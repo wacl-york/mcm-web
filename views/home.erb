@@ -1,0 +1,17 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Home</li>
+  </ol>
+</nav>
+
+<h1>Base App</h1>
+
+<%== erb :flash_messages %>
+
+<p>Welcome.</p>
+
+<% @links.each do |url, label| %>
+<p>
+  <a href="<%= rel url %>"><%= label %></a>
+</p>
+<% end %>

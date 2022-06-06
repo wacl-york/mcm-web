@@ -1,0 +1,215 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Faculty Dev APP_NAME
+Parameters:
+  Deployment:
+    Type: String
+    Description: The name of the deployment - dev, staging, prod
+  DomainName:
+    Type: String
+    Description: The domain name for the app
+  RDSUsername:
+    Type: String
+    Description: The postgres user that will connect to the RDS instance
+  AppName:
+    Type: String
+    Description: The name of the app - or the repository slug
+  CognitoClientID:
+    Type: String
+    Description: The Client ID for cognito auth
+  CognitoSecret:
+    Type: String
+    NoEcho: true
+    Description: The secret for cognito auth
+  CognitoPoolID:
+    Type: String
+    Description: The cognito pool ID
+    Default: eu-west-1_XP1nGHp9H
+  CognitoOAuthURL:
+    Type: String
+    Description: The OAuth URL for Cognito
+    Default: https://auth.aws.york.ac.uk
+Mappings:
+  DeploymentMap:
+    dev:
+      BannerText: This is the development instance!
+      BannerType: warning
+      BannerDismissable: true
+      LogRetentionInDays: 7
+    staging:
+      BannerText: This is the staging instance!
+      BannerType: danger
+      BannerDismissable: true
+      LogRetentionInDays: 7
+    prod:
+      BannerText: ""
+      BannerType: ""
+      BannerDismissable: false
+      LogRetentionInDays: 90
+
+Resources:
+  # The lambda function
+  SinatraWebFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: lambda.lambda_handler
+      Runtime: ruby2.7
+      MemorySize: 512
+      Timeout: 90
+      AutoPublishAlias: live
+      FunctionName: !Sub '${AppName}'
+      Description: !Sub 'App: https://${DomainName}'
+      Layers:
+        - arn:aws:lambda:eu-west-1:326340845860:layer:sys-layer-ruby-pg:5
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'rds-db:connect'
+              Resource: !Sub 'arn:aws:rds-db:${AWS::Region}:${AWS::AccountId}:dbuser:*/${RDSUsername}'
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionStorageTable
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref AppSecrets
+        - SNSPublishMessagePolicy:
+            TopicName: !ImportValue SNSDeveloperAlertTopicName
+      VpcConfig:
+        SecurityGroupIds:
+          - !ImportValue FacultyAppsSecurityGroup
+        SubnetIds:
+          - !ImportValue PrivateSubnet1ID
+          - !ImportValue PrivateSubnet2ID
+      Environment:
+        Variables:
+          RACK_ENV: production
+          DB_USER: !Ref RDSUsername
+          DB_HOST: !ImportValue FacultyDatabaseEndpoint
+          SESSION_TABLE: !Ref SessionStorageTable
+          APP_SECRET_NAME: !Sub 'FacultyApp/${AppName}/secrets'
+          BANNER_TEXT: !FindInMap [DeploymentMap, !Ref Deployment, BannerText]
+          BANNER_TYPE: !FindInMap [DeploymentMap, !Ref Deployment, BannerType]
+          BANNER_DISMISSABLE: !FindInMap [DeploymentMap, !Ref Deployment, BannerDismissable]
+          SNS_TOPIC: !ImportValue SNSDeveloperAlertArn
+          TZ: Europe/London
+
+  SinatraWebFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn:
+      - SinatraWebFunction
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub
+        - '/aws/lambda/${LAMBDA_NAME}'
+        - LAMBDA_NAME: !Ref SinatraWebFunction
+      RetentionInDays: !FindInMap [DeploymentMap, !Ref Deployment, LogRetentionInDays]
+
+  DomainNameRecord:
+    Type: Custom::CNAME
+    Properties:
+      ServiceToken: "arn:aws:sns:eu-west-1:230504789214:RequestRecordSet"
+      Source: !Sub '${DomainName}.'
+      Target: !Sub
+        - "${DNS}."
+        - DNS: !ImportValue FacultyAppsLoadBalancerDNS
+
+  AppTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: false
+      TargetType: "lambda"
+      Targets:
+        - Id: !Ref SinatraWebFunction.Alias
+      TargetGroupAttributes:
+        - Key: lambda.multi_value_headers.enabled
+          Value: true
+
+  ELBInvokePermissions:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref SinatraWebFunction.Alias
+      Action: 'lambda:InvokeFunction'
+      Principal: elasticloadbalancing.amazonaws.com
+
+  Certificate:
+    Type: Custom::Certificate
+    DependsOn: DomainNameRecord
+    Properties:
+      DomainName: !Ref DomainName
+      ValidationMethod: DNS
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-certificate-provider'
+
+  CertificateDNSRecord:
+    Type: Custom::CertificateDNSRecord
+    Properties:
+      CertificateArn: !Ref Certificate
+      DomainName: !Ref DomainName
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-certificate-provider'
+
+  ValidationDomainRecord:
+    Type: Custom::CNAME
+    Properties:
+      ServiceToken: 'arn:aws:sns:eu-west-1:230504789214:RequestRecordSet'
+      Source: !GetAtt CertificateDNSRecord.Name
+      Target: !GetAtt CertificateDNSRecord.Value
+
+  IssuedCertificate:
+    Type: Custom::IssuedCertificate
+    Properties:
+      CertificateArn: !Ref Certificate
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-certificate-provider'
+
+  AllocateHTTPSListenerRulePriority:
+    Type: Custom::AllocateListenerRulePriority
+    Properties:
+      ServiceToken: !ImportValue ListenerRulePriorityFunctionArn
+      ListenerArn: !ImportValue FacultyAppsLoadBalancerHTTPSListenerArn
+
+  HTTPSListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !ImportValue FacultyAppsLoadBalancerHTTPSListenerArn
+      Priority: !GetAtt AllocateHTTPSListenerRulePriority.Priority
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref AppTargetGroup
+      Conditions:
+        - Field: "host-header"
+          Values:
+            - !Ref DomainName
+
+  ListenerCertificate:
+    Type: AWS::ElasticLoadBalancingV2::ListenerCertificate
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref IssuedCertificate
+      ListenerArn: !ImportValue FacultyAppsLoadBalancerHTTPSListenerArn
+
+  # DynamoDB Table to store session data
+  SessionStorageTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: session_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: session_id
+          KeyType: HASH
+      Tags:
+        - Key: Name
+          Value: !Sub "${AppName} Sessions Table"
+      TimeToLiveSpecification:
+        AttributeName: 'ttl'
+        Enabled: true
+
+  # Secret application configuration (note some of this is not actually secret!)
+  AppSecrets:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub 'FacultyApp/${AppName}/secrets'
+      GenerateSecretString:
+        GenerateStringKey: 'SESSION_SECRET'
+        SecretStringTemplate: !Sub '{"COGNITO_CLIENT_ID":"${CognitoClientID}","COGNITO_CLIENT_SECRET": "${CognitoSecret}","OAUTH_URL":"${CognitoOAuthURL}","COGNITO_POOL_ID":"${CognitoPoolID}"}'

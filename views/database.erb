@@ -1,0 +1,16 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="<%= rel '/' %>">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Database Test</li>
+  </ol>
+</nav>
+
+<h1>Database Test</h1>
+
+<p><%= @databases.sql %></p>
+
+<ul>
+<% @databases.each do |db| %>
+<li><%= db[:datname] %></li>
+<% end %>
+</ul>

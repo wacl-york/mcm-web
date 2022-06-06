@@ -1,0 +1,20 @@
+<% if form_error?(:global_errors) %>
+  <div class="alert alert-danger alert-with-icon" role="alert">
+    <span class="fa-solid fa-triangle-exclamation" aria-hidden="true"></span>
+    <div>
+      There were issues with your input:
+      <ul class="mb-0">
+        <li>
+          <%== form_errors(:global_errors).join '</li><li>' %>
+        </li>
+      </ul>
+    </div>
+  </div>
+<% elsif form_error? %>
+  <div class="alert alert-danger alert-with-icon" role="alert">
+    <span class="fa-solid fa-triangle-exclamation" aria-hidden="true"></span>
+    <span>
+      There was an issue with your input. Please see the highlighted fields below.
+    </span>
+  </div>
+<% end %>

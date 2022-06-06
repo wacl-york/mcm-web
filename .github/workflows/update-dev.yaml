@@ -1,0 +1,22 @@
+name: Bundle Update [development, test]
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  bundle-update:
+    name: Run bundle update --group test development and auto-merge
+    runs-on: [ self-hosted, linux, x64 ]
+    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+    steps:
+      - uses: university-of-york/faculty-dev-actions/bundle-update-dev@v1
+        with:
+          checkout-key: ${{ secrets.BUNDLE_UPDATE_SSH_PRIVATE_KEY }}
+          container: "true"
+          github-token: ${{ secrets.GITHUB_TOKEN }}

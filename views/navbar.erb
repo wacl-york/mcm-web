@@ -1,0 +1,32 @@
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">Sinatra Base App</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link <%= 'active' if current_url? '/' %>" aria-current="page"
+             href="<%= rel '/' %>">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <%= 'active' if current_url? '/sample-form' %>" aria-current="page"
+             href="<%= rel '/sample-form' %>">Form</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown-example" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
+          <ul class="dropdown-menu" aria-labelledby="dropdown-example">
+            <li><a class="dropdown-item" href="/">Dropdown Link</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <span class="navbar-text">
+        <span class="fa-solid fa-user"></span>
+        <%= @logged_in_user.username if @logged_in_user %>
+      </span>
+    </div>
+  </div>
+</nav>

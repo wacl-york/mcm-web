@@ -1,0 +1,42 @@
+name: Test
+
+on:
+  push:
+    branches-ignore:
+      - base
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: university-of-york/faculty-dev-actions/rubocop@v1
+
+  rspec:
+    name: RSpec tests
+    runs-on: [ self-hosted, linux, x64 ]
+    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+    services:
+      postgres:
+        image: ghcr.io/university-of-york/faculty-dev-db-pristine:latest
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: university-of-york/faculty-dev-actions/rspec-lambda@v1
+        env:
+          DB_HOST: postgres
+          DB_USER: sinatra_base_app
+          TZ: Europe/London
+
+  bundler-audit:
+    name: Bundler Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: university-of-york/faculty-dev-actions/bundler-audit@v1

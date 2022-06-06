@@ -1,0 +1,130 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Test"]
+    branches: [main]
+    types:
+      - completed
+
+concurrency:
+  group: deployment
+  cancel-in-progress: true
+
+env:
+  DB_USER: sinatra_base_app
+
+jobs:
+  dev-deployment:
+    name: Deploy to Dev Environment
+    runs-on: [ self-hosted, linux, x64 ]
+    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: development
+    env:
+      AWS_ACCOUNT_ID: 496883770698
+      AWS_ENVIRONMENT: dev
+      DOMAIN_NAME: base.faculty-dev.app.york.ac.uk
+    steps:
+      - uses: actions/checkout@v3
+      - run: bundle install --deployment --without test development
+      - uses: university-of-york/aws-sam-deploy-action@master
+        env:
+          TEMPLATE: 'cloudformation.yaml'
+          AWS_STACK_NAME: ${{ github.event.repository.name }}
+          AWS_REGION: 'eu-west-1'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEPLOY_BUCKET: ${{ secrets.AWS_GLOBAL_ARTIFACT_BUCKET }}
+          ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
+          PARAMETER_OVERRIDES:
+            Deployment=${{ env.AWS_ENVIRONMENT }}
+            RDSUsername=${{ env.DB_USER }}
+            DomainName=${{ env.DOMAIN_NAME }}
+            AppName=${{ github.event.repository.name }}
+            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
+            CognitoSecret=${{ secrets.COGNITO_SECRET }}
+          TAGS:
+            name="Faculty Dev APP_NAME"
+            group=FACULTY-DEV
+            project=${{ github.repository }}
+            status=${{ env.AWS_ENVIRONMENT }}
+            pushed_by=github
+            defined_in=cloudformation
+            repo_name=${{ github.repository }}
+
+#  staging-deployment:
+#    name: Deploy to Staging Environment
+#    runs-on: [ self-hosted, linux, x64 ]
+#    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+#    environment: staging
+#    needs: [ dev-deployment ]
+#    env:
+#      AWS_ACCOUNT_ID: 423014805995
+#      AWS_ENVIRONMENT: staging
+#      DOMAIN_NAME:
+#    steps:
+#      - uses: actions/checkout@v3
+#      - run: bundle install --deployment --without test development
+#      - uses: university-of-york/aws-sam-deploy-action@master
+#        env:
+#          TEMPLATE: 'cloudformation.yaml'
+#          AWS_STACK_NAME: ${{ github.event.repository.name }}
+#          AWS_REGION: 'eu-west-1'
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_DEPLOY_BUCKET: ${{ secrets.AWS_GLOBAL_ARTIFACT_BUCKET }}
+#          ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
+#          PARAMETER_OVERRIDES:
+#            Deployment=${{ env.AWS_ENVIRONMENT }}
+#            RDSUsername=${{ env.DB_USER }}
+#            DomainName=${{ env.DOMAIN_NAME }}
+#            AppName=${{ github.event.repository.name }}
+#            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
+#            CognitoSecret=${{ secrets.COGNITO_SECRET }}
+#          TAGS:
+#            name="Faculty Dev APP_NAME"
+#            group=FACULTY-DEV
+#            project=${{ github.repository }}
+#            status=${{ env.AWS_ENVIRONMENT }}
+#            pushed_by=github
+#            defined_in=cloudformation
+#            repo_name=${{ github.repository }}
+#
+#  production-deployment:
+#    name: Deploy to Production Environment
+#    runs-on: [ self-hosted, linux, x64 ]
+#    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+#    environment: production
+#    needs: [ staging-deployment ]
+#    env:
+#      AWS_ACCOUNT_ID: 542159367156
+#      AWS_ENVIRONMENT: prod
+#      DOMAIN_NAME:
+#    steps:
+#      - uses: actions/checkout@v3
+#      - run: bundle install --deployment --without test development
+#      - uses: university-of-york/aws-sam-deploy-action@master
+#        env:
+#          TEMPLATE: 'cloudformation.yaml'
+#          AWS_STACK_NAME: ${{ github.event.repository.name }}
+#          AWS_REGION: 'eu-west-1'
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_DEPLOY_BUCKET: ${{ secrets.AWS_GLOBAL_ARTIFACT_BUCKET }}
+#          ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
+#          PARAMETER_OVERRIDES:
+#            Deployment=${{ env.AWS_ENVIRONMENT }}
+#            RDSUsername=${{ env.DB_USER }}
+#            DomainName=${{ env.DOMAIN_NAME }}
+#            AppName=${{ github.event.repository.name }}
+#            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
+#            CognitoSecret=${{ secrets.COGNITO_SECRET }}
+#          TAGS:
+#            name="Faculty Dev APP_NAME"
+#            group=FACULTY-DEV
+#            project=${{ github.repository }}
+#            status=${{ env.AWS_ENVIRONMENT }}
+#            pushed_by=github
+#            defined_in=cloudformation
+#            repo_name=${{ github.repository }}

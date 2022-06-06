@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Base App</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="<%= web_library 'css/bootstrap.css' %>" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="<%= web_library 'js/bootstrap.js' %>"></script>
+
+    <!-- Font Awesome -->
+    <script src="<%= web_library 'js/fontawesome.js' %>"></script>
+
+    <!-- flatpickr -->
+    <script src="<%= web_library 'js/flatpickr.js' %>"></script>
+    <script src="<%= web_library 'js/flatpickr-helper.js' %>"></script>
+    <link href="<%= web_library 'css/flatpickr.css' %>" rel="stylesheet">
+
+    <!-- luxon -->
+    <script src="<%= web_library 'js/luxon.js' %>"></script>
+    <script>
+        luxon.Settings.defaultLocale = "en-GB";
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <%== erb :navbar %>
+    </header>
+
+    <main role="main" class="container">
+      <%== erb :banner %>
+      <%== yield %>
+    </main>
+
+  </body>
+
+  <!-- in page script -->
+  <%== yield_content :javascript_footer %>
+</html>

@@ -1,0 +1,15 @@
+name: Web Library Update
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  web-library-update:
+    name: Check if the web library needs updating
+    runs-on: ubuntu-latest
+    steps:
+      - uses: university-of-york/faculty-dev-actions/web-library-update@v1
+        with:
+          checkout-key: ${{ secrets.BUNDLE_UPDATE_SSH_PRIVATE_KEY }}

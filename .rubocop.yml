@@ -1,0 +1,7 @@
+---
+inherit_from:
+  - https://uk-ac-york-its-faculty-dev-rubocop.s3.amazonaws.com/rubocop.yml
+  - https://uk-ac-york-its-faculty-dev-rubocop.s3.amazonaws.com/rubocop-performance.yml
+  - https://uk-ac-york-its-faculty-dev-rubocop.s3.amazonaws.com/rubocop-rake.yml
+  - https://uk-ac-york-its-faculty-dev-rubocop.s3.amazonaws.com/rubocop-rspec.yml
+  - https://uk-ac-york-its-faculty-dev-rubocop.s3.amazonaws.com/rubocop-sequel.yml

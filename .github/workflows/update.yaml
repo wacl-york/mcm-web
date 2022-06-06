@@ -1,0 +1,17 @@
+name: Bundle Update
+
+on:
+  schedule:
+    - cron: '0 7 * * THU'
+  workflow_dispatch:
+
+jobs:
+  bundle-update:
+    name: Run bundle update
+    runs-on: [ self-hosted, linux, x64 ]
+    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+    steps:
+      - uses: university-of-york/faculty-dev-actions/bundle-update@v1
+        with:
+          checkout-key: ${{ secrets.BUNDLE_UPDATE_SSH_PRIVATE_KEY }}
+          container: "true"
