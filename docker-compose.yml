@@ -16,10 +16,8 @@ services:
       BANNER_TYPE: info
       BANNER_DISMISSABLE: 'true'
       DB_HOST: db
-      DB_USER: sinatra_base_app
+      DB_USER: mcmweb_app
       TZ: Europe/London
-    depends_on:
-      - db
   web:
     build:
       context: docker
@@ -39,18 +37,8 @@ services:
     environment:
       ALLOW_STRING_WEB_LIBRARY_VERSION: 1
       DB_HOST: db-test
-      DB_USER: sinatra_base_app
+      DB_USER: mcmweb_app
       TZ: Europe/London
-    depends_on:
-      - db-test
-  db:
-    image: ghcr.io/university-of-york/faculty-dev-db-test:latest
-    volumes:
-      - db:/var/lib/postgresql/data
-    ports:
-      - "127.0.0.1:5432:5432"
-  db-test:
-    image: ghcr.io/university-of-york/faculty-dev-db-test:latest
 
 volumes:
   bundle:

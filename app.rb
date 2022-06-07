@@ -8,15 +8,16 @@ configure do # rubocop:disable Metrics/BlockLength
   config_file 'config.yaml'
   aws_config if in_lambda?
 
+  # Faculty-specific
   # Check that the web library version is a numeric (tagged) version if we're in production
-  only_versioned_web_library_in_production!
+  #only_versioned_web_library_in_production!
 
-  # Connect to database
-  settings.db ||= {}
-  settings.db[:noauto] = true unless in_lambda?
+  ## Connect to database
+  #settings.db ||= {}
+  #settings.db[:noauto] = true unless in_lambda?
 
-  DB = FacultyAWS::DBConnector.new(**settings.db).connection
-  RBAC = FacultyRBAC::Controller.new(DB)
+  #DB = FacultyAWS::DBConnector.new(**settings.db).connection
+  #RBAC = FacultyRBAC::Controller.new(DB)
   LOGGER = Logger.new $stdout
   $stdout.sync = true if development?
 
@@ -37,7 +38,8 @@ configure do # rubocop:disable Metrics/BlockLength
   use Rack::Protection::StrictTransport
   use Rack::Protection
 
-  register FacultyRBAC::Sinatra
+  # Faculty-specific
+  #register FacultyRBAC::Sinatra
   register Sinatra::Banner
 
   set :show_exceptions, :after_handler if development?
@@ -50,16 +52,18 @@ before do
   cache_control :no_cache
 
   unless request.path_info.start_with? '/auth/'
+    # Faculty-specific
     # require_authentication
 
-    @logged_in_user = RBAC.user(session[:username])
-    LOGGER.info "Username: #{@logged_in_user.username}"
+    #@logged_in_user = RBAC.user(session[:username])
+    #LOGGER.info "Username: #{@logged_in_user.username}"
   end
 end
 
-after do
-  DB.disconnect
-end
+# Faculty-specific
+#after do
+#  DB.disconnect
+#end
 
 before '/api/*' do
   content_type :json
@@ -70,7 +74,8 @@ error do
   LOGGER.error "#{error.class} - #{error.message}"
   LOGGER.error error.backtrace.join("\n\t")
 
-  FacultyAWS::NotifyDevs.send_error_warning if settings.in_lambda?
+  # Faculty-specific
+  #FacultyAWS::NotifyDevs.send_error_warning if settings.in_lambda?
 
   erb :'error/5xx', locals: { error: http_status(500) }
 end

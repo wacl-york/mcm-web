@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DB_USER: sinatra_base_app
+  DB_USER: mcmweb_app
 
 jobs:
   dev-deployment:
@@ -24,7 +24,7 @@ jobs:
     env:
       AWS_ACCOUNT_ID: 496883770698
       AWS_ENVIRONMENT: dev
-      DOMAIN_NAME: base.faculty-dev.app.york.ac.uk
+      DOMAIN_NAME: 
     steps:
       - uses: actions/checkout@v3
       - run: bundle install --deployment --without test development
@@ -45,7 +45,7 @@ jobs:
             CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
             CognitoSecret=${{ secrets.COGNITO_SECRET }}
           TAGS:
-            name="Faculty Dev APP_NAME"
+            name="Faculty Dev MCMWeb"
             group=FACULTY-DEV
             project=${{ github.repository }}
             status=${{ env.AWS_ENVIRONMENT }}
@@ -83,7 +83,7 @@ jobs:
 #            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
 #            CognitoSecret=${{ secrets.COGNITO_SECRET }}
 #          TAGS:
-#            name="Faculty Dev APP_NAME"
+#            name="Faculty Dev MCMWeb"
 #            group=FACULTY-DEV
 #            project=${{ github.repository }}
 #            status=${{ env.AWS_ENVIRONMENT }}
@@ -121,7 +121,7 @@ jobs:
 #            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
 #            CognitoSecret=${{ secrets.COGNITO_SECRET }}
 #          TAGS:
-#            name="Faculty Dev APP_NAME"
+#            name="Faculty Dev MCMWeb"
 #            group=FACULTY-DEV
 #            project=${{ github.repository }}
 #            status=${{ env.AWS_ENVIRONMENT }}

@@ -19,7 +19,6 @@ end
 Faculty::Rake::BaseUpdate.new 'git@github.com:university-of-york/faculty-dev-sinatra-base.git', 'base-update'
 Faculty::Rake::Deploy.new
 Faculty::Rake::DockerTasks.new
-Faculty::Rake::SinatraRename.new
 
 task default: :up
 

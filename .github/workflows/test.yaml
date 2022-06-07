@@ -32,7 +32,7 @@ jobs:
       - uses: university-of-york/faculty-dev-actions/rspec-lambda@v1
         env:
           DB_HOST: postgres
-          DB_USER: sinatra_base_app
+          DB_USER: mcmweb_app
           TZ: Europe/London
 
   bundler-audit:
