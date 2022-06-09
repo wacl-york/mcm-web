@@ -1,0 +1,68 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="<%= rel '/' %>">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Reactions</li>
+  </ol>
+</nav>
+
+<h1><%= @species[:Name] %></h1>
+<br>
+
+<div class="card" style="width: 60rem;">
+  <div class="card-header">
+    Species information
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Smiles: <%= @species[:Smiles] %></li>
+    <li class="list-group-item">InChI: <%= @species[:Inchi] %></li>
+    <li class="list-group-item">Mass: <%= @species[:Mass] %></li>
+  </ul>
+</div>
+
+<br>
+
+<h3>Sink Reactions</h2>
+<table id="sink_reactions" class="table">
+  <thead>
+    <tr>
+      <th>Reaction</th>
+      <th>Rate</th>
+      <th>Rate Category</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sink_reactions.each do |reaction| %>
+    <tr>
+      <td><%= reaction[:Reaction] %></td>
+      <td><%= reaction[:Rate] %></td>
+      <td><%= reaction[:RateCategory] %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<h3>Precursor Reactions</h2>
+<table id="precursor_reactions" class="table">
+  <thead>
+    <tr>
+      <th>Reaction</th>
+      <th>Rate</th>
+      <th>Rate Category</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @precursor_reactions.each do |reaction| %>
+    <tr>
+      <td><%= reaction[:Reaction] %></td>
+      <td><%= reaction[:Rate] %></td>
+      <td><%= reaction[:RateCategory] %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>

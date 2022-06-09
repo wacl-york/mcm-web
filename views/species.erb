@@ -1,0 +1,32 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="<%= rel '/' %>">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Reactions</li>
+  </ol>
+</nav>
+
+<h1>Species</h1>
+
+<form method="get">
+  <!--<div class="form-group"> -->
+    <label for="n_reactions">Number species to display</label>
+    <input type="text" name="n" value=<%= @n_species %>>
+    <input type="submit" value="Refresh">
+    <!--</div>-->
+</form>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @species.each do |species| %>
+    <tr>
+      <td><a href="species_info/<%= species[:SpeciesID]%>"><%= species[:Name] %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
