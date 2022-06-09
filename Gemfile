@@ -29,6 +29,7 @@ gem 'sequel'
 gem 'sequel_pg', require: 'sequel'
 gem 'sinatra', ['~> 2', '!= 2.1.0']
 gem 'sinatra-contrib', require: ['sinatra/capture', 'sinatra/config_file', 'sinatra/content_for']
+gem 'sqlite3'
 
 source 'https://gem.fury.io/universityofyork/' do
   gem 'aws-sessionstore-dynamodb', '~> 1'
