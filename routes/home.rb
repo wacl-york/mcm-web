@@ -3,7 +3,8 @@
 get '/' do
   @links = {
     '/reactions' => 'View all reactions',
-    '/species' => 'View all species'
+    '/species' => 'View all species',
+    '/export' => 'Export a mechanism subset'
   }
 
   erb :home

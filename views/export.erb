@@ -1,0 +1,24 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="<%= rel '/' %>">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Reactions</li>
+  </ol>
+</nav>
+
+<h1>Export</h1>
+
+Click below to export chosen mechanism subset for the selected species.
+
+<br>
+<br>
+
+<form method="post">
+  <div class="form-group">
+    <label for="selected">Select species mechanisms to export:</label><br>
+    <input type="checkbox" name="selected[]" value="C2H6">C2H6<br>
+    <input type="checkbox" name="selected[]" value="C2H4">C2H4<br>
+    <input type="checkbox" name="selected[]" value="C3H8">C3H8<br>
+    <br>
+    <input type="submit" value="Download">
+  </div>
+</form>
