@@ -4,6 +4,7 @@ get '/' do
   @links = {
     '/reactions' => 'View all reactions',
     '/species' => 'View all species',
+    '/search' => 'Search for a species',
     '/export' => 'Export a mechanism subset'
   }
 
