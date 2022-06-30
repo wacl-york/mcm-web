@@ -20,7 +20,7 @@ GEM
       omniauth (~> 1.0)
       omniauth-cognito-idp (~> 0.1)
       uoy-faculty-sinatra (>= 2.0, < 5.0)
-    uoy-faculty-spec-helpers (5.12.4)
+    uoy-faculty-spec-helpers (6.0.0)
       sequel (~> 5)
       uoy-faculty-rbac (~> 5.0)
       webmock (~> 3.10)
