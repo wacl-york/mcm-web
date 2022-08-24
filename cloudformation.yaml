@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Faculty Dev MCMWeb
+Description: WACL MCMWeb
 Parameters:
   Deployment:
     Type: String
@@ -8,6 +8,12 @@ Parameters:
   DomainName:
     Type: String
     Description: The domain name for the app
+  PrivateSubnet1ID:
+    Type: String
+    Description: First private subnet ID
+  PrivateSubnet2ID:
+    Type: String
+    Description: Second private subnet ID
   RDSUsername:
     Type: String
     Description: The postgres user that will connect to the RDS instance
@@ -78,17 +84,17 @@ Resources:
             TopicName: !ImportValue SNSDeveloperAlertTopicName
       VpcConfig:
         SecurityGroupIds:
-          - !ImportValue FacultyAppsSecurityGroup
+          - !ImportValue WACLAppsSecurityGroup
         SubnetIds:
-          - !ImportValue PrivateSubnet1ID
-          - !ImportValue PrivateSubnet2ID
+          - !Ref PrivateSubnet1ID
+          - !Ref PrivateSubnet2ID
       Environment:
         Variables:
           RACK_ENV: production
-          DB_USER: !Ref RDSUsername
-          DB_HOST: !ImportValue FacultyDatabaseEndpoint
+          #DB_USER: !Ref RDSUsername
+          #DB_HOST: !ImportValue FacultyDatabaseEndpoint
           SESSION_TABLE: !Ref SessionStorageTable
-          APP_SECRET_NAME: !Sub 'FacultyApp/${AppName}/secrets'
+          #APP_SECRET_NAME: !Sub 'FacultyApp/${AppName}/secrets'
           BANNER_TEXT: !FindInMap [DeploymentMap, !Ref Deployment, BannerText]
           BANNER_TYPE: !FindInMap [DeploymentMap, !Ref Deployment, BannerType]
           BANNER_DISMISSABLE: !FindInMap [DeploymentMap, !Ref Deployment, BannerDismissable]
@@ -113,7 +119,7 @@ Resources:
       Source: !Sub '${DomainName}.'
       Target: !Sub
         - "${DNS}."
-        - DNS: !ImportValue FacultyAppsLoadBalancerDNS
+        - DNS: !ImportValue WACLAppsLoadBalancerDNS
 
   AppTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -165,12 +171,12 @@ Resources:
     Type: Custom::AllocateListenerRulePriority
     Properties:
       ServiceToken: !ImportValue ListenerRulePriorityFunctionArn
-      ListenerArn: !ImportValue FacultyAppsLoadBalancerHTTPSListenerArn
+      ListenerArn: !ImportValue WACLAppsLoadBalancerHTTPSListenerArn
 
   HTTPSListenerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
-      ListenerArn: !ImportValue FacultyAppsLoadBalancerHTTPSListenerArn
+      ListenerArn: !ImportValue WACLAppsLoadBalancerHTTPSListenerArn
       Priority: !GetAtt AllocateHTTPSListenerRulePriority.Priority
       Actions:
         - Type: forward
@@ -185,7 +191,7 @@ Resources:
     Properties:
       Certificates:
         - CertificateArn: !Ref IssuedCertificate
-      ListenerArn: !ImportValue FacultyAppsLoadBalancerHTTPSListenerArn
+      ListenerArn: !ImportValue WACLAppsLoadBalancerHTTPSListenerArn
 
   # DynamoDB Table to store session data
   SessionStorageTable:
@@ -209,7 +215,7 @@ Resources:
   AppSecrets:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub 'FacultyApp/${AppName}/secrets'
+      Name: !Sub 'WACLApp/${AppName}/secrets'
       GenerateSecretString:
         GenerateStringKey: 'SESSION_SECRET'
         SecretStringTemplate: !Sub '{"COGNITO_CLIENT_ID":"${CognitoClientID}","COGNITO_CLIENT_SECRET": "${CognitoSecret}","OAUTH_URL":"${CognitoOAuthURL}","COGNITO_POOL_ID":"${CognitoPoolID}"}'
