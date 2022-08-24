@@ -14,9 +14,6 @@ Parameters:
   PrivateSubnet2ID:
     Type: String
     Description: Second private subnet ID
-  RDSUsername:
-    Type: String
-    Description: The postgres user that will connect to the RDS instance
   AppName:
     Type: String
     Description: The name of the app - or the repository slug
@@ -70,12 +67,6 @@ Resources:
         - arn:aws:lambda:eu-west-1:326340845860:layer:sys-layer-ruby-pg:5
       Policies:
         - AWSLambdaVPCAccessExecutionRole
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - 'rds-db:connect'
-              Resource: !Sub 'arn:aws:rds-db:${AWS::Region}:${AWS::AccountId}:dbuser:*/${RDSUsername}'
         - DynamoDBCrudPolicy:
             TableName: !Ref SessionStorageTable
         - AWSSecretsManagerGetSecretValuePolicy:
@@ -91,10 +82,7 @@ Resources:
       Environment:
         Variables:
           RACK_ENV: production
-          #DB_USER: !Ref RDSUsername
-          #DB_HOST: !ImportValue FacultyDatabaseEndpoint
           SESSION_TABLE: !Ref SessionStorageTable
-          #APP_SECRET_NAME: !Sub 'FacultyApp/${AppName}/secrets'
           BANNER_TEXT: !FindInMap [DeploymentMap, !Ref Deployment, BannerText]
           BANNER_TYPE: !FindInMap [DeploymentMap, !Ref Deployment, BannerType]
           BANNER_DISMISSABLE: !FindInMap [DeploymentMap, !Ref Deployment, BannerDismissable]

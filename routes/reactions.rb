@@ -2,10 +2,7 @@
 
 get '/reactions' do
   n = params[:n]
-  
-  if n.nil?
-    n = 10
-  end
+  n = 10 if n.nil?
 
   @reactions = DB[:reactionswide].limit(n)
   @n_reactions = n

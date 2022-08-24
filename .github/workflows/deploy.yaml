@@ -17,7 +17,7 @@ env:
 jobs:
   dev-deployment:
     name: Deploy to Dev Environment
-    runs-on: [ self-hosted, linux, x64 ]
+    runs-on: ubuntu-latest
     container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment: development
@@ -39,7 +39,6 @@ jobs:
           ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
           PARAMETER_OVERRIDES:
             Deployment=${{ env.AWS_ENVIRONMENT }}
-            RDSUsername=${{ env.DB_USER }}
             DomainName=${{ env.DOMAIN_NAME }}
             AppName=${{ github.event.repository.name }}
             CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
