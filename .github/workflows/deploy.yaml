@@ -24,6 +24,8 @@ jobs:
     env:
       AWS_ACCOUNT_ID: 733046350245
       AWS_ENVIRONMENT: dev
+      AWS_SUBNET_1: subnet-00907eafe30c1cd15
+      AWS_SUBNET_2: subnet-01d5c8f2990e30510
       DOMAIN_NAME: mcm.wacl-dev1.app.york.ac.uk
     steps:
       - uses: actions/checkout@v3
@@ -41,6 +43,8 @@ jobs:
             Deployment=${{ env.AWS_ENVIRONMENT }}
             DomainName=${{ env.DOMAIN_NAME }}
             AppName=${{ github.event.repository.name }}
+            PrivateSubnet1ID=${{ env.AWS_SUBNET_1 }}
+            PrivateSubnet2ID=${{ env.AWS_SUBNET_2 }}
             CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
             CognitoSecret=${{ secrets.COGNITO_SECRET }}
           TAGS:
