@@ -21,7 +21,7 @@ jobs:
     container: 
       image: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
       volumes: 
-        - ./db:/db
+        - ${{ github.workspace }}/db:/db
     runs-on: ubuntu-latest
     steps:
       - uses: university-of-york/faculty-dev-actions/rspec-lambda@v1
