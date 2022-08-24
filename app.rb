@@ -76,7 +76,7 @@ error do
   LOGGER.error error.backtrace.join("\n\t")
 
   # Faculty-specific
-  #FacultyAWS::NotifyDevs.send_error_warning if settings.in_lambda?
+  # FacultyAWS::NotifyDevs.send_error_warning if settings.in_lambda?
 
   erb :'error/5xx', locals: { error: http_status(500) }
 end
