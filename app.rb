@@ -16,7 +16,7 @@ configure do
   # settings.db ||= {}
   # settings.db[:noauto] = true unless in_lambda?
 
-  DB = Sequel.connect('sqlite://db/mcm.db')
+  DB = Sequel.connect('sqlite:///db/mcm.db')
   # DB = FacultyAWS::DBConnector.new(**settings.db).connection
   # RBAC = FacultyRBAC::Controller.new(DB)
   LOGGER = Logger.new $stdout

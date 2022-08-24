@@ -6,11 +6,13 @@ services:
     volumes:
       - .:/var/task
       - bundle:/bundle
+      - ./db:/db
   app:
-    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-dev:2.7
+    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-postgres:2.7
     volumes:
       - .:/var/task
       - bundle:/bundle
+      - ./db:/db
     environment:
       BANNER_TEXT: 'This is a Dockerized development instance.'
       BANNER_TYPE: info
@@ -28,14 +30,14 @@ services:
     ports:
       - "127.0.0.1:80:80"
   test:
-    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-dev:2.7
+    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-postgres:2.7
     volumes:
       - .:/var/task
       - bundle:/bundle
+      - ./db:/db
     environment:
       ALLOW_STRING_WEB_LIBRARY_VERSION: 1
       TZ: Europe/London
 
 volumes:
   bundle:
-  db:
