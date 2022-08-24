@@ -8,7 +8,7 @@ on:
 jobs:
   bundle-update:
     name: Run bundle update
-    runs-on: [ self-hosted, linux, x64 ]
+    runs-on: ubuntu-latest
     container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
     steps:
       - uses: university-of-york/faculty-dev-actions/bundle-update@v1

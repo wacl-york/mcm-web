@@ -15,8 +15,6 @@ services:
       BANNER_TEXT: 'This is a Dockerized development instance.'
       BANNER_TYPE: info
       BANNER_DISMISSABLE: 'true'
-      DB_HOST: db
-      DB_USER: mcmweb_app
       TZ: Europe/London
   web:
     build:
@@ -36,8 +34,6 @@ services:
       - bundle:/bundle
     environment:
       ALLOW_STRING_WEB_LIBRARY_VERSION: 1
-      DB_HOST: db-test
-      DB_USER: mcmweb_app
       TZ: Europe/London
 
 volumes:
