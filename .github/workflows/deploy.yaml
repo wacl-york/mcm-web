@@ -22,9 +22,9 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment: development
     env:
-      AWS_ACCOUNT_ID: 496883770698
+      AWS_ACCOUNT_ID: 733046350245
       AWS_ENVIRONMENT: dev
-      DOMAIN_NAME: 
+      DOMAIN_NAME: mcm.wacl-dev1.app.york.ac.uk
     steps:
       - uses: actions/checkout@v3
       - run: bundle install --deployment --without test development
