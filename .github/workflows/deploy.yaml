@@ -18,7 +18,10 @@ jobs:
   dev-deployment:
     name: Deploy to Dev Environment
     runs-on: ubuntu-latest
-    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+    container: 
+      image: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+      volumes:
+        - ./db:/db
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment: development
     env:
