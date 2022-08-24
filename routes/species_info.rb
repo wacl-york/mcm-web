@@ -2,11 +2,11 @@
 
 get '/species_info/:id' do
 
-  @sink_reactions = DB.fetch("SELECT Reaction, Rate, RateTypes.Name as RateCategory FROM Reactants INNER JOIN ReactionsWide USING(ReactionID) INNER JOIN Reactions USING(ReactionID) INNER JOIN Rates USING(RateID) LEFT JOIN RateTypes USING(RateTypeID) WHERE SpeciesID = ? ORDER BY Reaction;", params[:id])
+  @sink_reactions = DB[:Reactants].join(:ReactionsWide, [:ReactionID]).join(:Reactions, [:ReactionID]).join(:Rates, [:RateID]).left_join(:RateTypes, [:RateTypeID]).where(SpeciesID: params[:id]).order(:Reaction).select(:Reaction, :Rate, Sequel.as(Sequel[:RateTypes][:Name], :RateCategory))
 
-  @precursor_reactions = DB.fetch("SELECT Reaction, Rate, RateTypes.Name as RateCategory FROM Products INNER JOIN ReactionsWide USING(ReactionID) INNER JOIN Reactions USING(ReactionID) INNER JOIN Rates USING(RateID) LEFT JOIN RateTypes USING(RateTypeID) WHERE SpeciesID = ? ORDER BY Reaction;", params[:id])
+  @precursor_reactions = DB[:Products].join(:ReactionsWide, [:ReactionID]).join(:Reactions, [:ReactionID]).join(:Rates, [:RateID]).left_join(:RateTypes, [:RateTypeID]).where(SpeciesID: params[:id]).order(:Reaction).select(:Reaction, :Rate, Sequel.as(Sequel[:RateTypes][:Name], :RateCategory))
 
-  @species = DB.fetch("SELECT Name, Smiles, Inchi, Mass FROM Species WHERE SpeciesID = ?", params[:id]).first
+  @species = DB[:Species].where(SpeciesID: params[:id]).select(:Name, :Smiles, :Inchi, :Mass).first
 
   erb :species_info
 end
