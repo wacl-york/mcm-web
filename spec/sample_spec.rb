@@ -2,7 +2,6 @@
 
 RSpec.describe 'Sample Spec Tests' do
   describe 'the index page' do
-
     before do
       visit '/'
     end
@@ -14,7 +13,5 @@ RSpec.describe 'Sample Spec Tests' do
     it 'contains a link to itself' do
       expect(page).to have_link href: %r{/}
     end
-
   end
-
 end
