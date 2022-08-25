@@ -48,8 +48,8 @@ jobs:
             CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
             CognitoSecret=${{ secrets.COGNITO_SECRET }}
           TAGS:
-            name="Faculty Dev MCMWeb"
-            group=FACULTY-DEV
+            name="WACL Dev MCMWeb"
+            group=WACL
             project=${{ github.repository }}
             status=${{ env.AWS_ENVIRONMENT }}
             pushed_by=github
@@ -86,8 +86,8 @@ jobs:
 #            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
 #            CognitoSecret=${{ secrets.COGNITO_SECRET }}
 #          TAGS:
-#            name="Faculty Dev MCMWeb"
-#            group=FACULTY-DEV
+#            name="WACL Dev MCMWeb"
+#            group=WACL
 #            project=${{ github.repository }}
 #            status=${{ env.AWS_ENVIRONMENT }}
 #            pushed_by=github
@@ -124,8 +124,8 @@ jobs:
 #            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
 #            CognitoSecret=${{ secrets.COGNITO_SECRET }}
 #          TAGS:
-#            name="Faculty Dev MCMWeb"
-#            group=FACULTY-DEV
+#            name="WACL Dev MCMWeb"
+#            group=WACL
 #            project=${{ github.repository }}
 #            status=${{ env.AWS_ENVIRONMENT }}
 #            pushed_by=github
