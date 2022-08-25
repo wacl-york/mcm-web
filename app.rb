@@ -15,7 +15,9 @@ configure do
   ## Connect to database
   # settings.db ||= {}
   # settings.db[:noauto] = true unless in_lambda?
-
+  
+  # DEBUG
+  puts Dir.entries['/var/task/vendor/bundle/ruby/2.7.0/gems/sqlite3-1.4.4/lib/sqlite3/']
   DB = Sequel.connect('sqlite://mcm.db')
   # DB = FacultyAWS::DBConnector.new(**settings.db).connection
   # RBAC = FacultyRBAC::Controller.new(DB)
