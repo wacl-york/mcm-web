@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 dir = '/var/task/vendor/bundle/ruby/2.7.0/gems/sqlite3-1.4.4/lib/sqlite3'
 puts Dir.entries(dir) if File.directory?(dir)
 
