@@ -30,7 +30,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: bundle install --deployment --without test development
-      - run: cp /lib64/libsqlite3.so.0 /var/task
       - uses: university-of-york/aws-sam-deploy-action@master
         env:
           TEMPLATE: 'cloudformation.yaml'

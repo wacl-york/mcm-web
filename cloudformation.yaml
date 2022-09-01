@@ -64,7 +64,7 @@ Resources:
       FunctionName: !Sub '${AppName}'
       Description: !Sub 'App: https://${DomainName}'
       Layers:
-        - arn:aws:lambda:eu-west-1:326340845860:layer:sys-layer-ruby-pg:5
+        - arn:aws:lambda:eu-west-1:733046350245:layer:sqliteLayer:3
       Policies:
         - AWSLambdaVPCAccessExecutionRole
         - DynamoDBCrudPolicy:
@@ -83,6 +83,9 @@ Resources:
         Variables:
           RACK_ENV: production
           SESSION_TABLE: !Ref SessionStorageTable
+          APP_SECRET_NAME: !Sub 'WACLApp/${AppName}/secrets'
+          DB_USER: test
+          DB_HOST: test
           BANNER_TEXT: !FindInMap [DeploymentMap, !Ref Deployment, BannerText]
           BANNER_TYPE: !FindInMap [DeploymentMap, !Ref Deployment, BannerType]
           BANNER_DISMISSABLE: !FindInMap [DeploymentMap, !Ref Deployment, BannerDismissable]
