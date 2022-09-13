@@ -2,6 +2,8 @@
 
 require 'rubygems'
 require 'bundler'
+Bundler.require
+require 'sinatra'
 
 require File.expand_path 'app.rb', __dir__
 
