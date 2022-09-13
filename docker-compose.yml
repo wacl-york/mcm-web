@@ -1,24 +1,25 @@
 version: '2.4'
 
 services:
-  builder:
-    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-dev:2.7
-    volumes:
-      - .:/var/task
-      - bundle:/bundle
   app:
-    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-postgres:2.7
-    volumes:
-      - .:/var/task
-      - bundle:/bundle
+    image: 733046350245.dkr.ecr.eu-west-1.amazonaws.com/mcm-app
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    networks:
+      - webnet
+    ports:
+      - '5000:5000'
     environment:
       BANNER_TEXT: 'This is a Dockerized development instance.'
       BANNER_TYPE: info
       BANNER_DISMISSABLE: 'true'
       TZ: Europe/London
   web:
+    image: 733046350245.dkr.ecr.eu-west-1.amazonaws.com/mcm-web
     build:
-      context: docker
+      context: docker/web
+      dockerfile: Dockerfile
       args:
         - WEB_LIBRARY_ROOT
         - WEB_LIBRARY_VERSION
@@ -26,15 +27,10 @@ services:
     depends_on:
       - app
     ports:
-      - "127.0.0.1:80:80"
-  test:
-    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-postgres:2.7
-    volumes:
-      - .:/var/task
-      - bundle:/bundle
-    environment:
-      ALLOW_STRING_WEB_LIBRARY_VERSION: 1
-      TZ: Europe/London
-
-volumes:
-  bundle:
+      - '80:80'
+    networks:
+      - webnet
+x-aws-vpc: 'vpc-046b5017307b5020a'
+networks:
+  webnet: 
+    driver: bridge

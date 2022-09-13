@@ -98,6 +98,7 @@ GEM
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
     netrc (0.11.0)
+    nio4r (2.5.8)
     nokogiri (1.13.8-x86_64-linux)
       racc (~> 1.4)
     oauth2 (2.0.9)
@@ -120,6 +121,8 @@ GEM
     parser (3.1.2.1)
       ast (~> 2.4.1)
     public_suffix (5.0.0)
+    puma (5.6.5)
+      nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.4)
     rack-protection (2.2.2)
@@ -216,6 +219,8 @@ DEPENDENCIES
   bundler-audit
   capybara
   erubi
+  public_suffix (~> 5.0)
+  puma
   rack (~> 2.2)
   rack-test
   rest-client
@@ -240,4 +245,4 @@ RUBY VERSION
    ruby 2.7.6p219
 
 BUNDLED WITH
-   2.3.19
+   2.3.13
