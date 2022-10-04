@@ -14,9 +14,9 @@ post '/export' do
     # Have to use literal SQL for the WHERE filter as can't seem to get the table name qualifier working, see below
     voc_prods = DB[:Reactants]
                 .join(:Products, [:ReactionID])
-                .join(:Species, SpeciesID: Sequel[:Products][:SpeciesID])
-                .where(Sequel.lit('Reactants.SpeciesID IN ?', stack.to_a))
-                .where(SpeciesCategoryID: 1).select(Sequel[:Products][:SpeciesID]).map(:SpeciesID)
+                .join(:Species, Name: Sequel[:Products][:Species])
+                .where(Sequel.lit('Reactants.Species IN ?', stack.to_a))
+                .where(SpeciesCategory: 'VOC').select(Sequel[:Products][:Species]).map(:Species)
                 .to_set
     stack = voc_prods.difference(prods)
   end
@@ -24,7 +24,7 @@ post '/export' do
   # Now find reactions where these species are reactants
   all_rxns = DB[:Reactants]
              .join(:ReactionsWide, [:ReactionID])
-             .where(SpeciesID: prods.to_a)
+             .where(Species: prods.to_a)
              .select(:Reaction, :Rate)
              .distinct
 

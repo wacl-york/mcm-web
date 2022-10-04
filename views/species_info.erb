@@ -6,7 +6,7 @@
 </nav>
 
 <h1><%= @species[:Name] %></h1>
-<form method="post" action="/add_marklist/<%= @species[:SpeciesID] %>">
+<form method="post" action="/add_marklist/<%= @species[:Name] %>">
   <input class="btn btn-primary" type="submit" value="Add to Mark list"/>
 </form>
 <br>
@@ -40,7 +40,7 @@
     <tr>
       <td><%= reaction[:Reaction] %></td>
       <td><%= reaction[:Rate] %></td>
-      <td><%= reaction[:RateCategory] %></td>
+      <td><%= reaction[:RateType] %></td>
     </tr>
   <% end %>
   </tbody>
@@ -63,7 +63,7 @@
     <tr>
       <td><%= reaction[:Reaction] %></td>
       <td><%= reaction[:Rate] %></td>
-      <td><%= reaction[:RateCategory] %></td>
+      <td><%= reaction[:RateType] %></td>
     </tr>
   <% end %>
   </tbody>
