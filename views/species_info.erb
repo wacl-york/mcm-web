@@ -6,6 +6,10 @@
 </nav>
 
 <h1><%= @species[:Name] %></h1>
+<form method="post" action="/add_marklist/<%= @species[:SpeciesID] %>">
+  <input class="btn btn-primary" type="submit" value="Add to Mark list"/>
+</form>
+<br>
 <br>
 
 <div class="card" style="width: 60rem;">

@@ -21,7 +21,7 @@ get '/species_info/:id' do
 
   @species = DB[:Species]
              .where(SpeciesID: params[:id])
-             .select(:Name, :Smiles, :Inchi, :Mass)
+             .select(:SpeciesID, :Name, :Smiles, :Inchi, :Mass)
              .first
 
   erb :species_info
