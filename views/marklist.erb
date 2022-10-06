@@ -3,8 +3,10 @@
 
 <form method="post" action="/remove_marklist">
   <div class="form-group">
-    <% session[:mark_list].each do |x| %>
-      <input type="checkbox" name="selected[]" value=<%= x %>> <%= x %><br>
+    <% unless session[:mark_list].nil? %>
+      <% session[:mark_list].each do |x| %>
+        <input type="checkbox" name="selected[]" value=<%= x %>> <%= x %><br>
+      <% end %>
     <% end %>
     <br>
     <input type="submit" value="Remove selected">
