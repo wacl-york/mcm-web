@@ -24,20 +24,28 @@ post '/export' do
   # Now find reactions where these species are reactants
   all_rxns = DB[:Reactants]
              .join(:ReactionsWide, [:ReactionID])
-             .where(Species: prods.to_a)
-             .select(:Reaction, :Rate)
+             .where(Sequel.lit('Reactants.Species IN ?', prods.to_a))
+             .select(:ReactionID, :Reaction, :Rate)
              .distinct
 
   if params[:inorganic]
     inorg_rxns = DB[:ReactionsWide]
                  .exclude(InorganicCategory: nil)
-                 .select(:Reaction, :Rate)
+                 .select(:ReactionID, :Reaction, :Rate)
                  .distinct
     all_rxns = all_rxns.union(inorg_rxns)
   end
 
-  # TODO Grab the species involved in these reactions
-  # Should already have these... might need to just rejig previous code?
+  # Grab the species involved in these reactions
+  reactants = all_rxns
+              .join(Sequel[:Reactants].as(:rea), [:ReactionID])
+              .select(Sequel[:rea][:Species].as(:spec))
+  products = all_rxns
+              .join(Sequel[:Products].as(:pro), [:ReactionID])
+             .select(Sequel[:pro][:Species].as(:spec))
+
+  species = reactants.union(products).select_map(:spec)
+  species_out = species.join(' ')
 
   # TODO extract generic rate if request
   # in the old app code this grabs everything from the generic_rates and complex_rates tables
@@ -66,11 +74,7 @@ post '/export' do
   # Make available to download
   content_type 'text/plain'
   attachment 'mcm_export.fac'
-  all_rxns.map { |row| "#{row[:Rate]}: #{row[:Reaction]}" }.join("\n")
+  rxns_out = all_rxns.map { |row| "#{row[:Rate]}: #{row[:Reaction]}" }.join("\n")
 
-  # ORDER:
-  # citation
-  # species list of chosen subset
-  # VARIABLE then list of all exported species
-  # Then 'Generic' and 'Complex' coefficients
+  species_out + rxns_out
 end
