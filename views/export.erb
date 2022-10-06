@@ -7,11 +7,16 @@ Click below to export chosen mechanism subset for the selected species.
 
 <form method="post">
   <div class="form-group">
-    <label for="selected">Select species mechanisms to export:</label><br>
-    <% session[:mark_list].each do |x| %>
-      <input type="checkbox" name="selected[]" value=<%= x %> checked> <%= x %><br>
-    <% end %>
+    <% unless session[:mark_list].nil? %>
+      <label for="selected">Select species mechanisms to export:</label><br>
+      <% session[:mark_list].each do |x| %>
+        <input type="checkbox" name="selected[]" value=<%= x %> checked> <%= x %><br>
+      <% end %>
     <br>
     <input type="submit" value="Download">
+  <% else %>
+    <p> Add species to the marklist for export</p>
+  <% end %>
+   
   </div>
 </form>
