@@ -45,13 +45,33 @@ post '/export' do
              .select(Sequel[:pro][:Species].as(:spec))
 
   species = reactants.union(products).select_map(:spec)
-  species_out = species.join(' ')
 
-  # TODO extract generic rate if request
-  # in the old app code this grabs everything from the generic_rates and complex_rates tables
-  # Which I think are what I've got as Tokens. Yeah generic rates are tokens NOT used elsewhere,
-  # # complex rates are tokens that ARE used elsewhere
-  #
+  # Generic rates are those that are not used in any other rate equations
+  # Complex rates are used, either as a parent or a child
+  tokenized_rates = DB[:Tokens]
+                    .left_join(:TokenRelationships, ChildToken: :Token)
+  never_children = DB[:Tokens]
+                   .left_join(:TokenRelationships, ChildToken: :Token)
+                   .where(ChildToken: nil)
+  never_parents = DB[:Tokens]
+                   .left_join(:TokenRelationships, ParentToken: :Token)
+                   .where(ParentToken: nil)
+  generic_rates = never_children
+                  .intersect(never_parents)
+                  .select(:Token, :Definition)
+                  .distinct
+
+  sometimes_children = DB[:Tokens]
+                   .left_join(:TokenRelationships, ChildToken: :Token)
+                   .exclude(ChildToken: nil)
+  sometimes_parents = DB[:Tokens]
+                   .left_join(:TokenRelationships, ParentToken: :Token)
+                   .exclude(ParentToken: nil)
+  complex_rates = sometimes_parents
+                  .union(sometimes_children)
+                  .select(:Token, :Definition)
+                  .distinct()
+
   # TODO Work out which of our species are peroxy radicals
   # The original code uses pybel to search for this pattern
   #_peroxy_smarts = pybel.Smarts('*-O[O;h0;D1]')
@@ -61,20 +81,31 @@ post '/export' do
   # It should only contain peroxy radicals of species in this dump
   # And just display RO2 = peroxy1 + peroxy2 + ... peroxyn
   
-  # TODO FACSIMILIE ORDER:
-  # CITATION
-  # SUBSPECIES CHOSEN
-  # VARIABLE DEFINITION OF ALL SPECIES
-  # !! GENERIC RATE COEFFICIENTS (generic_rates in old DB) !!
-  # !! COMPLEX RATE COEFFICIENTS (complex_rates in old DB) !!
-  # PEROXY RADICALS + warning if have Species without Smiles
-  # REACTION DEFINITIONS
-  # SUMMARY of number of reactions + species
-
   # Make available to download
   content_type 'text/plain'
   attachment 'mcm_export.fac'
-  rxns_out = all_rxns.map { |row| "#{row[:Rate]}: #{row[:Reaction]}" }.join("\n")
 
-  species_out + rxns_out
+  # Format for export
+  species_out = species.join(' ')
+  rxns_out = all_rxns.map { |row| "% #{row[:Rate]}: #{row[:Reaction]} ;" }.join("\n")
+  generic_rates_out = generic_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;" }.join("\n")
+  complex_rates_out = complex_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;" }.join("\n")
+
+  # TODO use variable substitution instead of concat
+  # TODO need to wrap lines
+  out = ""
+  # TODO citation
+  out += "* " + params[:selected].join(" ") + " ;\n*;\n"
+  out += "* Variable definitions. All species are listed here.;\n*;\n"
+  out += "VARIABLE\n " + species_out + " ;\n"
+  if params[:generic]
+    out += "*;\n* Generic Rate Coefficients ;\n*;\n"
+    out += generic_rates_out + "\n"
+    out += "*;\n* Complex reactions ;\n*;\n"
+    out += complex_rates_out + "\n"
+  end
+  # TODO peroxy warning if have missing smiles
+  # TODO peroxy radicals
+  out += "* Reaction definitions. ;\n*;\n" + rxns_out + "\n*;\n"
+  out += "* End of Subset. No. of Species = #{species.size}, No. of Reactions = #{all_rxns.count} ;"
 end
