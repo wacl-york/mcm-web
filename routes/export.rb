@@ -25,7 +25,7 @@ post '/export' do
   all_rxns = DB[:Reactants]
              .join(:ReactionsWide, [:ReactionID])
              .where(Sequel.lit('Reactants.Species IN ?', prods.to_a))
-             .select(:ReactionID, :Reaction, :Rate)
+             .select(:ReactionID, :Reaction, :Rate)  # Can't use distinct as it generates DISTINCT ON - unsupported in SQLite
              .distinct
 
   if params[:inorganic]
@@ -46,31 +46,19 @@ post '/export' do
 
   species = reactants.union(products).select_map(:spec)
 
-  # Generic rates are those that are not used in any other rate equations
-  # Complex rates are used, either as a parent or a child
+  # Generic rates are those that are not used in any other rate equations, either as a parent or child
+  # Complex rates can be used either as a parent or a child
   tokenized_rates = DB[:Tokens]
-                    .left_join(:TokenRelationships, ChildToken: :Token)
-  never_children = DB[:Tokens]
-                   .left_join(:TokenRelationships, ChildToken: :Token)
-                   .where(ChildToken: nil)
-  never_parents = DB[:Tokens]
-                   .left_join(:TokenRelationships, ParentToken: :Token)
-                   .where(ParentToken: nil)
-  generic_rates = never_children
-                  .intersect(never_parents)
-                  .select(:Token, :Definition)
+                    .left_join(Sequel[:TokenRelationships].as(:tr1), ChildToken: Sequel[:Tokens][:Token])
+                    .left_join(Sequel[:TokenRelationships].as(:tr2), ParentToken: Sequel[:Tokens][:Token])
+  generic_rates = tokenized_rates
+                  .where(Sequel.lit('tr1.ChildToken IS NULL AND tr2.ParentToken IS NULL'))  # can't get Where to work with fully specified table
+                  .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
                   .distinct
-
-  sometimes_children = DB[:Tokens]
-                   .left_join(:TokenRelationships, ChildToken: :Token)
-                   .exclude(ChildToken: nil)
-  sometimes_parents = DB[:Tokens]
-                   .left_join(:TokenRelationships, ParentToken: :Token)
-                   .exclude(ParentToken: nil)
-  complex_rates = sometimes_parents
-                  .union(sometimes_children)
-                  .select(:Token, :Definition)
-                  .distinct()
+  complex_rates = tokenized_rates
+                  .where(Sequel.lit('tr1.ChildToken IS NOT NULL OR tr2.ParentToken IS NOT NULL'))
+                  .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
+                  .distinct
 
   # TODO Work out which of our species are peroxy radicals
   # The original code uses pybel to search for this pattern
