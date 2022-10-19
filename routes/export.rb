@@ -40,11 +40,15 @@ post '/export' do
   reactants = all_rxns
               .join(Sequel[:Reactants].as(:rea), [:ReactionID])
               .select(Sequel[:rea][:Species].as(:spec))
+              .join(:Species, Name: Sequel[:rea][:Species])
+              .select(:Name, :PeroxyRadical)
   products = all_rxns
               .join(Sequel[:Products].as(:pro), [:ReactionID])
-             .select(Sequel[:pro][:Species].as(:spec))
+              .select(Sequel[:pro][:Species].as(:spec))
+              .join(:Species, Name: Sequel[:pro][:Species])
+              .select(:Name, :PeroxyRadical)
 
-  species = reactants.union(products).select_map(:spec)
+  species = reactants.union(products)
 
   # Generic rates are those that are not used in any other rate equations, either as a parent or child
   # Complex rates can be used either as a parent or a child
@@ -60,21 +64,19 @@ post '/export' do
                   .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
                   .distinct
 
-  # TODO Work out which of our species are peroxy radicals
-  # The original code uses pybel to search for this pattern
-  #_peroxy_smarts = pybel.Smarts('*-O[O;h0;D1]')
-  #   m = pybel.readstring('smi', sm.strip())
-  #   _peroxy_smarts.findall(m): 
-  # BUT IS THIS JUST REGEX? If so can do it direct in DB
-  # It should only contain peroxy radicals of species in this dump
-  # And just display RO2 = peroxy1 + peroxy2 + ... peroxyn
+  # Obtain peroxy information
+  peroxies = species
+              .where(PeroxyRadical: true)
+  missing_peroxies = species
+              .where(PeroxyRadical: nil)
+  peroxy_out = 'RO2 = ' + peroxies.map(:Name).join(' + ') + " ;\n"
   
   # Make available to download
   content_type 'text/plain'
   attachment 'mcm_export.fac'
 
   # Format for export
-  species_out = species.join(' ')
+  species_out = species.map(:Name).join(' ')
   rxns_out = all_rxns.map { |row| "% #{row[:Rate]}: #{row[:Reaction]} ;" }.join("\n")
   generic_rates_out = generic_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;" }.join("\n")
   complex_rates_out = complex_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;" }.join("\n")
@@ -82,18 +84,45 @@ post '/export' do
   # TODO use variable substitution instead of concat
   # TODO need to wrap lines
   out = ""
+
+  # Citation
+  out += '*' * 77 + " ;\n"
   # TODO citation
+  out += '*' * 77 + " ;\n"
+
+  # Species
+  out += '*' * 77 + " ;\n"
   out += "* " + params[:selected].join(" ") + " ;\n*;\n"
   out += "* Variable definitions. All species are listed here.;\n*;\n"
   out += "VARIABLE\n " + species_out + " ;\n"
+  out += '*' * 77 + " ;\n"
+
+  # Generic rate coefficients
   if params[:generic]
     out += "*;\n* Generic Rate Coefficients ;\n*;\n"
     out += generic_rates_out + "\n"
     out += "*;\n* Complex reactions ;\n*;\n"
     out += complex_rates_out + "\n"
   end
-  # TODO peroxy warning if have missing smiles
-  # TODO peroxy radicals
+
+  # Peroxies
+  if peroxies.count.positive?
+    out += '*' * 77 + " ;\n";
+    out += "* Peroxy radicals. ;\n*;\n"
+    if missing_peroxies.count.positive?
+      out += "* WARNING: The following spceies do not have SMILES strings in the database. ;\n"
+      out += "*          If any of these are peroxy radicals the RO2 sum will be wrong!!! ;\n"
+      out += '* ' + missing_peroxies.map(:Name).join(' ') + " ;\n"
+    end
+    out += '*' * 77 + " ;\n"
+    out += "* ;\n"
+    out += peroxy_out
+    out += "*;\n"
+  end
+
+  # Reactions
   out += "* Reaction definitions. ;\n*;\n" + rxns_out + "\n*;\n"
-  out += "* End of Subset. No. of Species = #{species.size}, No. of Reactions = #{all_rxns.count} ;"
+
+  # Summary
+  out += "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
 end
