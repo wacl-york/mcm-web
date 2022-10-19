@@ -66,64 +66,75 @@ post '/export' do
 
   # Obtain peroxy information
   peroxies = species
-              .where(PeroxyRadical: true)
+             .where(PeroxyRadical: true)
   missing_peroxies = species
-              .where(PeroxyRadical: nil)
-  peroxy_out = 'RO2 = ' + peroxies.map(:Name).join(' + ') + " ;\n"
-  
+                     .where(PeroxyRadical: nil)
+  peroxy_out = "RO2 = #{peroxies.map(:Name).join(' + ')}  ;\n"
+  #
   # Make available to download
   content_type 'text/plain'
   attachment 'mcm_export.fac'
 
   # Format for export
   species_out = species.map(:Name).join(' ')
-  rxns_out = all_rxns.map { |row| "% #{row[:Rate]}: #{row[:Reaction]} ;\n" }.join("")
-  generic_rates_out = generic_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join("")
-  complex_rates_out = complex_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join("")
+  rxns_out = all_rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
+  generic_rates_out = generic_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
+  complex_rates_out = complex_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
 
-  # TODO use variable substitution instead of concat
   # TODO need to wrap lines
-  out = ""
+  out = ''
+  spacer = "#{'*' * 77} ;\n"
+  empty_comment = "*;\n"
 
   # Citation
   citation_file = File.open("#{settings.public_folder}/citation.txt")
   citation_lines = citation_file.readlines.map(&:chomp)
-  out += '*' * 77 + " ;\n"
-  out += citation_lines.map{ |row| "* #{row}\n" }.join("")
-  out += '*' * 77 + " ;\n"
+  out += spacer
+  out += citation_lines.map { |row| "* #{row}\n" }.join
+  out += spacer
 
   # Species
-  out += '*' * 77 + " ;\n"
-  out += "* " + params[:selected].join(" ") + " ;\n*;\n"
-  out += "* Variable definitions. All species are listed here.;\n*;\n"
-  out += "VARIABLE\n " + species_out + " ;\n"
-  out += '*' * 77 + " ;\n"
+  out += spacer
+  out += "* #{params[:selected].join(' ')} ;\n"
+  out += empty_comment
+  out += "* Variable definitions. All species are listed here.;\n"
+  out += empty_comment
+  out += "VARIABLE\n"
+  out += "#{species_out} ;\n"
+  out += spacer
 
   # Generic rate coefficients
   if params[:generic]
-    out += "*;\n* Generic Rate Coefficients ;\n*;\n"
+    out += empty_comment
+    out += "* Generic Rate Coefficients ;\n"
+    out += empty_comment
     out += generic_rates_out
-    out += "*;\n* Complex reactions ;\n*;\n"
+    out += empty_comment
+    out += "* Complex reactions ;\n"
+    out += empty_comment
     out += complex_rates_out
   end
 
   # Peroxies
   if peroxies.count.positive?
-    out += '*' * 77 + " ;\n";
+    out += spacer
     out += "* Peroxy radicals. ;\n*;\n"
     if missing_peroxies.count.positive?
       out += "* WARNING: The following spceies do not have SMILES strings in the database. ;\n"
       out += "*          If any of these are peroxy radicals the RO2 sum will be wrong!!! ;\n"
-      out += '* ' + missing_peroxies.map(:Name).join(' ') + " ;\n"
+      out += "* #{missing_peroxies.map(:Name).join(' ')} ;\n"
     end
-    out += '*' * 77 + " ;\n"
-    out += "* ;\n"
+    out += spacer
+    out += empty_comment
     out += peroxy_out
-    out += "*;\n"
+    out += empty_comment
   end
 
   # Reactions
-  out += "* Reaction definitions. ;\n*;\n" + rxns_out + "*;\n"
+  out += "* Reaction definitions. ;\n"
+  out += empty_comment
+  out += rxns_out
+  out += empty_comment
 
   # Summary
   out += "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
