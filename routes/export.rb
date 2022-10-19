@@ -77,17 +77,19 @@ post '/export' do
 
   # Format for export
   species_out = species.map(:Name).join(' ')
-  rxns_out = all_rxns.map { |row| "% #{row[:Rate]}: #{row[:Reaction]} ;" }.join("\n")
-  generic_rates_out = generic_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;" }.join("\n")
-  complex_rates_out = complex_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;" }.join("\n")
+  rxns_out = all_rxns.map { |row| "% #{row[:Rate]}: #{row[:Reaction]} ;\n" }.join("")
+  generic_rates_out = generic_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join("")
+  complex_rates_out = complex_rates.map{ |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join("")
 
   # TODO use variable substitution instead of concat
   # TODO need to wrap lines
   out = ""
 
   # Citation
+  citation_file = File.open("#{settings.public_folder}/citation.txt")
+  citation_lines = citation_file.readlines.map(&:chomp)
   out += '*' * 77 + " ;\n"
-  # TODO citation
+  out += citation_lines.map{ |row| "* #{row}\n" }.join("")
   out += '*' * 77 + " ;\n"
 
   # Species
@@ -100,9 +102,9 @@ post '/export' do
   # Generic rate coefficients
   if params[:generic]
     out += "*;\n* Generic Rate Coefficients ;\n*;\n"
-    out += generic_rates_out + "\n"
+    out += generic_rates_out
     out += "*;\n* Complex reactions ;\n*;\n"
-    out += complex_rates_out + "\n"
+    out += complex_rates_out
   end
 
   # Peroxies
@@ -121,7 +123,7 @@ post '/export' do
   end
 
   # Reactions
-  out += "* Reaction definitions. ;\n*;\n" + rxns_out + "\n*;\n"
+  out += "* Reaction definitions. ;\n*;\n" + rxns_out + "*;\n"
 
   # Summary
   out += "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
