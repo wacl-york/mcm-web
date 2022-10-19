@@ -25,7 +25,7 @@ post '/export' do
   all_rxns = DB[:Reactants]
              .join(:ReactionsWide, [:ReactionID])
              .where(Sequel.lit('Reactants.Species IN ?', prods.to_a))
-             .select(:ReactionID, :Reaction, :Rate)  # Can't use distinct as it generates DISTINCT ON - unsupported in SQLite
+             .select(:ReactionID, :Reaction, :Rate) # Distinct first generates DISTINCT ON - unsupported in SQLite
              .distinct
 
   if params[:inorganic]
@@ -43,10 +43,10 @@ post '/export' do
               .join(:Species, Name: Sequel[:rea][:Species])
               .select(:Name, :PeroxyRadical)
   products = all_rxns
-              .join(Sequel[:Products].as(:pro), [:ReactionID])
-              .select(Sequel[:pro][:Species].as(:spec))
-              .join(:Species, Name: Sequel[:pro][:Species])
-              .select(:Name, :PeroxyRadical)
+             .join(Sequel[:Products].as(:pro), [:ReactionID])
+             .select(Sequel[:pro][:Species].as(:spec))
+             .join(:Species, Name: Sequel[:pro][:Species])
+             .select(:Name, :PeroxyRadical)
 
   species = reactants.union(products)
 
@@ -56,7 +56,7 @@ post '/export' do
                     .left_join(Sequel[:TokenRelationships].as(:tr1), ChildToken: Sequel[:Tokens][:Token])
                     .left_join(Sequel[:TokenRelationships].as(:tr2), ParentToken: Sequel[:Tokens][:Token])
   generic_rates = tokenized_rates
-                  .where(Sequel.lit('tr1.ChildToken IS NULL AND tr2.ParentToken IS NULL'))  # can't get Where to work with fully specified table
+                  .where(Sequel.lit('tr1.ChildToken IS NULL AND tr2.ParentToken IS NULL')) # can't get working in ORM
                   .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
                   .distinct
   complex_rates = tokenized_rates
@@ -155,5 +155,5 @@ post '/export' do
   out += empty_comment
 
   # Summary
-  out += "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
+  out + "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
 end

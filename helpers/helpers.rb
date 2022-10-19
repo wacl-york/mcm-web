@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 helpers do
-  def wrap_lines(words, max_line_length: 68, starting_char: ' ', ending_char: ';', sep: ' ', every_line_start: '', every_line_end: '')
+  def wrap_lines(words, max_line_length: 68, starting_char: ' ', ending_char: ';', sep: ' ', every_line_start: '',
+                 every_line_end: '')
     out = starting_char
     current_line_length = 0
     words.each do |word|

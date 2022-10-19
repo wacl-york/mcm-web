@@ -4,7 +4,7 @@ configure do
   set :session_timeout, 8 * 3600 # seconds
 
   config_file 'config.yaml'
-  #aws_config if in_lambda?
+  # aws_config if in_lambda?
 
   # Faculty-specific
   # Check that the web library version is a numeric (tagged) version if we're in production
@@ -24,14 +24,14 @@ configure do
   # Erubi setup - escape html when using <%= %>
   set :erb, escape_html: true
 
-  #if in_lambda?
+  # if in_lambda?
   #  register Sinatra::CognitoAuth
-  #elsif production?
+  # elsif production?
   #  raise 'No production session/auth available outside AWS'
-  #else
+  # else
   #  register Sinatra::BasicPasswordlessAuth
   #  use Rack::Session::Cookie, secret: 'local_secret'
-  #end
+  # end
   register Sinatra::BasicPasswordlessAuth
   use Rack::Session::Cookie, secret: 'local_secret'
 
