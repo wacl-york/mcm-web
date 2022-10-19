@@ -30,7 +30,6 @@ services:
       - '80:80'
     networks:
       - webnet
-x-aws-vpc: 'vpc-046b5017307b5020a'
 networks:
   webnet: 
     driver: bridge
