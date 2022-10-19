@@ -69,19 +69,23 @@ post '/export' do
              .where(PeroxyRadical: true)
   missing_peroxies = species
                      .where(PeroxyRadical: nil)
-  peroxy_out = "RO2 = #{peroxies.map(:Name).join(' + ')}  ;\n"
+  peroxy_out = wrap_lines(peroxies.map(:Name),
+                          starting_char: 'RO2 = ',
+                          ending_char: ';',
+                          sep: ' + ',
+                          max_line_length: 65,
+                          every_line_start: ' ' * 6)
   #
   # Make available to download
   content_type 'text/plain'
   attachment 'mcm_export.fac'
 
   # Format for export
-  species_out = species.map(:Name).join(' ')
+  species_out = wrap_lines(species.map(:Name))
   rxns_out = all_rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
   generic_rates_out = generic_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
   complex_rates_out = complex_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
 
-  # TODO need to wrap lines
   out = ''
   spacer = "#{'*' * 77} ;\n"
   empty_comment = "*;\n"
@@ -93,14 +97,28 @@ post '/export' do
   out += citation_lines.map { |row| "* #{row}\n" }.join
   out += spacer
 
+  params_out = wrap_lines(params[:selected],
+                          starting_char: '* ',
+                          every_line_start: '* ',
+                          every_line_end: ' ;',
+                          ending_char: ' ;',
+                          sep: ' ')
+
+  missing_peroxies_out = wrap_lines(missing_peroxies.map(:Name),
+                                    starting_char: '* ',
+                                    every_line_start: '* ',
+                                    every_line_end: ' ;',
+                                    ending_char: ' ;',
+                                    sep: ' ')
+
   # Species
   out += spacer
-  out += "* #{params[:selected].join(' ')} ;\n"
+  out += params_out
   out += empty_comment
   out += "* Variable definitions. All species are listed here.;\n"
   out += empty_comment
   out += "VARIABLE\n"
-  out += "#{species_out} ;\n"
+  out += species_out
   out += spacer
 
   # Generic rate coefficients
@@ -120,9 +138,9 @@ post '/export' do
     out += spacer
     out += "* Peroxy radicals. ;\n*;\n"
     if missing_peroxies.count.positive?
-      out += "* WARNING: The following spceies do not have SMILES strings in the database. ;\n"
+      out += "* WARNING: The following species do not have SMILES strings in the database. ;\n"
       out += "*          If any of these are peroxy radicals the RO2 sum will be wrong!!! ;\n"
-      out += "* #{missing_peroxies.map(:Name).join(' ')} ;\n"
+      out += missing_peroxies_out # TODO: Shoud this exclude inorganics?
     end
     out += spacer
     out += empty_comment
