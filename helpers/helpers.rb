@@ -17,4 +17,17 @@ helpers do
     end
     out = "#{out[..-sep.length]}#{ending_char}\n" # remove last unused separating space
   end
+
+  def get_parent_from_children(children, db)
+    DB[:TokenRelationships]
+      .where(ChildToken: children)
+      .distinct
+      .select_map(:ParentToken)
+  end
+
+  def get_token_definition(token, db)
+    DB[:Tokens]
+      .where(Token: token)
+      .get(:Definition)
+  end
 end

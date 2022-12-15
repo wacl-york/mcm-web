@@ -59,10 +59,32 @@ post '/export' do
                   .where(Sequel.lit('tr1.ChildToken IS NULL AND tr2.ParentToken IS NULL')) # can't get working in ORM
                   .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
                   .distinct
-  complex_rates = tokenized_rates
-                  .where(Sequel.lit('tr1.ChildToken IS NOT NULL OR tr2.ParentToken IS NOT NULL'))
-                  .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
-                  .distinct
+  
+  # Complex rates need to be listed in order from leaf nodes up to the top of the tree
+  # Since some tokens can be used by multiple parents, need to take care
+  all_children = []
+  # Start by finding all tokens that are only ever used as children
+  new_children = tokenized_rates
+                 .where(Sequel.lit('tr1.ChildToken IS NOT NULL AND tr2.ParentToken IS NULL'))
+                 .distinct
+                 .select_map(Sequel[:tr1][:ChildToken])
+  all_children.append(new_children.to_set)
+  # Iteratively find the parents of each generation of children
+  while true
+    new_children = get_parent_from_children(new_children, DB)
+    if new_children.empty?
+      break
+    end
+
+    all_children.append(new_children.to_set)
+  end
+  # Flatten into a single list of complex tokens, but in reverse order (i.e. starting with parents)
+  # and using set union to combine. That way if a token was found in multiple iterations, it is only
+  # kept in the latest generation so there is no chance of it being defined before a parent refers to it
+  children = all_children.reverse.reduce(:+).to_a.reverse
+  # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
+  # than a batch query that returns in order
+  complex_rates = children.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
 
   # Obtain peroxy information
   peroxies = species
@@ -75,7 +97,7 @@ post '/export' do
                           sep: ' + ',
                           max_line_length: 65,
                           every_line_start: ' ' * 6)
-  #
+
   # Make available to download
   content_type 'text/plain'
   attachment 'mcm_export.fac'
