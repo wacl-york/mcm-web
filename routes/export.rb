@@ -8,7 +8,8 @@ post '/export' do
   prods = Set[]
   stack = params[:selected].to_set
 
-  # Firstly find all products until reach inorganic species
+  # Find all products from reactions where the user-selected species are reactants
+  # and iterate down the reaction tree until reach a non-VOC or run out of reactions
   until stack.empty?
     prods = prods.union(stack)
     # Have to use literal SQL for the WHERE filter as can't seem to get the table name qualifier working, see below
@@ -28,6 +29,7 @@ post '/export' do
              .select(:ReactionID, :Reaction, :Rate) # Distinct first generates DISTINCT ON - unsupported in SQLite
              .distinct
 
+  # Include all inorganic reactions if user requested
   if params[:inorganic]
     inorg_rxns = DB[:ReactionsWide]
                  .exclude(InorganicCategory: nil)
@@ -36,7 +38,8 @@ post '/export' do
     all_rxns = all_rxns.union(inorg_rxns)
   end
 
-  # Grab the species involved in these reactions
+  # The export needs to include ALL species involved in this mechanism, not just
+  # the user selected ones
   reactants = all_rxns
               .join(Sequel[:Reactants].as(:rea), [:ReactionID])
               .select(Sequel[:rea][:Species].as(:spec))
@@ -59,8 +62,10 @@ post '/export' do
                   .where(Sequel.lit('tr1.ChildToken IS NULL AND tr2.ParentToken IS NULL')) # can't get working in ORM
                   .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
                   .distinct
-  
+
+  #------------------- Complex Rates
   # Complex rates need to be listed in order from leaf nodes up to the top of the tree
+  # in order to parse correctly
   # Since some tokens can be used by multiple parents, need to take care
   all_children = []
   # Start by finding all tokens that are only ever used as children
@@ -75,16 +80,18 @@ post '/export' do
     if new_children.empty?
       break
     end
-
     all_children.append(new_children.to_set)
   end
+
   # Flatten into a single list of complex tokens, but in reverse order (i.e. starting with parents)
   # and using set union to combine. That way if a token was found in multiple iterations, it is only
   # kept in the latest generation so there is no chance of it being defined before a parent refers to it
+  # Finally reverse it back into child -> parent order for output
   children = all_children.reverse.reduce(:+).to_a.reverse
   # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
   # than a batch query that returns in order
   complex_rates = children.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
+  #------------------- End complex rates
 
   # Obtain peroxy information
   peroxies = species
@@ -102,22 +109,11 @@ post '/export' do
   content_type 'text/plain'
   attachment 'mcm_export.fac'
 
-  # Format for export
+  # Format sections for export
   species_out = wrap_lines(species.map(:Name))
   rxns_out = all_rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
   generic_rates_out = generic_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
   complex_rates_out = complex_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
-
-  out = ''
-  spacer = "#{'*' * 77} ;\n"
-  empty_comment = "*;\n"
-
-  # Citation
-  citation_file = File.open("#{settings.public_folder}/citation.txt")
-  citation_lines = citation_file.readlines.map(&:chomp)
-  out += spacer
-  out += citation_lines.map { |row| "* #{row}\n" }.join
-  out += spacer
 
   params_out = wrap_lines(params[:selected],
                           starting_char: '* ',
@@ -133,7 +129,20 @@ post '/export' do
                                     ending_char: ' ;',
                                     sep: ' ')
 
-  # Species
+  spacer = "#{'*' * 77} ;\n"
+  empty_comment = "*;\n"
+
+  citation_file = File.open("#{settings.public_folder}/citation.txt")
+  citation_lines = citation_file.readlines.map(&:chomp)
+
+  #---------------------- Write Facsimile file
+  # Citation comes first
+  out = ''
+  out += spacer
+  out += citation_lines.map { |row| "* #{row}\n" }.join
+  out += spacer
+
+  # Selected species + all species in this mechanism
   out += spacer
   out += params_out
   out += empty_comment
@@ -178,4 +187,5 @@ post '/export' do
 
   # Summary
   out + "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
+  #---------------------- End write facsimile file
 end
