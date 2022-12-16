@@ -4,6 +4,7 @@ get '/export' do
   erb :export
 end
 
+# rubocop:disable Metrics/BlockLength
 post '/export' do
   prods = Set[]
   stack = params[:selected].to_set
@@ -75,11 +76,10 @@ post '/export' do
                  .select_map(Sequel[:tr1][:ChildToken])
   all_children.append(new_children.to_set)
   # Iteratively find the parents of each generation of children
-  while true
+  loop do
     new_children = get_parent_from_children(new_children, DB)
-    if new_children.empty?
-      break
-    end
+    break if new_children.empty?
+
     all_children.append(new_children.to_set)
   end
 
@@ -87,7 +87,7 @@ post '/export' do
   # and using set union to combine. That way if a token was found in multiple iterations, it is only
   # kept in the latest generation so there is no chance of it being defined before a parent refers to it
   # Finally reverse it back into child -> parent order for output
-  children = all_children.reverse.reduce(:+).to_a.reverse
+  children = all_children.reverse.sum.to_a.reverse
   # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
   # than a batch query that returns in order
   complex_rates = children.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
@@ -189,3 +189,4 @@ post '/export' do
   out + "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
   #---------------------- End write facsimile file
 end
+# rubocop:enable Metrics/BlockLength

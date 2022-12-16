@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 helpers do
+  # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
   def wrap_lines(words, max_line_length: 68, starting_char: ' ', ending_char: ';', sep: ' ', every_line_start: '',
                  every_line_end: '')
     out = starting_char
@@ -17,17 +19,19 @@ helpers do
     end
     out = "#{out[..-sep.length]}#{ending_char}\n" # remove last unused separating space
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
 
-  def get_parent_from_children(children, db)
+  def get_parent_from_children(children, _db)
     DB[:TokenRelationships]
       .where(ChildToken: children)
       .distinct
       .select_map(:ParentToken)
   end
 
-  def get_token_definition(token, db)
+  def get_token_definition(token, _db)
     DB[:Tokens]
       .where(Token: token)
       .get(:Definition)
   end
 end
+# rubocop:enable Metrics/BlockLength
