@@ -23,11 +23,11 @@ end
 gem 'aws-sdk-rds', '~> 1'
 gem 'aws-sdk-sns', '~> 1'
 gem 'erubi'
+gem 'public_suffix', '~> 5.0'
+gem 'puma'
 gem 'rack', '~> 2.2'
 gem 'rest-client'
 gem 'sequel'
-gem 'public_suffix', '~> 5.0'
-gem 'puma'
 gem 'sinatra', ['~> 2', '!= 2.1.0']
 gem 'sinatra-contrib', require: ['sinatra/capture', 'sinatra/config_file', 'sinatra/content_for']
 gem 'sqlite3'
