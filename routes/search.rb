@@ -7,12 +7,17 @@ get '/search' do
              else
                species = DB[:species]
                          .where(Sequel.ilike(:Name, "%#{q}%"))
-                         .select(Sequel.lit('Name, 1 as priority'))
+                         .select(Sequel.lit('Name, 1 as priority, 1 as NumReferences'))
                synonyms = DB[:speciessynonyms]
                           .where(Sequel.ilike(:Synonym, "%#{q}%"))
-                          .select(Sequel.lit('Species as Name, 2 as priority'))
-               # Again can't distinct when have multiple columns in sqlite
-               species.union(synonyms).order(:priority).select(:Name).distinct
+                          .select(Sequel.lit('Species as Name, 2 as priority, NumReferences'))
+               # Return results first by whether the species itself was matched, and then the number
+               # of references for a species' most common synonym
+               species
+                 .union(synonyms)
+                 .group(:Name)
+                 .select(Sequel.lit('Name, min(priority) as priority, max(NumReferences) as NumReferences'))
+                 .order(:priority, Sequel.desc(:NumReferences))
              end
   erb :search
 end
