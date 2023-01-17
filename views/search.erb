@@ -30,6 +30,38 @@
           callback();
         });
     },
+    render: {
+      option: function(item, escape) {
+          return `<div class="py-2 d-flex">
+                      <div class="icon me-3">
+                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                      </div>
+                      <div>
+                          <div class="mb-1">
+                              <span class="h4">
+                                  ${ escape(item.Species) }
+                              </span>
+                          </div>
+                          <div class="description">${ escape(item.Synonyms) }</div>
+                      </div>
+                  </div>`;
+      },
+      item: function(item, escape) {
+          return `<div class="py-2 d-flex">
+                      <div class="icon me-3">
+                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                      </div>
+                      <div>
+                          <div class="mb-1">
+                              <span class="h4">
+                                  ${ escape(item.Species) }
+                              </span>
+                          </div>
+                          <div class="description">${ escape(item.Synonyms) }</div>
+                      </div>
+                  </div>`;
+      }
+    },
     onItemAdd: function(value, item) {
       console.log("Value: '" + value + "'");
       window.location.href = "species_info/" + value;
