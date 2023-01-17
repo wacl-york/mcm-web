@@ -13,10 +13,10 @@
     maxItems: 1,
     maxOptions: 100,
     closeAfterSelect: true,
-    valueField: 'Name',
-    labelField: 'Name',
-    searchField: 'Name',
-    //sortField: 'NumReferences',
+    valueField: 'Species',
+    labelField: 'Species',
+    searchField: ['Species', 'Synonyms'],
+    sortField: [{field: '$order'}, {field: '$score'}],
     options: [],
     create: false,
     load: function(query, callback) {
@@ -29,12 +29,6 @@
         }).catch(() => {
           callback();
         });
-    },
-    score: function(search) {
-      var score = this.getScoreFunction(search);
-      return function(item) {
-        return score(item) * item.priority;
-      };
     },
     onItemAdd: function(value, item) {
       console.log("Value: '" + value + "'");

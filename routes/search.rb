@@ -7,22 +7,42 @@ end
 get '/search-synonym' do
   q = params[:q]
   species = if q.nil?
-               nil
-             else
-               species = DB[:species]
-                         .where(Sequel.ilike(:Name, "%#{q}%"))
-                         .select(Sequel.lit('Name, 1 as priority, 1 as NumReferences'))
-               synonyms = DB[:speciessynonyms]
-                          .where(Sequel.ilike(:Synonym, "%#{q}%"))
-                          .select(Sequel.lit('Species as Name, 2 as priority, NumReferences'))
-               # Return results first by whether the species itself was matched, and then the number
-               # of references for a species' most common synonym
-               species
-                 .union(synonyms)
-                 .group(:Name)
-                 .select(Sequel.lit('Name, min(priority) as priority, max(NumReferences) as NumReferences'))
-                 .order(:priority, Sequel.desc(:NumReferences))
-             end
+              nil
+            else
+              # TODO: can add Species and Inchi later
+              species = DB[:species]
+                        .where(Sequel.ilike(:Name, "%#{q}%"))
+                        .select(Sequel.lit('Name, 1 as weight, (SELECT MAX(NumReferences)+1 FROM SpeciesSynonyms) as NumReferences'))
+              synonyms = DB[:speciessynonyms]
+                         .where(Sequel.ilike(:Synonym, "%#{q}%"))
+                         .select(Sequel.lit('Species as Name, 0.5 as weight, NumReferences'))
+              # Score results by number of references, although matches in formula name will always have higher weight
+              matches = species
+                        .union(synonyms)
+                        .group(:Name)
+                        .select(:Name, Sequel.lit('max(weight * NumReferences) as score'))
+
+              # Add on the top n synonyms for display
+              matches_with_all_synonyms = matches
+                                          .from_self(alias: :matches)
+                                          .join(:SpeciesSynonyms, { Species: :Name }, table_alias: :syn)
+                                          .select_append(Sequel.function(:row_number).over(partition: :Species,
+                                                                                           order: Sequel.desc(:NumReferences)).as(:n))
+
+              # Limit to 5 most common synonyms
+              # NB: can't get this working in Sequel unless explicitly create subquery like this
+              matches_with_5_synonyms = matches_with_all_synonyms
+                                        .from_self(alias: :m3)
+                                        .where { n <= 5 }
+
+              # Collapse synonyms to single string.
+              # NB: following is SQLite specific, but the string_agg extension doesn't work here
+              matches_with_5_synonyms
+                .from_self(alias: :m4)
+                .group(:Species)
+                .select(:Species, :score, Sequel.lit('GROUP_CONCAT(Synonym, \', \')').as(:Synonyms))
+                .order(Sequel.desc(:score))
+            end
   content_type :json
   species.all.to_json
 end
