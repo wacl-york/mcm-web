@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 get '/search' do
+  erb :search
+end
+
+get '/search-synonym' do
   q = params[:q]
-  @species = if q.nil?
+  species = if q.nil?
                nil
              else
                species = DB[:species]
@@ -19,5 +23,6 @@ get '/search' do
                  .select(Sequel.lit('Name, min(priority) as priority, max(NumReferences) as NumReferences'))
                  .order(:priority, Sequel.desc(:NumReferences))
              end
-  erb :search
+  content_type :json
+  species.all.to_json
 end
