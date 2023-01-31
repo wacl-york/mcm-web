@@ -12,6 +12,7 @@
   var settings = {
     maxItems: 1,
     maxOptions: 50,
+    loadThrottle: 500,
     closeAfterSelect: true,
     valueField: 'Species',
     searchField: ['Species', 'Synonyms'],
@@ -20,7 +21,6 @@
     create: false,
     load: function(query, callback) {
       var url = "/search-synonym?q=" + encodeURIComponent(query);
-      console.log("Requesting data from: " + url);
       fetch(url)
         .then(response => response.json())
         .then(json => {
@@ -62,7 +62,6 @@
       }
     },
     onItemAdd: function(value, item) {
-      console.log("Value: '" + value + "'");
       window.location.href = "species_info/" + value;
     }
   };
