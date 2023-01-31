@@ -1,27 +1,69 @@
 <h1>Search</h1>
 
-<form method="get">
-  <!--<div class="form-group"> -->
-  <!--<label for="n_reactions">Number species to display</label>-->
-    <input type="text" name="q" placeholder="Enter a species name">
-    <input type="submit" value="Search">
-    <!--</div>-->
-</form>
-
-<% unless @species.nil? %>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @species.each do |species| %>
-    <tr>
-      <td><a href="species_info/<%= species[:Name]%>"><%= species[:Name] %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
-<% end %>
+<select id="tom-select-it" placeholder="Start typing a species formula or name...">
+</select>
+  <!-- TODO where and how should scoring go? Just return from API 
+  a list of all species and -->
+  <!-- Each search should return a single species along with its Smiles, Inchi etc... 
+    So should the serverside search return a single score that the client side just naively ranks?
+  Or should the server return a large list of values, set the searchField property and let TomSelect go nuts?-->
+  <!-- TODO add nice HTML rendering of each Species including their diagram, Synonym, Smiles, Inchi -->
+<script>
+  var settings = {
+    maxItems: 1,
+    maxOptions: 50,
+    loadThrottle: 500,
+    closeAfterSelect: true,
+    valueField: 'Species',
+    searchField: ['Species', 'Synonyms'],
+    sortField: [{field: '$order'}, {field: '$score'}],
+    options: [],
+    create: false,
+    load: function(query, callback) {
+      var url = "/search-synonym?q=" + encodeURIComponent(query);
+      fetch(url)
+        .then(response => response.json())
+        .then(json => {
+          callback(json);
+        }).catch(() => {
+          callback();
+        });
+    },
+    render: {
+      option: function(item, escape) {
+          return `<div class="py-2 d-flex">
+                      <div class="icon me-3">
+                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                      </div>
+                      <div>
+                          <div class="mb-1">
+                              <span class="h4">
+                                  ${ escape(item.Species) }
+                              </span>
+                          </div>
+                          <div class="description">${ escape(item.Synonyms) }</div>
+                      </div>
+                  </div>`;
+      },
+      item: function(item, escape) {
+          return `<div class="py-2 d-flex">
+                      <div class="icon me-3">
+                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                      </div>
+                      <div>
+                          <div class="mb-1">
+                              <span class="h4">
+                                  ${ escape(item.Species) }
+                              </span>
+                          </div>
+                          <div class="description">${ escape(item.Synonyms) }</div>
+                      </div>
+                  </div>`;
+      }
+    },
+    onItemAdd: function(value, item) {
+      window.location.href = "species_info/" + value;
+    }
+  };
+new TomSelect('#tom-select-it', settings);
+</script>
