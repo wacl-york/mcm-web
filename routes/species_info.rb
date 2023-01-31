@@ -1,26 +1,22 @@
 # frozen_string_literal: true
 
-get '/species_info/:id' do
+get '/species_info/:species' do
   @sink_reactions = DB[:Reactants]
+                    .where(Species: params[:species])
                     .join(:ReactionsWide, [:ReactionID])
-                    .join(:Reactions, [:ReactionID])
-                    .join(:Rates, [:RateID])
-                    .left_join(:RateTypes, [:RateTypeID])
-                    .where(SpeciesID: params[:id])
+                    .join(:Rates, [:Rate])
                     .order(:Reaction)
-                    .select(:Reaction, :Rate, Sequel.as(Sequel[:RateTypes][:Name], :RateCategory))
+                    .select(:Reaction, :Rate, :RateType)
 
   @precursor_reactions = DB[:Products]
+                         .where(Species: params[:species])
                          .join(:ReactionsWide, [:ReactionID])
-                         .join(:Reactions, [:ReactionID])
-                         .join(:Rates, [:RateID])
-                         .left_join(:RateTypes, [:RateTypeID])
-                         .where(SpeciesID: params[:id])
+                         .join(:Rates, [:Rate])
                          .order(:Reaction)
-                         .select(:Reaction, :Rate, Sequel.as(Sequel[:RateTypes][:Name], :RateCategory))
+                         .select(:Reaction, :Rate, :RateType)
 
   @species = DB[:Species]
-             .where(SpeciesID: params[:id])
+             .where(Name: params[:species])
              .select(:Name, :Smiles, :Inchi, :Mass)
              .first
 

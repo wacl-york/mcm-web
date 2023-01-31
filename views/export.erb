@@ -1,10 +1,3 @@
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= rel '/' %>">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Reactions</li>
-  </ol>
-</nav>
-
 <h1>Export</h1>
 
 Click below to export chosen mechanism subset for the selected species.
@@ -14,12 +7,20 @@ Click below to export chosen mechanism subset for the selected species.
 
 <form method="post">
   <div class="form-group">
-    <label for="selected">Select species mechanisms to export:</label><br>
-    <input type="checkbox" name="selected[]" value="7">C2H6<br>
-    <input type="checkbox" name="selected[]" value="988">C2H4<br>
-    <input type="checkbox" name="selected[]" value="12">C3H8<br>
-    <input type="checkbox" name="selected[]" value="21">NC4H10<br>
+    <% unless session[:mark_list].nil? %>
+      <label for="selected">Select species mechanisms to export:</label><br>
+      <% session[:mark_list].each do |x| %>
+        <input type="checkbox" name="selected[]" value=<%= x %> checked> <%= x %><br>
+      <% end %>
+    <br>
+    <br>
+    <input type="checkbox" name="inorganic">Include inorganic reactions?<br>
+    <input type="checkbox" name="generic">Include generic rate coefficients?<br>
     <br>
     <input type="submit" value="Download">
+  <% else %>
+    <p> Add species to the marklist for export</p>
+  <% end %>
+   
   </div>
 </form>

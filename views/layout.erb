@@ -35,10 +35,16 @@
       <%== erb :navbar %>
     </header>
 
-    <main role="main" class="container">
-      <%== erb :banner %>
-      <%== yield %>
-    </main>
+    <div class="container">
+      <div class="row">
+        <div class="col-8" role="main">
+          <%== yield %>
+        </div>
+        <div class="col-4">
+          <%== erb :marklist %>
+        </div>
+      </div>
+    </div>
 
   </body>
 

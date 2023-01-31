@@ -1,0 +1,46 @@
+      Citation
+      
+      A citation to
+ the MCM website and the relevant mechanism construction
+ protocols should be given in any publication using
+ information obtained from this source, using the following
+ or comparable wording:
+      
+The chemical mechanistic
+ information was taken from the Master Chemical Mechanism,
+ MCM v3.3.1 (reference), via  website:
+ http://mcm.york.ac.uk/
+
+The reference should be: 
+
+
+ For non-aromatic schemes:
+   
+      Jenkin et al.,
+ Atmos. Environ., 31, 81, 1997
+ [doi:10.1016/S1352-2310(96)00105-7]
+      Saunders et
+ al., Atmos. Chem. Phys., 3, 161, 2003
+ [doi:10.5194/acp-3-161-2003]
+   
+   For aromatic
+ schemes:
+   
+      Jenkin et al., Atmos. Chem. Phys.,
+ 3, 181, 2003 [doi:10.5194/acp-3-181-2003]
+      Bloss et
+ al., Atmos. Chem. Phys., 5, 641, 2005
+ [doi:10.5194/acp-5-641-2005]
+   
+   For the
+ β-caryophyllene scheme:
+   
+      Jenkin et al.,
+ Atmos. Chem. Phys.,  12, 5275, 2012
+ [doi:10.5194/acp-12-5275-2012]
+   
+   For the isoprene
+ scheme:
+   
+      Jenkin et al., Atmos. Chem. Phys.,
+ 15, 11433-11459, 2015 [doi:10.5194/acp-15-11433-2015]

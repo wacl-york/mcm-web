@@ -1,11 +1,8 @@
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= rel '/' %>">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Species</li>
-  </ol>
-</nav>
-
 <h1><%= @species[:Name] %></h1>
+<form method="post" action="/add_marklist/<%= @species[:Name] %>">
+  <input class="btn btn-primary" type="submit" value="Add to Mark list"/>
+</form>
+<br>
 <br>
 
 <div class="card" style="width: 60rem;">
@@ -36,7 +33,7 @@
     <tr>
       <td><%= reaction[:Reaction] %></td>
       <td><%= reaction[:Rate] %></td>
-      <td><%= reaction[:RateCategory] %></td>
+      <td><%= reaction[:RateType] %></td>
     </tr>
   <% end %>
   </tbody>
@@ -59,7 +56,7 @@
     <tr>
       <td><%= reaction[:Reaction] %></td>
       <td><%= reaction[:Rate] %></td>
-      <td><%= reaction[:RateCategory] %></td>
+      <td><%= reaction[:RateType] %></td>
     </tr>
   <% end %>
   </tbody>
