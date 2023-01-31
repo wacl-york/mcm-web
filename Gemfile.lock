@@ -159,7 +159,7 @@ GEM
     rubocop (1.40.0)
       json (~> 2.3)
       parallel (~> 1.10)
-      parser (>= 3.1.2.1)
+      parser (>= 3.2.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)

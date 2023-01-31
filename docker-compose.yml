@@ -1,11 +1,6 @@
 version: '2.4'
 
 services:
-  builder:
-    image: ghcr.io/university-of-york/faculty-dev-docker-images/local-dev/aws-lambda-ruby-dev:2.7
-    volumes:
-      - .:/var/task
-      - bundle:/bundle
   app:
     image: 733046350245.dkr.ecr.eu-west-1.amazonaws.com/mcm-app
     build:
