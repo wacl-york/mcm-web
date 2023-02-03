@@ -16,10 +16,12 @@
     closeAfterSelect: true,
     valueField: 'Species',
     searchField: ['Species', 'Synonyms', 'Smiles', 'Inchi'],
-    sortField: [{field: '$order'}, {field: '$score'}],
+    sortField: [{field: 'score', direction: 'desc'}, {field: '$score'}],
     options: [],
     create: false,
     load: function(query, callback) {
+      // Clear previously found results, otherwise they will be kept at the top regardless of their match
+      this.clearOptions();
       var url = "/search-synonym?q=" + encodeURIComponent(query);
       fetch(url)
         .then(response => response.json())
