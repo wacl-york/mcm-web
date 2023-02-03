@@ -23,18 +23,39 @@ get '/search-synonym' do
 
              ## First level match
              species_trailing = find_species(q, preceeding: false)
-                                .select_append(Sequel.lit("#{2 * max_synonyms} as score"))
+                                .select_append(Sequel.lit('CASE WHEN ' \
+                                                          'UPPER(Name) LIKE UPPER(?) ' \
+                                                          'THEN ? ELSE ? END as score',
+                                                          q,
+                                                          3 * max_synonyms,
+                                                          2 * max_synonyms))
              # Will use the Synonym itself later to populate the search results in case
              # it isn't one of the top 5
              syns_trailing = find_synonym(q, preceeding: false)
              smiles = find_smiles(q)
-                      .select_append(Sequel.lit("#{2 * max_synonyms} as score"))
+                      .select_append(Sequel.lit('CASE WHEN ' \
+                                                'UPPER(Smiles) LIKE UPPER(?) ' \
+                                                'THEN ? ELSE ? END as score',
+                                                q,
+                                                3 * max_synonyms,
+                                                2 * max_synonyms))
              inchi = find_inchi(q)
-                     .select_append(Sequel.lit("#{2 * max_synonyms} as score"))
+                     .select_append(Sequel.lit('CASE WHEN ' \
+                                               'UPPER(Inchi) LIKE UPPER(?) ' \
+                                               'THEN ? ELSE ? END as score',
+                                               q,
+                                               3 * max_synonyms,
+                                               2 * max_synonyms))
 
              first_order_matches = species_trailing
                                    .union(syns_trailing.select(:Species,
-                                                               Sequel.lit("NumReferences+#{max_synonyms} as score")))
+                                                               Sequel.lit('CASE WHEN UPPER(Synonym) LIKE UPPER(?) ' \
+                                                                          'THEN NumReferences+? ' \
+                                                                          'ELSE NumReferences+? ' \
+                                                                          'END as score',
+                                                                          q,
+                                                                          max_synonyms * 2,
+                                                                          max_synonyms)))
                                    .union(smiles)
                                    .union(inchi)
 
@@ -67,7 +88,11 @@ get '/search-synonym' do
 
              # Next find the top matched synonym
              matched_synonyms = syns_trailing
-                                .select_append(Sequel.lit("NumReferences + #{max_synonyms} as score"))
+                                .select_append(Sequel.lit('CASE WHEN UPPER(Synonym) LIKE UPPER(?) ' \
+                                                          'THEN NumReferences+? ELSE NumReferences+? END as score',
+                                                          q,
+                                                          max_synonyms * 2,
+                                                          max_synonyms))
                                 .union(syns_full.select_append(Sequel.lit('NumReferences as score')))
                                 .select_append(Sequel.function(:row_number).over(partition: :Species,
                                                                                  order: Sequel.desc(:score)).as(:n))
