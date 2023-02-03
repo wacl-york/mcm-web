@@ -84,6 +84,8 @@ get '/search-synonym' do
                .from_self(alias: :m7)
                .group(:Species, :score)
                .select(:Species, :score, Sequel.lit('GROUP_CONCAT(Synonym, \', \')').as(:Synonyms))
+               .inner_join(:Species, Name: :Species)
+               .select_append(:Smiles, :Inchi)
                .order(Sequel.desc(:score))
            end
   content_type :json

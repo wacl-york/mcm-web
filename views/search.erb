@@ -15,7 +15,7 @@
     loadThrottle: 500,
     closeAfterSelect: true,
     valueField: 'Species',
-    searchField: ['Species', 'Synonyms'],
+    searchField: ['Species', 'Synonyms', 'Smiles', 'Inchi'],
     sortField: [{field: '$order'}, {field: '$score'}],
     options: [],
     create: false,
@@ -41,7 +41,13 @@
                                   ${ escape(item.Species) }
                               </span>
                           </div>
-                          <div class="description">${ escape(item.Synonyms) }</div>
+                          <div class="description">
+                              ${ escape(item.Synonyms) }
+                              <br>
+                              Smiles: ${ escape(item.Smiles) }
+                              <br>
+                              Inchi: ${ escape(item.Inchi) }
+                          </div>
                       </div>
                   </div>`;
       },
@@ -56,7 +62,13 @@
                                   ${ escape(item.Species) }
                               </span>
                           </div>
-                          <div class="description">${ escape(item.Synonyms) }</div>
+                          <div class="description">
+                              ${ escape(item.Synonyms) }
+                              <br>
+                              Smiles: ${ escape(item.Smiles) }
+                              <br>
+                              Inchi: ${ escape(item.Inchi) }
+                          </div>
                       </div>
                   </div>`;
       }
