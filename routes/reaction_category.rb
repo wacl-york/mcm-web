@@ -2,6 +2,7 @@
 
 get '/reaction_category' do
   cat = params[:category]
+  reactionid = params[:reactionid]
 
   @content = if cat.nil?
                '<p>No reaction category specified.</p>'
@@ -12,8 +13,19 @@ get '/reaction_category' do
                else
                  full_fn = File.join('public', 'reaction_categories', fn)
                  File.read(full_fn)
-                end
+               end
              end
+
+  @rxn = if cat.nil?
+           ''
+         else
+           rxn = DB[:ReactionsWide].where(ReactionId: reactionid)
+           if fn.nil?
+             "<p>Unknown reaction id '#{reactionid}'.</p>"
+           else
+             rxn.map { |row| "#{row[:Reaction]} : #{row[:Rate]}" }.join
+           end
+         end
 
   erb :reaction_category
 end
