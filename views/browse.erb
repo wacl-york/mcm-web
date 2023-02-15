@@ -1,11 +1,29 @@
 <h1>Select a primary VOC</h1>
 
-<!-- TODO Display a list of each class along with a link to this current page with the first word lower -->
+<ul>
+<% @categories.each do |category, values| %>
+  <li>
+    <a href='<%= "/browse\##{link_from_category(category)}"%>' >
+      <%= category %>
+    </a>
+  </li>
+<% end %>
+</ul>
 
-<!-- For each class, display: -->
-<!-- H4 with compound name --> 
-<!-- make link accessible with lower first word -->
-<!-- ul -->
-<!-- For each species in this compound -->
-<!-- li with link to this species page -->
-<!-- Checkbox to add to export -->
+
+<% @categories.each do |category, values| %>
+  <a name='<%= "#{link_from_category(category)}" %>'/>
+  <h4><%= category%></h4>
+  <ul>
+  <!-- species in Species, Human Readable, Inchi -->
+  <% values.each do |species| %>
+    <li>
+      <a href='<%= "/species_info/#{species[0]}"%>'>
+        <%= species[1] %>
+      </a>
+      <%= "(#{species[2]})" %>
+    </li>
+  <% end %>
+  </ul>
+<% end %>
+<!-- TODO Checkbox to add to export -->

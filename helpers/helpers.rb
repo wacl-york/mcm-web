@@ -33,5 +33,9 @@ helpers do
       .where(Token: token)
       .get(:Definition)
   end
+
+  def link_from_category(category)
+    category.split[0].downcase
+  end
 end
 # rubocop:enable Metrics/BlockLength
