@@ -37,5 +37,29 @@ helpers do
   def link_from_category(category)
     category.split[0].downcase
   end
+
+  def display_reaction(rxn, species)
+    # Parses a Reaction dataset into a visual UI
+    reactants_parsed = rxn[:Reactants]
+                       .map { |x| create_link_from_species_name(x[:Name], x[:Category], species) }
+                       .join(' + ')
+    prods_parsed = rxn[:Products]
+                   .map { |x| create_link_from_species_name(x[:Name], x[:Category], species) }
+                   .join(' + ')
+    "#{reactants_parsed} -> #{prods_parsed}"
+    # TODO: add rate and image in
+    # img = "<img class='img-fluid' src='species_images/.png' />"
+  end
+
+  def create_link_from_species_name(name, category, species_page)
+    # Creates a link to a species page under 2 conditions:
+    # 1) It is a VOC, and 2) it is not the species that the current
+    # page is displaying.
+    if (category == 'VOC') && (name != species_page)
+      "<a href='/species/#{name}'>#{name}</a>"
+    else
+      name.to_s
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength

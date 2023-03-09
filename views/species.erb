@@ -19,47 +19,16 @@
 <br>
 
 <h3>Sink Reactions</h2>
-<table id="sink_reactions" class="table">
-  <thead>
-    <tr>
-      <th>Reaction</th>
-      <th>Rate</th>
-      <th>Rate Category</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @sink_reactions.each do |reaction| %>
-    <tr>
-      <td><%= reaction[:Reaction] %></td>
-      <td><%= reaction[:Rate] %></td>
-      <td><%= reaction[:RateType] %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<ul>
+<% @sink_rxns.each do |reaction| %>
+  <li> 
+    <%== display_reaction(reaction, @species[:Name]) %>
+  </li>
+<% end %>
+</ul>
 
 <br>
 
 <h3>Precursor Reactions</h2>
-<table id="precursor_reactions" class="table">
-  <thead>
-    <tr>
-      <th>Reaction</th>
-      <th>Rate</th>
-      <th>Rate Category</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @precursor_reactions.each do |reaction| %>
-    <tr>
-      <td><%= reaction[:Reaction] %></td>
-      <td><%= reaction[:Rate] %></td>
-      <td><%= reaction[:RateType] %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
 
 <br>

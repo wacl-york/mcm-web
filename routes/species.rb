@@ -29,8 +29,8 @@ def get_reactions(species, column: :Reactants)
   ids = DB[column].where(Species: species).distinct.select(:ReactionID)
 
   # Then extract all relevant information
-  reactants = DB[:Reactants].where(ReactionID: ids).to_hash_groups(:ReactionID)
-  products = DB[:Products].where(ReactionID: ids).to_hash_groups(:ReactionID)
+  reactants = DB[:Reactants].where(ReactionID: ids).join(:Species, Name: :Species).to_hash_groups(:ReactionID)
+  products = DB[:Products].where(ReactionID: ids).join(:Species, Name: :Species).to_hash_groups(:ReactionID)
   rxns = DB[:Reactions].where(ReactionID: ids).to_hash(:ReactionID)
 
   # And parse into the desired output format
@@ -40,8 +40,8 @@ def get_reactions(species, column: :Reactants)
       Reaction: id,
       Rate: rxns[id][:Rate],
       Category: rxns[id][:RateCategory],
-      Products: products[id].map { |x| x[:Species] },
-      Reactants: reactants[id].map { |x| x[:Species] }
+      Products: products[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } },
+      Reactants: reactants[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } }
     }
   end
 end
