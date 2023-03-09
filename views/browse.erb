@@ -1,0 +1,31 @@
+<h1>Select a primary VOC</h1>
+
+<ul>
+<% @categories.each do |category, values| %>
+  <li>
+    <a href='<%= "/browse\##{link_from_category(category)}"%>' >
+      <%= category %>
+    </a>
+  </li>
+<% end %>
+</ul>
+
+
+<% @categories.each do |category, values| %>
+  <a name='<%= "#{link_from_category(category)}" %>'/>
+  <h4><%= category%></h4>
+  <ul>
+  <!-- species in Species, Human Readable, Inchi -->
+  <% values.each do |species| %>
+    <li>
+      <form method="post" action="/add_marklist/<%= species[0] %>">
+        <a href='<%= "/species_info/#{species[0]}"%>'>
+          <%= species[1] %>
+        </a>
+        <input class="btn btn-primary btn-sm" type="submit" value="+"/>
+        </form>
+    </li>
+  <% end %>
+  </ul>
+<% end %>
+<!-- TODO Checkbox to add to export -->
