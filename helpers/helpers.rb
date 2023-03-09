@@ -38,17 +38,31 @@ helpers do
     category.split[0].downcase
   end
 
-  def display_reaction(rxn, species)
-    # Parses a Reaction dataset into a visual UI
-    reactants_parsed = rxn[:Reactants]
-                       .map { |x| create_link_from_species_name(x[:Name], x[:Category], species) }
-                       .join(' + ')
-    prods_parsed = rxn[:Products]
-                   .map { |x| create_link_from_species_name(x[:Name], x[:Category], species) }
-                   .join(' + ')
-    "#{reactants_parsed} -> #{prods_parsed}"
-    # TODO: add rate and image in
-    # img = "<img class='img-fluid' src='species_images/.png' />"
+  def parse_rate(rate)
+    # Parses a raw rate string into a MathJAX formatted label with matching length arrow
+    # Converts the FACSIMILIE rate equation into human readable math in 3 ways:
+    # 1) converts x / y fractions into \frac{x}{y}
+    # 2) replaces EXP with the \exp function
+    # 3) replaces aD-b with a \times 10^{-b}
+    # NB: Should really hardcode this into DB rather than doing on fly
+
+    # Convert EXP() and fractions
+    parsed = rate.gsub(%r{EXP\(([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)\)}, '\\exp{\\frac{\1}{\2}}')
+
+    # Convert D to scientific notation
+    parsed = parsed.gsub(/([0-9.-])+D([0-9-]+)/, '\1\\times10^{\2}')
+
+    # Use mhchem's ce environment for getting reaction arrow that stretches with rate
+    "\\(\\ce{->[#{parsed}]}\\)"
+  end
+
+  def parse_multiple_species(values, species_page)
+    # Parses an array of species into a '+' delimited string with hyperreferences
+    # to a compound's own page. MathJAX is used to format the text
+    parsed = values
+             .map { |x| create_link_from_species_name(x[:Name], x[:Category], species_page) }
+             .join(' + ')
+    "\\(#{parsed}\\)"
   end
 
   def create_link_from_species_name(name, category, species_page)
@@ -56,9 +70,9 @@ helpers do
     # 1) It is a VOC, and 2) it is not the species that the current
     # page is displaying.
     if (category == 'VOC') && (name != species_page)
-      "<a href='/species/#{name}'>#{name}</a>"
+      "\\href{/species/#{name}}{\\text{#{name}}}"
     else
-      name.to_s
+      "\\text{#{name}}"
     end
   end
 end

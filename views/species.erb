@@ -18,17 +18,20 @@
 
 <br>
 
-<h3>Sink Reactions</h2>
-<ul>
+<h3 class="rxn-title">Sink Reactions</h2>
 <% @sink_rxns.each do |reaction| %>
-  <li> 
-    <%== display_reaction(reaction, @species[:Name]) %>
-  </li>
+  <div class='row rxn-row'>
+    <div class='col-sm-3'><%= parse_multiple_species(reaction[:Reactants], @species[:Name]) %></div>
+    <div class='col-sm-4'><%= parse_rate(reaction[:Rate]) %></div>
+    <div class='col-sm-3'><%= parse_multiple_species(reaction[:Products], @species[:Name]) %></div>
+  </div>
 <% end %>
-</ul>
 
-<br>
-
-<h3>Precursor Reactions</h2>
-
-<br>
+<h3 class="rxn-title">Precursor Reactions</h2>
+<% @precursor_rxns.each do |reaction| %>
+  <div class='row rxn-row'>
+    <div class='col-sm-3'><%= parse_multiple_species(reaction[:Reactants], @species[:Name]) %></div>
+    <div class='col-sm-4'><%= parse_rate(reaction[:Rate]) %></div>
+    <div class='col-sm-3'><%= parse_multiple_species(reaction[:Products], @species[:Name]) %></div>
+  </div>
+<% end %>
