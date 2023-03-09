@@ -1,11 +1,24 @@
 # frozen_string_literal: true
 
-get '/species' do
-  n = params[:n]
-  n = 10 if n.nil?
+get '/species/:species' do
+  @sink_reactions = DB[:Reactants]
+                    .where(Species: params[:species])
+                    .join(:ReactionsWide, [:ReactionID])
+                    .join(:Rates, [:Rate])
+                    .order(:Reaction)
+                    .select(:Reaction, :Rate, :RateType)
 
-  @species = DB[:species].limit(n).order(:Name)
-  @n_species = n
+  @precursor_reactions = DB[:Products]
+                         .where(Species: params[:species])
+                         .join(:ReactionsWide, [:ReactionID])
+                         .join(:Rates, [:Rate])
+                         .order(:Reaction)
+                         .select(:Reaction, :Rate, :RateType)
+
+  @species = DB[:Species]
+             .where(Name: params[:species])
+             .select(:Name, :Smiles, :Inchi, :Mass)
+             .first
 
   erb :species
 end

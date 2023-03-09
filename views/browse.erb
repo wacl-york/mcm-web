@@ -19,7 +19,7 @@
   <% values.each do |species| %>
     <li>
       <form method="post" action="/add_marklist/<%= species[0] %>">
-        <a href='<%= "/species_info/#{species[0]}"%>'>
+        <a href='<%= "/species/#{species[0]}"%>'>
           <%= species[1] %>
         </a>
         <input class="btn btn-primary btn-sm" type="submit" value="+"/>
