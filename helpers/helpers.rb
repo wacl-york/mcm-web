@@ -50,7 +50,7 @@ helpers do
     parsed = rate.gsub(%r{EXP\(([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)\)}, '\\exp{\\frac{\1}{\2}}')
 
     # Convert D to scientific notation
-    parsed = parsed.gsub(/([0-9.-])+D([0-9-]+)/, '\1\\times10^{\2}')
+    parsed = parsed.gsub(/([0-9.-]+)D([0-9-]+)/, '\1\\times10^{\2}')
 
     # Use mhchem's ce environment for getting reaction arrow that stretches with rate
     "\\(\\ce{->[#{parsed}]}\\)"
