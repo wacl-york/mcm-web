@@ -13,7 +13,18 @@
     <li class="list-group-item">Smiles: <%= @species[:Smiles] %></li>
     <li class="list-group-item">InChI: <%= @species[:Inchi] %></li>
     <li class="list-group-item">Mass: <%= @species[:Mass] %></li>
+    <li class="list-group-item">
+      External links:
+      <a href="http://www.google.com/search?q=<%= @species[:Inchi] %>">Google</a>,
+      <a href="http://www.chemspider.com/Search.aspx?q=<%= @species[:Inchi] %>">ChemSpider</a>,
+      <a href='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pccompound&term="<%= @species[:Inchi] %>"[inchi]'>PubChem</a>,
+      <a href="http://webbook.nist.gov/cgi/cbook.cgi?Name=<%= @species[:Inchi] %>">NIST WebBook</a>,
+      <a href="http://iupac.pole-ether.fr/cgi-bin/Compound.cgi?nameType=InChI&name=<%= @species[:Inchi] %>">IUPAC</a>,
+      <a href="http://era-orleans.org/eradb/index.php?fonctionnalite=inchi&inchi=<%= @species[:Inchi] %>">ERADB</a>,
+      <a href="http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=<%= @species[:Inchi] %>">ChEBI</a>
+    </li>
   </ul>
+
 </div>
 
 <br>
