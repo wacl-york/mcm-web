@@ -28,7 +28,81 @@
              href="<%= rel '/export' %>">Export</a>
         </li>
       </ul>
-
     </div>
+    <select class="form-inline search-bar" id="tom-select-search" placeholder="Start typing a species formula or name...">
+    </select>
   </div>
 </nav>
+<script>
+  var settings = {
+    maxItems: 1,
+    maxOptions: 50,
+    loadThrottle: 500,
+    closeAfterSelect: true,
+    valueField: 'Species',
+    searchField: ['Species', 'Synonyms', 'Smiles', 'Inchi'],
+    sortField: [{field: 'score', direction: 'desc'}, {field: '$score'}],
+    options: [],
+    create: false,
+    load: function(query, callback) {
+      // Clear previously found results, otherwise they will be kept at the top regardless of their match
+      this.clearOptions();
+      var url = "/search-synonym?q=" + encodeURIComponent(query);
+      fetch(url)
+        .then(response => response.json())
+        .then(json => {
+          callback(json);
+        }).catch(() => {
+          callback();
+        });
+    },
+    render: {
+      option: function(item, escape) {
+          return `<div class="py-2 d-flex">
+                      <div class="icon me-3">
+                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                      </div>
+                      <div>
+                          <div class="mb-1">
+                              <span class="h4">
+                                  ${ escape(item.Species) }
+                              </span>
+                          </div>
+                          <div class="description">
+                              ${ escape(item.Synonyms) }
+                              <br>
+                              Smiles: ${ escape(item.Smiles) }
+                              <br>
+                              Inchi: ${ escape(item.Inchi) }
+                          </div>
+                      </div>
+                  </div>`;
+      },
+      item: function(item, escape) {
+          return `<div class="py-2 d-flex">
+                      <div class="icon me-3">
+                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                      </div>
+                      <div>
+                          <div class="mb-1">
+                              <span class="h4">
+                                  ${ escape(item.Species) }
+                              </span>
+                          </div>
+                          <div class="description">
+                              ${ escape(item.Synonyms) }
+                              <br>
+                              Smiles: ${ escape(item.Smiles) }
+                              <br>
+                              Inchi: ${ escape(item.Inchi) }
+                          </div>
+                      </div>
+                  </div>`;
+      }
+    },
+    onItemAdd: function(value, item) {
+      window.location.href = "species/" + value;
+    }
+  };
+new TomSelect('#tom-select-search', settings);
+</script>

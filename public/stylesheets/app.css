@@ -6,6 +6,11 @@
     margin-bottom: 1em;
 }
 
+.search-bar {
+    width: 500px;
+}
+
+
 .mytooltip {
 display: inline;
 position: relative;
