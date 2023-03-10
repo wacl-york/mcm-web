@@ -38,6 +38,17 @@ helpers do
     category.split[0].downcase
   end
 
+  def display_reaction(rxn, species_page)
+    "<div class='row rxn-row'>
+      <div class='col-sm-3'>#{parse_multiple_species(rxn[:Reactants], species_page)}</div>
+      <div class='col-sm-4'>#{parse_rate(rxn[:Rate])}</div>
+      <div class='col-sm-4'>#{parse_multiple_species(rxn[:Products], species_page)}</div>
+      <div class='col-sm-1'>
+        <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
+      </div>
+    </div>"
+  end
+
   def parse_rate(rate)
     # Parses a raw rate string into a MathJAX formatted label with matching length arrow
     # Converts the FACSIMILIE rate equation into human readable math in 3 ways:

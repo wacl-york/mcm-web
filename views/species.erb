@@ -29,20 +29,12 @@
 
 <br>
 
-<h3 class="rxn-title">Sink Reactions</h2>
+<h3 class="rxn-title">Sink Reactions</h3>
 <% @sink_rxns.each do |reaction| %>
-  <div class='row rxn-row'>
-    <div class='col-sm-4'><%== parse_multiple_species(reaction[:Reactants], @species[:Name]) %></div>
-    <div class='col-sm-4'><%= parse_rate(reaction[:Rate]) %></div>
-    <div class='col-sm-4'><%== parse_multiple_species(reaction[:Products], @species[:Name]) %></div>
-  </div>
+  <%== display_reaction(reaction, @species[:Name]) %>
 <% end %>
 
-<h3 class="rxn-title">Precursor Reactions</h2>
+<h3 class="rxn-title">Precursor Reactions</h3>
 <% @precursor_rxns.each do |reaction| %>
-  <div class='row rxn-row'>
-    <div class='col-sm-4'><%== parse_multiple_species(reaction[:Reactants], @species[:Name]) %></div>
-    <div class='col-sm-4'><%= parse_rate(reaction[:Rate]) %></div>
-    <div class='col-sm-4'><%== parse_multiple_species(reaction[:Products], @species[:Name]) %></div>
-  </div>
+  <%== display_reaction(reaction, @species[:Name]) %>
 <% end %>

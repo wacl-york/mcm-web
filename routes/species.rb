@@ -35,11 +35,12 @@ def get_reactions(species, column: :Reactants)
 
   # And parse into the desired output format
   # First map needed to turn in Ruby array rather than Sequel Dataset
+  # TODO Ideally this would be done as a Sequel Model rather than manually here
   ids.map(:ReactionID).map do |id|
     {
-      Reaction: id,
+      ReactionID: id,
       Rate: rxns[id][:Rate],
-      Category: rxns[id][:RateCategory],
+      Category: rxns[id][:ReactionCategory],
       Products: products[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } },
       Reactants: reactants[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } }
     }
