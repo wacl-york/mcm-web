@@ -50,7 +50,7 @@ helpers do
     parsed = rate.gsub(%r{EXP\(([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)\)}, '\\exp{\\frac{\1}{\2}}')
 
     # Convert D to scientific notation
-    parsed = parsed.gsub(/([0-9.-]+)D([0-9-]+)/, '\1\\times10^{\2}')
+    parsed = parsed.gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
 
     # Use mhchem's ce environment for getting reaction arrow that stretches with rate
     "\\(\\ce{->[#{parsed}]}\\)"
@@ -59,10 +59,9 @@ helpers do
   def parse_multiple_species(values, species_page)
     # Parses an array of species into a '+' delimited string with hyperreferences
     # to a compound's own page. MathJAX is used to format the text
-    parsed = values
-             .map { |x| create_link_from_species_name(x[:Name], x[:Category], species_page) }
-             .join(' + ')
-    "\\(#{parsed}\\)"
+    values
+      .map { |x| create_link_from_species_name(x[:Name], x[:Category], species_page) }
+      .join(' + ')
   end
 
   def create_link_from_species_name(name, category, species_page)
@@ -70,9 +69,12 @@ helpers do
     # 1) It is a VOC, and 2) it is not the species that the current
     # page is displaying.
     if (category == 'VOC') && (name != species_page)
-      "\\href{/species/#{name}}{\\text{#{name}}}"
+      "<span class='mytooltip tooltip-effect-1'>
+      <span class='tooltip-item'><a href='/species/#{name}'>#{name}</a></span>
+      <span class='tooltip-content clearfix'><img class='tooltip-image' src='/species_images/#{name}.png'/>
+      </span></span>"
     else
-      "\\text{#{name}}"
+      "<span>#{name}</span>"
     end
   end
 end
