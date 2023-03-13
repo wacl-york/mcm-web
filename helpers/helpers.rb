@@ -39,11 +39,13 @@ helpers do
   end
 
   def display_reaction(rxn, species_page)
-    "<div class='row rxn-row'>
-      <div class='col-sm-3'>#{parse_multiple_species(rxn[:Reactants], species_page)}</div>
-      <div class='col-sm-4'>#{parse_rate(rxn[:Rate])}</div>
-      <div class='col-sm-4'>#{parse_multiple_species(rxn[:Products], species_page)}</div>
-      <div class='col-sm-1'>
+    "<div class='row rxn-row d-flex justify-content-center'>
+      <div class='col-sm-11'>
+        #{parse_multiple_species(rxn[:Reactants], species_page)}
+        #{parse_rate(rxn[:Rate])}
+        #{parse_multiple_species(rxn[:Products], species_page)}
+      </div>
+      <div class='col-sm-1 d-flex justify-content-end'>
         <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
       </div>
     </div>"
@@ -62,6 +64,9 @@ helpers do
 
     # Convert D to scientific notation
     parsed = parsed.gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
+
+    # Replace TEMP with T for brevity
+    parsed = parsed.gsub(/TEMP/, 'T')
 
     # Use mhchem's ce environment for getting reaction arrow that stretches with rate
     "\\(\\ce{->[#{parsed}]}\\)"
