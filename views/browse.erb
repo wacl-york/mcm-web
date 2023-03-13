@@ -2,43 +2,32 @@
 
 <br>
 <br>
-<div class='row justify-content-center'>
-  <ul class='list-group row d-flex align-items-start'>
-  <li class='list-group-item active align-items-start col-4' aria-current='true'>
-    Sections
+
+<ul class="nav nav-tabs" id="browse-tab" role="tablist">
+  <% @categories.each_with_index do |(category, values), index| %>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link<%= index == 0 ? ' active' : ''%>" id="<%= remove_spaces(category) %>-tab" data-bs-toggle="tab" data-bs-target="#<%= remove_spaces(category) %>-tab-pane" type="button" role="tab" aria-controls="<%= remove_spaces(category) %>-tab-pane" aria-selected=<%= index == 0 ? 'true' : 'false' %>><%= category %></button>
   </li>
-  <% @categories.each do |category, values| %>
-    <li class='list-group-item d-flex justify-content-between align-items-start col-4'>
-      <a href='<%= "/browse\##{link_from_category(category)}"%>' >
-        <%= category %>
-      </a>
-      <span class='badge bg-primary rounded-pill'>
-        <%= values.size %>
-      </span>
-    </li>
   <% end %>
-  </ul>
+</ul>
+
+
+<div class="tab-content" id="browse-tab-content">
+  <% @categories.each_with_index do |(category, values), index| %>
+  <div class="tab-pane fade<%= index == 0 ? ' show active' : '' %>" id="<%= remove_spaces(category) %>-tab-pane" role="tabpanel" aria-labelledby="<%= remove_spaces(category) %>-tab" tabindex="0">
+      <ul>
+      <% values.each do |species| %>
+        <!-- TODO add hover -->
+        <li>
+          <form method="post" action="/add_marklist/<%= species[0] %>">
+            <a href='<%= "/species/#{species[0]}"%>'>
+              <%= species[1] %>
+            </a>
+            <input class="btn btn-primary btn-sm" type="submit" value="+"/>
+            </form>
+        </li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>
-
-<br>
-<br>
-
-
-<% @categories.each do |category, values| %>
-  <a name='<%= "#{link_from_category(category)}" %>'>
-    <h4><%= category%></h4>
-  </a>
-  <ul>
-  <% values.each do |species| %>
-    <li>
-      <form method="post" action="/add_marklist/<%= species[0] %>">
-        <a href='<%= "/species/#{species[0]}"%>'>
-          <%= species[1] %>
-        </a>
-        <input class="btn btn-primary btn-sm" type="submit" value="+"/>
-        </form>
-    </li>
-  <% end %>
-  </ul>
-<% end %>
-<!-- TODO Checkbox to add to export -->

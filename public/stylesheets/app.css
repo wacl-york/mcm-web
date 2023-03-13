@@ -50,3 +50,8 @@ opacity: 1;
   border: 1px solid #000000;
   border-radius: 1px;
 }
+
+#browse-tab-content ul {
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
