@@ -9,7 +9,13 @@ get '/species/:species' do
              .where(Name: params[:species])
              .select(:Name, :Smiles, :Inchi, :Mass)
              .first
-
+  @synonyms = DB[:SpeciesSynonyms]
+              .where(Species: params[:species])
+              .select_append(Sequel.function(:row_number).over(partition: :Species,
+                                                               order: Sequel.desc(:NumReferences)).as(:n))
+              .from_self(alias: :m3) # 'where' gets applied at wrong stage without this
+              .where { n <= 5 }
+              .map(:Synonym).join(', ')
   erb :species
 end
 
