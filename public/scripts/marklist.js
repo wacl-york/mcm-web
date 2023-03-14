@@ -13,20 +13,28 @@ function refreshMarklist() {
   ml.replaceChildren();
   var species = getCookie('marklist').split(',');
   species.forEach(function(x) {
+    // Each species is represented by:
+    // 1. a containing div (needed to apply styles that can't apply to li)
+    // 2. an li
+    // 3. a button (to remove from marklist)
+
     if (x == '') return;
+    var div = document.createElement("div");
+    div.setAttribute("class", "marklist-item");
+
     var li = document.createElement("li");
-    li.setAttribute("class", "marklist-item");
     li.setAttribute("id", "ml-" + x);
     li.textContent = x;
 
     var remove_button = document.createElement("button");
     remove_button.setAttribute("type", "button");
-    remove_button.setAttribute("class", "btn btn-danger btn-small");
+    remove_button.setAttribute("class", "btn btn-danger btn-small btn-marklist");
     remove_button.setAttribute("onclick", "removeFromMarklist('"+x+"')");
     remove_button.textContent = '-';
 
     li.appendChild(remove_button);
-    ml.appendChild(li);
+    div.appendChild(li);
+    ml.appendChild(div);
   });
 }
 

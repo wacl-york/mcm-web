@@ -34,12 +34,14 @@
       <% values.each do |species| %>
         <!-- TODO add hover -->
         <li>
-          <a href='/species/<%= species[0]%>'>
-            <%= species[1] %>
-          </a>
-          <button class="btn btn-success btn-sm" onclick="addToMarklist('<%= species[0] %>')">
-            +
-          </button>
+          <div class="marklist-item">
+            <a href='/species/<%= species[0]%>'>
+              <%= species[1] %>
+            </a>
+            <button class="btn btn-success btn-sm btn-marklist" onclick="addToMarklist('<%= species[0] %>')">
+              +
+            </button>
+          </div>
         </li>
       <% end %>
       </ul>

@@ -62,6 +62,21 @@
     grid-gap: 5px;
 }
 
+div.marklist-item {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+button.btn-marklist {
+    font-size: 1em;
+    margin-left: 0.5em;
+    padding-top: 0em;
+    padding-bottom: 0em;
+    color: white;
+}
+
 .mytooltip {
 display: inline;
 position: relative;
