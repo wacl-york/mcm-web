@@ -87,12 +87,10 @@ helpers do
     # 1) It is a VOC, and 2) it is not the species that the current
     # page is displaying.
     inner_tag = if (category == 'VOC') && (name != species_page)
-                  "
-      <a class='rxn-species-image' href='/species/#{name}'>
-        <img src='/species_images/#{name}.png'/>
-        #{name}
-      </a>
-                  "
+                  "<a class='rxn-species-image' href='/species/#{name}'>
+                     <img src='/species_images/#{name}.png'/>
+                     #{name}
+                   </a>"
                 elsif name == species_page
                   "<span class='text-success'>#{name}</span>"
                 else
@@ -103,7 +101,7 @@ helpers do
 
   def remove_spaces(input)
     # Replaces spaces with hyphens and also makes the text all lower-case
-    input.downcase.gsub(' ', '-')
+    input.downcase.tr(' ', '-')
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -128,8 +126,16 @@ helpers do
     #   ]
 
     # Extract the constituent parts of a reaction
-    reactants = DB[:Reactions].where(ReactionID: reaction_ids).left_join(:Reactants, [:ReactionID]).left_join(:Species, Name: :Species).to_hash_groups(:ReactionID)
-    products = DB[:Reactions].where(ReactionID: reaction_ids).left_join(:Products, [:ReactionID]).left_join(:Species, Name: :Species).to_hash_groups(:ReactionID)
+    reactants = DB[:Reactions]
+                .where(ReactionID: reaction_ids)
+                .left_join(:Reactants, [:ReactionID])
+                .left_join(:Species, Name: :Species)
+                .to_hash_groups(:ReactionID)
+    products = DB[:Reactions]
+               .where(ReactionID: reaction_ids)
+               .left_join(:Products, [:ReactionID])
+               .left_join(:Species, Name: :Species)
+               .to_hash_groups(:ReactionID)
     rxns = DB[:Reactions].where(ReactionID: reaction_ids).to_hash(:ReactionID)
 
     # And parse into the desired output format
