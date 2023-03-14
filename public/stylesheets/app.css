@@ -40,6 +40,21 @@
     width: 500px;
 }
 
+.marklist-row {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.marklist-container {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.marklist-clear {
+    display: flex;
+    align-self: flex-start;
+}
 
 .mytooltip {
 display: inline;
