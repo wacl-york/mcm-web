@@ -60,7 +60,7 @@ helpers do
     # NB: Should really hardcode this into DB rather than doing on fly
 
     # Convert EXP() and fractions
-    parsed = rate.gsub(%r{EXP\(([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)\)}, '\\exp{\\frac{\1}{\2}}')
+    parsed = rate.gsub(%r{EXP\(([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)\)}, '\\exp({\\frac{\1}{\2}})')
 
     # Convert D to scientific notation
     parsed = parsed.gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
