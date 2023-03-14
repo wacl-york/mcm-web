@@ -8,9 +8,12 @@ function addToMarklist(x) {
 }
 
 function refreshMarklist() {
+  // Remove all values from marklist and redraw
   var ml = document.getElementById('marklist');
-  species = getCookie('marklist').split(',');
+  ml.replaceChildren();
+  var species = getCookie('marklist').split(',');
   species.forEach(function(x) {
+    if (x == '') return;
     var li = document.createElement("li");
     li.setAttribute("class", "marklist-item");
     li.setAttribute("id", "ml-" + x);
@@ -61,19 +64,16 @@ function checkCookie() {
 
 function clearMarklist() {
   setCookie('marklist', '');
-  var ml = document.getElementById('marklist');
-  ml.replaceChildren();
+  refreshMarklist();
 }
 
 function removeFromMarklist(x) {
-  // Remove species from cookie
+  // Remove species from cookie then redraw marklist
   var curr_cookie = getCookie('marklist');
   re = new RegExp(x + '\\b,?')
   curr_cookie = curr_cookie.replace(re, "")
   curr_cookie = curr_cookie.replace(/,$/, "")  // If the target species was last there will be a trailing comma
   setCookie('marklist', curr_cookie);
 
-  // Remove species from marklist
-  var ele = document.getElementById('ml-' + x);
-  ele.remove();
+  refreshMarklist();
 }
