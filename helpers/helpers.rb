@@ -89,10 +89,12 @@ helpers do
     # 1) It is a VOC, and 2) it is not the species that the current
     # page is displaying.
     inner_tag = if (category == 'VOC') && (name != species_page)
-      "<span class='mytooltip tooltip-effect-1'>
-      <span class='tooltip-item'><a href='/species/#{name}'>#{name}</a></span>
-      <span class='tooltip-content clearfix'><img class='tooltip-image' src='/species_images/#{name}.png'/>
-      </span></span>"
+                  "
+      <a class='rxn-species-image' href='/species/#{name}'>
+        <img src='/species_images/#{name}.png'/>
+        #{name}
+      </a>
+                  "
     else
       "<span>#{name}</span>"
     end

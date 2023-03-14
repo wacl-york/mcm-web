@@ -26,8 +26,14 @@
 }
 
 .rxn-category {
-    justify-content: center;
     display: flex;
+    justify-content: center;
+}
+
+.rxn-species-image {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
 }
 
 .search-bar {
