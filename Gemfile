@@ -25,7 +25,7 @@ gem 'aws-sdk-sns', '~> 1'
 gem 'erubi'
 gem 'public_suffix', '~> 5.0'
 gem 'puma'
-gem 'rack', '~> 2.2'
+gem 'rack', ['~> 2.2.6', '>= 2.2.6.3']
 gem 'rest-client'
 gem 'sequel'
 gem 'sinatra', ['~> 2', '!= 2.1.0']

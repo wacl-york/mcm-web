@@ -1,8 +1,23 @@
-<h1>Select a primary VOC</h1>
+<h1>Browse the mechanism</h1>
 
 <br>
 <br>
 
+<h2>Inorganic Chemistry</h2>
+<ul>
+<% @inorganic_categories.each do | cat | %>
+  <li>
+    <a href="/inorganic?category=<%= cat %>">
+      <%= cat %>
+    </a>
+  </li>
+<% end %>
+</ul>
+
+<br>
+<br>
+
+<h2>Select a primary VOC</h2>
 <ul class="nav nav-tabs" id="browse-tab" role="tablist">
   <% @categories.each_with_index do |(category, values), index| %>
   <li class="nav-item" role="presentation">

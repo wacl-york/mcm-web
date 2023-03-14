@@ -22,6 +22,5 @@ get '/reaction_category' do
            # read_reaction accepts and returns a list, so we can just drop it to the first value
            read_reaction(Array(reactionid))[0]
          end
-  puts "@rxn: #{@rxn}"
   erb :reaction_category
 end
