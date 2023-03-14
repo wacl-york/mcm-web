@@ -1,9 +1,33 @@
-.rxn-row {
+.rxn-container {
+    display: flex;
+    flex-flow: row nowrap;
     margin-bottom: 1em;
+}
+
+.rxn-row {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .rxn-title {
     margin-bottom: 1em;
+}
+
+.rxn-plus {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.rxn-rate {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.rxn-category {
+    justify-content: center;
+    display: flex;
 }
 
 .search-bar {
