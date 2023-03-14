@@ -50,18 +50,6 @@ function getCookie(cname) {
   return "";
 }
 
-function checkCookie() {
-  let user = getCookie("username");
-  if (user != "") {
-    alert("Welcome again " + user);
-  } else {
-    user = prompt("Please enter your name:", "");
-    if (user != "" && user != null) {
-      setCookie("username", user, 365);
-    }
-  }
-}
-
 function clearMarklist() {
   setCookie('marklist', '');
   refreshMarklist();
@@ -76,4 +64,28 @@ function removeFromMarklist(x) {
   setCookie('marklist', curr_cookie);
 
   refreshMarklist();
+}
+
+function populateExportMarklist() {
+  // Remove all values from marklist and redraw
+  var ml = document.getElementById('export-marklist');
+  ml.replaceChildren();
+  var species = getCookie('marklist').split(',');
+  species.forEach(function(x) {
+    if (x == '') return;
+
+    var input = document.createElement("input");
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("name", "selected[]");
+    input.setAttribute("id", "export-"+x);
+    input.setAttribute("value", x);
+    input.setAttribute("checked", true);
+
+    var label = document.createElement("label");
+    label.setAttribute("for", "export-"+x);
+    label.textContent = x;
+
+    ml.appendChild(input);
+    ml.appendChild(label);
+  });
 }

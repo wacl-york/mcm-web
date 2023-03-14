@@ -56,6 +56,12 @@
     align-self: flex-start;
 }
 
+#export-marklist {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+}
+
 .mytooltip {
 display: inline;
 position: relative;
