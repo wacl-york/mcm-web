@@ -93,6 +93,8 @@ helpers do
         #{name}
       </a>
                   "
+                elsif name == species_page
+                  "<span class='text-success'>#{name}</span>"
                 else
                   "<span>#{name}</span>"
                 end
