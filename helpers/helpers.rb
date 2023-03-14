@@ -128,9 +128,8 @@ helpers do
     #   ]
 
     # Extract the constituent parts of a reaction
-    reactants = DB[:Reactants].where(ReactionID: reaction_ids).join(:Species,
-                                                                    Name: :Species).to_hash_groups(:ReactionID)
-    products = DB[:Products].where(ReactionID: reaction_ids).join(:Species, Name: :Species).to_hash_groups(:ReactionID)
+    reactants = DB[:Reactions].where(ReactionID: reaction_ids).left_join(:Reactants, [:ReactionID]).left_join(:Species, Name: :Species).to_hash_groups(:ReactionID)
+    products = DB[:Reactions].where(ReactionID: reaction_ids).left_join(:Products, [:ReactionID]).left_join(:Species, Name: :Species).to_hash_groups(:ReactionID)
     rxns = DB[:Reactions].where(ReactionID: reaction_ids).to_hash(:ReactionID)
 
     # And parse into the desired output format
