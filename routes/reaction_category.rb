@@ -2,7 +2,7 @@
 
 get '/reaction_category' do
   cat = params[:category]
-  reactionid = params[:reactionid]
+  reactionid = params[:reactionid].to_i
 
   @content = if cat.nil?
                '<p>No reaction category specified.</p>'
@@ -19,13 +19,9 @@ get '/reaction_category' do
   @rxn = if cat.nil?
            ''
          else
-           rxn = DB[:ReactionsWide].where(ReactionId: reactionid)
-           if fn.nil?
-             "<p>Unknown reaction id '#{reactionid}'.</p>"
-           else
-             rxn.map { |row| "#{row[:Reaction]} : #{row[:Rate]}" }.join
-           end
+           # read_reaction accepts and returns a list, so we can just drop it to the first value
+           read_reaction(Array(reactionid))[0]
          end
-
+  puts "@rxn: #{@rxn}"
   erb :reaction_category
 end

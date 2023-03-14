@@ -35,7 +35,7 @@
       option: function(item, escape) {
           return `<div class="py-2 d-flex">
                       <div class="icon me-3">
-                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                          <img class="img-fluid" src="/species_images/${ escape(item.Species) }.png" />
                       </div>
                       <div>
                           <div class="mb-1">
@@ -56,7 +56,7 @@
       item: function(item, escape) {
           return `<div class="py-2 d-flex">
                       <div class="icon me-3">
-                          <img class="img-fluid" src="species_images/${ escape(item.Species) }.png" />
+                          <img class="img-fluid" src="/species_images/${ escape(item.Species) }.png" />
                       </div>
                       <div>
                           <div class="mb-1">
@@ -76,7 +76,7 @@
       }
     },
     onItemAdd: function(value, item) {
-      window.location.href = "species_info/" + value;
+      window.location.href = "/species/" + value;
     }
   };
 new TomSelect('#tom-select-it', settings);

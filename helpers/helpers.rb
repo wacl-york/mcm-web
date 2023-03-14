@@ -37,5 +37,114 @@ helpers do
   def link_from_category(category)
     category.split[0].downcase
   end
+
+  def display_reaction(rxn, species_page)
+    "<div class='rxn-container'>
+        <div class='col-sm-11'>
+          <div class='rxn-row'>
+            #{parse_multiple_species(rxn[:Reactants], species_page)}
+            #{parse_rate(rxn[:Rate])}
+            #{parse_multiple_species(rxn[:Products], species_page)}
+          </div>
+        </div>
+        <div class='rxn-category col-sm-1'>
+          <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
+        </div>
+      </div>"
+  end
+
+  def parse_rate(rate)
+    # Parses a raw rate string into a MathJAX formatted label with matching length arrow
+    # Converts the FACSIMILIE rate equation into human readable math in 3 ways:
+    # 1) converts x / y fractions into \frac{x}{y}
+    # 2) replaces EXP with the \exp function
+    # 3) replaces aD-b with a \times 10^{-b}
+    # NB: Should really hardcode this into DB rather than doing on fly
+
+    # Convert EXP() and fractions
+    parsed = rate.gsub(%r{EXP\(([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)\)}, '\\exp({\\frac{\1}{\2}})')
+
+    # Convert D to scientific notation
+    parsed = parsed.gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
+
+    # Replace TEMP with T for brevity
+    parsed = parsed.gsub(/TEMP/, 'T')
+
+    # Use mhchem's ce environment for getting reaction arrow that stretches with rate
+    "<div class='rxn-rate'>\\(\\ce{->[#{parsed}]}\\)</div>"
+  end
+
+  def parse_multiple_species(values, species_page)
+    # Parses an array of species into a '+' delimited string with hyperreferences
+    # to a compound's own page. MathJAX is used to format the text
+    values
+      .map { |x| create_link_from_species_name(x[:Name], x[:Category], species_page) }
+      .join(' <div class="rxn-plus"> + </div>')
+  end
+
+  def create_link_from_species_name(name, category, species_page)
+    # Creates a link to a species page under 2 conditions:
+    # 1) It is a VOC, and 2) it is not the species that the current
+    # page is displaying.
+    inner_tag = if (category == 'VOC') && (name != species_page)
+                  "
+      <a class='rxn-species-image' href='/species/#{name}'>
+        <img src='/species_images/#{name}.png'/>
+        #{name}
+      </a>
+                  "
+                elsif name == species_page
+                  "<span class='text-success'>#{name}</span>"
+                else
+                  "<span>#{name}</span>"
+                end
+    "<div>#{inner_tag}</div>"
+  end
+
+  def remove_spaces(input)
+    # Replaces spaces with hyphens and also makes the text all lower-case
+    input.downcase.gsub(' ', '-')
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def read_reaction(reaction_ids)
+    # Parses given reactions from the DB into a hierarchical data structure
+    # Ideally this would be done as a Sequel Model rather than manually here
+    #
+    # Args:
+    #   - reaction_ids ([Int]): Array of integers
+    #
+    # Returns:
+    # A list of reactions in the following format:
+    #   [
+    #     {
+    #       ReactionID: <id>,
+    #       Rate: '<rate>',
+    #       ReactionCategory: '<category>',
+    #       Reactants: [...],
+    #       Products: [...]
+    #     }
+    #   ]
+
+    # Extract the constituent parts of a reaction
+    reactants = DB[:Reactants].where(ReactionID: reaction_ids).join(:Species,
+                                                                    Name: :Species).to_hash_groups(:ReactionID)
+    products = DB[:Products].where(ReactionID: reaction_ids).join(:Species, Name: :Species).to_hash_groups(:ReactionID)
+    rxns = DB[:Reactions].where(ReactionID: reaction_ids).to_hash(:ReactionID)
+
+    # And parse into the desired output format
+    reaction_ids.map do |id|
+      {
+        ReactionID: id,
+        Rate: rxns[id][:Rate],
+        Category: rxns[id][:ReactionCategory],
+        Products: products[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } },
+        Reactants: reactants[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } }
+      }
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end
 # rubocop:enable Metrics/BlockLength
