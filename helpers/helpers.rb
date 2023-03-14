@@ -93,5 +93,10 @@ helpers do
       "<span>#{name}</span>"
     end
   end
+
+  def remove_spaces(input)
+    # Replaces spaces with hyphens and also makes the text all lower-case
+    input.downcase.gsub(' ', '-')
+  end
 end
 # rubocop:enable Metrics/BlockLength
