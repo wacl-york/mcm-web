@@ -7,7 +7,6 @@ get '/inorganic' do
             []
           else
             ids = DB[:Reactions].where(InorganicReactionCategory: @cat).map(:ReactionID)
-            puts "IDS: #{ids}"
             if ids.nil?
               []
             else
