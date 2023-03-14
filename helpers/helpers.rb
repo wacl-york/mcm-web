@@ -39,8 +39,7 @@ helpers do
   end
 
   def display_reaction(rxn, species_page)
-    "
-      <div class='rxn-container'>
+    "<div class='rxn-container'>
         <div class='col-sm-11'>
           <div class='rxn-row'>
             #{parse_multiple_species(rxn[:Reactants], species_page)}
@@ -51,8 +50,7 @@ helpers do
         <div class='rxn-category col-sm-1'>
           <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
         </div>
-      </div>
-      "
+      </div>"
   end
 
   def parse_rate(rate)
@@ -95,9 +93,9 @@ helpers do
         #{name}
       </a>
                   "
-    else
-      "<span>#{name}</span>"
-    end
+                else
+                  "<span>#{name}</span>"
+                end
     "<div>#{inner_tag}</div>"
   end
 
@@ -105,5 +103,46 @@ helpers do
     # Replaces spaces with hyphens and also makes the text all lower-case
     input.downcase.gsub(' ', '-')
   end
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def read_reaction(reaction_ids)
+    # Parses given reactions from the DB into a hierarchical data structure
+    # Ideally this would be done as a Sequel Model rather than manually here
+    #
+    # Args:
+    #   - reaction_ids ([Int]): Array of integers
+    #
+    # Returns:
+    # A list of reactions in the following format:
+    #   [
+    #     {
+    #       ReactionID: <id>,
+    #       Rate: '<rate>',
+    #       ReactionCategory: '<category>',
+    #       Reactants: [...],
+    #       Products: [...]
+    #     }
+    #   ]
+
+    # Extract the constituent parts of a reaction
+    reactants = DB[:Reactants].where(ReactionID: reaction_ids).join(:Species,
+                                                                    Name: :Species).to_hash_groups(:ReactionID)
+    products = DB[:Products].where(ReactionID: reaction_ids).join(:Species, Name: :Species).to_hash_groups(:ReactionID)
+    rxns = DB[:Reactions].where(ReactionID: reaction_ids).to_hash(:ReactionID)
+
+    # And parse into the desired output format
+    reaction_ids.map do |id|
+      {
+        ReactionID: id,
+        Rate: rxns[id][:Rate],
+        Category: rxns[id][:ReactionCategory],
+        Products: products[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } },
+        Reactants: reactants[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } }
+      }
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end
 # rubocop:enable Metrics/BlockLength

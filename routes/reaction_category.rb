@@ -19,23 +19,9 @@ get '/reaction_category' do
   @rxn = if cat.nil?
            ''
          else
-           rxns = DB[:Reactions].where(ReactionID: reactionid).to_hash(:ReactionID)
-           if rxns.nil?
-             "<p>Unknown reaction id '#{reactionid}'.</p>"
-           else
-             reactants = DB[:Reactants].where(ReactionID: reactionid).join(:Species,
-                                                                           Name: :Species).to_hash_groups(:ReactionID)
-             products = DB[:Products].where(ReactionID: reactionid).join(:Species,
-                                                                         Name: :Species).to_hash_groups(:ReactionID)
-             # Parse reaction into desired format
-             {
-               ReactionID: reactionid,
-               Rate: rxns[reactionid][:Rate],
-               Category: rxns[reactionid][:ReactionCategory],
-               Products: products[reactionid].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } },
-               Reactants: reactants[reactionid].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } }
-             }
-           end
+           # read_reaction accepts and returns a list, so we can just drop it to the first value
+           read_reaction(Array(reactionid))[0]
          end
+  puts "@rxn: #{@rxn}"
   erb :reaction_category
 end

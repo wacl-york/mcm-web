@@ -20,35 +20,8 @@ get '/species/:species' do
 end
 
 def get_reactions(species, column: :Reactants)
-  # Finds all reactions in the DB with a given species
-  # and parses into a hierarchical data structure of:
-  # [
-  #   {
-  #     ReactionID: <id>,
-  #     Rate: '<rate>',
-  #     ReactionCategory: '<category>',
-  #     Reactants: [...],
-  #     Products: [...]
-  #   }
-  # ]
-  # Find all reactionIDs that this species is involved in
-  ids = DB[column].where(Species: species).distinct.select(:ReactionID)
-
-  # Then extract all relevant information
-  reactants = DB[:Reactants].where(ReactionID: ids).join(:Species, Name: :Species).to_hash_groups(:ReactionID)
-  products = DB[:Products].where(ReactionID: ids).join(:Species, Name: :Species).to_hash_groups(:ReactionID)
-  rxns = DB[:Reactions].where(ReactionID: ids).to_hash(:ReactionID)
-
-  # And parse into the desired output format
-  # First map needed to turn in Ruby array rather than Sequel Dataset
-  # TODO Ideally this would be done as a Sequel Model rather than manually here
-  ids.map(:ReactionID).map do |id|
-    {
-      ReactionID: id,
-      Rate: rxns[id][:Rate],
-      Category: rxns[id][:ReactionCategory],
-      Products: products[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } },
-      Reactants: reactants[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } }
-    }
-  end
+  # Find reactions that this species is involved in
+  ids = DB[column].where(Species: species).distinct.map(:ReactionID)
+  j # Parse reaction into a standardised hierarchical structure
+  read_reaction(ids)
 end
