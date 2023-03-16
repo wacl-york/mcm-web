@@ -14,47 +14,47 @@ concurrency:
 env:
   DB_USER: mcmweb_app
 
-jobs:
-  dev-deployment:
-    name: Deploy to Dev Environment
-    runs-on: ubuntu-22.04
-    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    environment: development
-    env:
-      AWS_ACCOUNT_ID: 733046350245
-      AWS_ENVIRONMENT: dev
-      AWS_SUBNET_1: subnet-00907eafe30c1cd15
-      AWS_SUBNET_2: subnet-01d5c8f2990e30510
-      DOMAIN_NAME: mcm.wacl-dev1.app.york.ac.uk
-    steps:
-      - uses: actions/checkout@v3
-      - run: bundle install --deployment --without test development
-      - uses: university-of-york/aws-sam-deploy-action@master
-        env:
-          TEMPLATE: 'cloudformation.yaml'
-          AWS_STACK_NAME: ${{ github.event.repository.name }}
-          AWS_REGION: 'eu-west-1'
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEPLOY_BUCKET: ${{ secrets.AWS_GLOBAL_ARTIFACT_BUCKET }}
-          ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
-          PARAMETER_OVERRIDES:
-            Deployment=${{ env.AWS_ENVIRONMENT }}
-            DomainName=${{ env.DOMAIN_NAME }}
-            AppName=${{ github.event.repository.name }}
-            PrivateSubnet1ID=${{ env.AWS_SUBNET_1 }}
-            PrivateSubnet2ID=${{ env.AWS_SUBNET_2 }}
-            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
-            CognitoSecret=${{ secrets.COGNITO_SECRET }}
-          TAGS:
-            name="WACL Dev MCMWeb"
-            group=WACL
-            project=${{ github.repository }}
-            status=${{ env.AWS_ENVIRONMENT }}
-            pushed_by=github
-            defined_in=cloudformation
-            repo_name=${{ github.repository }}
+    #jobs:
+    #  dev-deployment:
+    #    name: Deploy to Dev Environment
+    #    runs-on: ubuntu-22.04
+    #    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+    #    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #    environment: development
+    #    env:
+    #      AWS_ACCOUNT_ID: 733046350245
+    #      AWS_ENVIRONMENT: dev
+    #      AWS_SUBNET_1: subnet-00907eafe30c1cd15
+    #      AWS_SUBNET_2: subnet-01d5c8f2990e30510
+    #      DOMAIN_NAME: mcm.wacl-dev1.app.york.ac.uk
+    #    steps:
+    #      - uses: actions/checkout@v3
+    #      - run: bundle install --deployment --without test development
+    #      - uses: university-of-york/aws-sam-deploy-action@master
+    #        env:
+    #          TEMPLATE: 'cloudformation.yaml'
+    #          AWS_STACK_NAME: ${{ github.event.repository.name }}
+    #          AWS_REGION: 'eu-west-1'
+    #          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #          AWS_DEPLOY_BUCKET: ${{ secrets.AWS_GLOBAL_ARTIFACT_BUCKET }}
+    #          ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
+    #          PARAMETER_OVERRIDES:
+    #            Deployment=${{ env.AWS_ENVIRONMENT }}
+    #            DomainName=${{ env.DOMAIN_NAME }}
+    #            AppName=${{ github.event.repository.name }}
+    #            PrivateSubnet1ID=${{ env.AWS_SUBNET_1 }}
+    #            PrivateSubnet2ID=${{ env.AWS_SUBNET_2 }}
+    #            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
+    #            CognitoSecret=${{ secrets.COGNITO_SECRET }}
+    #          TAGS:
+    #            name="WACL Dev MCMWeb"
+    #            group=WACL
+    #            project=${{ github.repository }}
+    #            status=${{ env.AWS_ENVIRONMENT }}
+    #            pushed_by=github
+    #            defined_in=cloudformation
+    #            repo_name=${{ github.repository }}
 
 #  staging-deployment:
 #    name: Deploy to Staging Environment
