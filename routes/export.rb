@@ -87,7 +87,9 @@ post '/export' do
   # and using set union to combine. That way if a token was found in multiple iterations, it is only
   # kept in the latest generation so there is no chance of it being defined before a parent refers to it
   # Finally reverse it back into child -> parent order for output
-  children = all_children.reverse.sum.to_a.reverse
+  # rubocop:disable Performance/Sum
+  children = all_children.reverse.reduce(:+).to_a.reverse
+  # rubocop:enable Performance/Sum
   # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
   # than a batch query that returns in order
   complex_rates = children.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
