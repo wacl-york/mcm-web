@@ -1,7 +1,7 @@
 <h1><%= @species[:Name] %></h1>
-<form method="post" action="/add_marklist/<%= @species[:Name] %>">
-  <input class="btn btn-primary" type="submit" value="Add to Mark list"/>
-</form>
+<button class="btn btn-success" onclick="addToMarklist('<%= @species[:Name] %>')">
+  Add to mark list
+</button>
 <br>
 <br>
 

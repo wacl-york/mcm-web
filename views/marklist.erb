@@ -1,18 +1,13 @@
 <h2>Mark List</h2>
 <br>
+<div class='marklist-container'>
+  <ul id='marklist'>
+  </ul>
+  <button class="btn btn-danger marklist-clear" onclick="clearMarklist()">
+    Clear mark list
+  </button>
+</div>
 
-<form method="post" action="/remove_marklist">
-  <div class="form-group">
-    <% unless session[:mark_list].nil? %>
-      <% session[:mark_list].each do |x| %>
-        <input type="checkbox" name="selected[]" value=<%= x %>> <%= x %><br>
-      <% end %>
-    <% end %>
-    <br>
-    <input type="submit" value="Remove selected">
-  </div>
-</form>
-
-<form method="post" action="/clear_marklist">
-  <input class="btn btn-danger" type="submit" value="Clear mark list"/>
-</form>
+<script>
+  refreshMarklist()
+</script>

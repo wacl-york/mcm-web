@@ -40,6 +40,42 @@
     width: 500px;
 }
 
+.marklist-row {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.marklist-container {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.marklist-clear {
+    display: flex;
+    align-self: flex-start;
+}
+
+#export-marklist {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+}
+
+div.marklist-item {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+button.btn-marklist {
+    font-size: 1em;
+    margin-left: 0.5em;
+    padding-top: 0em;
+    padding-bottom: 0em;
+    color: white;
+}
 
 .mytooltip {
 display: inline;
