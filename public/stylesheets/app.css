@@ -1,0 +1,123 @@
+.rxn-container {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-bottom: 1em;
+}
+
+.rxn-row {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.rxn-title {
+    margin-bottom: 1em;
+}
+
+.rxn-plus {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.rxn-rate {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.rxn-category {
+    display: flex;
+    justify-content: center;
+}
+
+.rxn-species-image {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.search-bar {
+    width: 500px;
+}
+
+.marklist-row {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.marklist-container {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.marklist-clear {
+    display: flex;
+    align-self: flex-start;
+}
+
+#export-marklist {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+}
+
+div.marklist-item {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+button.btn-marklist {
+    font-size: 1em;
+    margin-left: 0.5em;
+    padding-top: 0em;
+    padding-bottom: 0em;
+    color: white;
+}
+
+.mytooltip {
+display: inline;
+position: relative;
+z-index: 999
+}
+.mytooltip .tooltip-item {
+display: inline-block;
+}
+.mytooltip .tooltip-content {
+position: absolute;
+z-index: 9999;
+bottom: 100%;
+margin: 0 0 20px -40px;
+left: 50%;
+opacity: 0;
+pointer-events: none
+}
+.mytooltip .tooltip-content::after {
+content: '';
+top: 100%;
+left: 50%;
+position: absolute;
+}
+.mytooltip .tooltip-content img {
+position: relative;
+display: block;
+}
+.mytooltip .tooltip-item::after {
+position: absolute;
+bottom: 100%;
+left: 50%;
+}
+.mytooltip:hover .tooltip-content {
+opacity: 1;
+}
+.tooltip-image {
+  border: 1px solid #000000;
+  border-radius: 1px;
+}
+
+#browse-tab-content ul {
+    margin-left: 1rem;
+    margin-top: 1rem;
+}

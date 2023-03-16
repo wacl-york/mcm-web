@@ -230,7 +230,7 @@ DEPENDENCIES
   erubi
   public_suffix (~> 5.0)
   puma
-  rack (~> 2.2)
+  rack (~> 2.2.6, >= 2.2.6.3)
   rack-test
   rest-client
   rspec

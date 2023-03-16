@@ -1,25 +1,40 @@
-<h1>Species</h1>
+<h1><%= @species[:Name] %></h1>
+<button class="btn btn-success" onclick="addToMarklist('<%= @species[:Name] %>')">
+  Add to mark list
+</button>
+<br>
+<br>
 
-<form method="get">
-  <!--<div class="form-group"> -->
-    <label for="n_reactions">Number species to display</label>
-    <input type="text" name="n" value=<%= @n_species %>>
-    <input type="submit" value="Refresh">
-    <!--</div>-->
-</form>
+<div class="card">
+  <div class="card-header">
+    Species information
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Smiles: <%= @species[:Smiles] %></li>
+    <li class="list-group-item">InChI: <%= @species[:Inchi] %></li>
+    <li class="list-group-item">Mass: <%= @species[:Mass] %></li>
+    <li class="list-group-item">Synonyms: <%= @synonyms%></li>
+    <li class="list-group-item">
+      External links:
+      <a href="http://www.google.com/search?q=<%= @species[:Inchi] %>">Google</a>,
+      <a href="http://www.chemspider.com/Search.aspx?q=<%= @species[:Inchi] %>">ChemSpider</a>,
+      <a href='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pccompound&term="<%= @species[:Inchi] %>"[inchi]'>PubChem</a>,
+      <a href="http://webbook.nist.gov/cgi/cbook.cgi?Name=<%= @species[:Inchi] %>">NIST WebBook</a>,
+      <a href="https://iupac.aeris-data.fr/search/">IUPAC</a>,
+      <a href="http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=<%= @species[:Inchi] %>">ChEBI</a>
+    </li>
+  </ul>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-    </tr>
-  </thead>
+</div>
 
-  <tbody>
-    <% @species.each do |species| %>
-    <tr>
-      <td><a href="species_info/<%= species[:Name]%>"><%= species[:Name] %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<br>
+
+<h3 class="rxn-title">Sink Reactions</h3>
+<% @sink_rxns.each do |reaction| %>
+  <%== display_reaction(reaction, @species[:Name]) %>
+<% end %>
+
+<h3 class="rxn-title">Precursor Reactions</h3>
+<% @precursor_rxns.each do |reaction| %>
+  <%== display_reaction(reaction, @species[:Name]) %>
+<% end %>
