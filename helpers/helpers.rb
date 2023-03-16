@@ -78,26 +78,41 @@ helpers do
     # Parses an array of species into a '+' delimited string with hyperreferences
     # to a compound's own page. MathJAX is used to format the text
     values
-      .map { |x| create_link_from_species_name(x[:Name], x[:Category], species_page) }
+      .map { |x| parse_species(x[:Name], x[:Category], species_page) }
       .join(' <div class="rxn-plus"> + </div>')
   end
 
-  def create_link_from_species_name(name, category, species_page)
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity
+  def parse_species(name, category, species_page)
     # Creates a link to a species page under 2 conditions:
     # 1) It is a VOC, and 2) it is not the species that the current
     # page is displaying.
-    inner_tag = if (category == 'VOC') && (name != species_page)
-                  "<a class='rxn-species-image' href='/species/#{name}'>
-                     <img src='/species_images/#{name}.png'/>
-                     #{name}
-                   </a>"
-                elsif name == species_page
-                  "<span class='text-success'>#{name}</span>"
-                else
-                  "<span>#{name}</span>"
-                end
-    "<div>#{inner_tag}</div>"
+    outer_open_tag = if category == 'VOC'
+                       if name == species_page
+                         "<div class='rxn-species-image'>"
+                       else
+                         "<a class='rxn-species-image' href='/species/#{name}'>"
+                       end
+                     else
+                       ''
+                     end
+    outer_close_tag = if category == 'VOC'
+                        if name == species_page
+                          '</div>'
+                        else
+                          '</a>'
+                        end
+                      else
+                        ''
+                      end
+    inner_open_tag = category == 'VOC' ? "<img src='/species_images/#{name}.png'/>" : '<span>'
+    inner_close_tag = category == 'VOC' ? '' : '</span>'
+
+    ['<div>', outer_open_tag, inner_open_tag, name, inner_close_tag, outer_close_tag, '</div>'].join("\n")
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def remove_spaces(input)
     # Replaces spaces with hyphens and also makes the text all lower-case

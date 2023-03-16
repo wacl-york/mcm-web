@@ -1,7 +1,7 @@
 .rxn-container {
     display: flex;
     flex-flow: row nowrap;
-    margin-bottom: 1em;
+    margin-bottom: 3em;
 }
 
 .rxn-row {
