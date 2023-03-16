@@ -51,6 +51,22 @@
     flex-flow: column nowrap;
 }
 
+.species-list {
+    display: flex;
+    flex-flow: column nowrap;
+    margin-left: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.marklist-list {
+    display: flex;
+    flex-flow: column nowrap;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 .marklist-clear {
     display: flex;
     align-self: flex-start;
@@ -71,7 +87,7 @@ div.marklist-item {
 
 button.btn-marklist {
     font-size: 1em;
-    margin-left: 0.5em;
+    margin-right: 0.5em;
     padding-top: 0em;
     padding-bottom: 0em;
     color: white;

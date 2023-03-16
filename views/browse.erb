@@ -30,21 +30,18 @@
 <div class="tab-content" id="browse-tab-content">
   <% @categories.each_with_index do |(category, values), index| %>
   <div class="tab-pane fade<%= index == 0 ? ' show active' : '' %>" id="<%= remove_spaces(category) %>-tab-pane" role="tabpanel" aria-labelledby="<%= remove_spaces(category) %>-tab" tabindex="0">
-      <ul>
+    <div class="species-list">
       <% values.each do |species| %>
-        <!-- TODO add hover -->
-        <li>
           <div class="marklist-item">
-            <a href='/species/<%= species[0]%>'>
-              <%= species[1] %>
-            </a>
             <button class="btn btn-success btn-sm btn-marklist" onclick="addToMarklist('<%= species[0] %>')">
               +
             </button>
+            <a href='/species/<%= species[0]%>'>
+              <%= species[1] %>
+            </a>
           </div>
-        </li>
       <% end %>
-      </ul>
+      </div>
     </div>
   <% end %>
 </div>

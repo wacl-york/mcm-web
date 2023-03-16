@@ -21,10 +21,7 @@ function refreshMarklist() {
     if (x == '') return;
     var div = document.createElement("div");
     div.setAttribute("class", "marklist-item");
-
-    var li = document.createElement("li");
-    li.setAttribute("id", "ml-" + x);
-    li.textContent = x;
+    div.setAttribute("id", "ml-" + x);
 
     var remove_button = document.createElement("button");
     remove_button.setAttribute("type", "button");
@@ -32,8 +29,11 @@ function refreshMarklist() {
     remove_button.setAttribute("onclick", "removeFromMarklist('"+x+"')");
     remove_button.textContent = '-';
 
-    li.appendChild(remove_button);
-    div.appendChild(li);
+    var species_label = document.createElement("span");
+    species_label.textContent = x;
+
+    div.appendChild(remove_button);
+    div.appendChild(species_label);
     ml.appendChild(div);
   });
 }
