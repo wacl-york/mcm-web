@@ -9,21 +9,30 @@
   <div class="card-header">
     Species information
   </div>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">Smiles: <%= @species[:Smiles] %></li>
-    <li class="list-group-item">InChI: <%= @species[:Inchi] %></li>
-    <li class="list-group-item">Mass: <%= @species[:Mass] %></li>
-    <li class="list-group-item">Synonyms: <%= @synonyms%></li>
-    <li class="list-group-item">
-      External links:
-      <a href="http://www.google.com/search?q=<%= @species[:Inchi] %>">Google</a>,
-      <a href="http://www.chemspider.com/Search.aspx?q=<%= @species[:Inchi] %>">ChemSpider</a>,
-      <a href='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pccompound&term="<%= @species[:Inchi] %>"[inchi]'>PubChem</a>,
-      <a href="http://webbook.nist.gov/cgi/cbook.cgi?Name=<%= @species[:Inchi] %>">NIST WebBook</a>,
-      <a href="https://iupac.aeris-data.fr/search/">IUPAC</a>,
-      <a href="http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=<%= @species[:Inchi] %>">ChEBI</a>
-    </li>
-  </ul>
+  <div class="row g-0">
+    <div class="col-md-8">
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Smiles: <%= @species[:Smiles] %></li>
+          <li class="list-group-item">InChI: <%= @species[:Inchi] %></li>
+          <li class="list-group-item">Mass: <%= @species[:Mass] %></li>
+          <li class="list-group-item">Synonyms: <%= @synonyms%></li>
+          <li class="list-group-item">
+            External links:
+            <a href="http://www.google.com/search?q=<%= @species[:Inchi] %>">Google</a>,
+            <a href="http://www.chemspider.com/Search.aspx?q=<%= @species[:Inchi] %>">ChemSpider</a>,
+            <a href='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pccompound&term="<%= @species[:Inchi] %>"[inchi]'>PubChem</a>,
+            <a href="http://webbook.nist.gov/cgi/cbook.cgi?Name=<%= @species[:Inchi] %>">NIST WebBook</a>,
+            <a href="https://iupac.aeris-data.fr/search/">IUPAC</a>,
+            <a href="http://www.ebi.ac.uk/chebi/advancedSearchFT.do?searchString=<%= @species[:Inchi] %>">ChEBI</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-4 species-image-large-container">
+      <img src="/species_images/<%= @species[:Name] %>.png" class="img-fluid rounded-start species-image-large" alt="A drawing of the structure of <%= @species[:Name]%>"/>
+    </div>
+  </div>
 
 </div>
 
