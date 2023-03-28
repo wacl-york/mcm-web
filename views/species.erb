@@ -43,7 +43,26 @@
   <%== display_reaction(reaction, @species[:Name]) %>
 <% end %>
 
+
 <h3 class="rxn-title">Precursor Reactions</h3>
-<% @precursor_rxns.each do |reaction| %>
-  <%== display_reaction(reaction, @species[:Name]) %>
+<% for i in 1..@precursor_num_pages do %>
+  <div id="page-<%= i %>" <%= i > 1 ? 'hidden' : ''%>>
+    <% @precursor_rxns[((i-1)*@precursor_page_size)..(i*@precursor_page_size-1)].each do |reaction| %>
+      <%== display_reaction(reaction, @species[:Name]) %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @precursor_num_pages > 1 %>
+  <nav aria-label="...">
+    <ul class="pagination justify-content-center">
+      <% for i in 1..@precursor_num_pages do %>
+        <li class="page-item <%= i == 1 ? ' active' : '' %>" id="list-button-<%= i %>">
+          <button class="page-link" type="button" onclick="showPage(<%= i %>, <%= @precursor_num_pages %>)">
+            <%= i %>
+          </button>
+        </li>
+    <% end %>
+    </ul>
+  </nav>
 <% end %>
