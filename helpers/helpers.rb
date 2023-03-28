@@ -68,7 +68,10 @@ helpers do
     parsed = parsed.gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
 
     # Replace TEMP with T for brevity
-    parsed = parsed.gsub(/TEMP/, 'T')
+    parsed = parsed.gsub(/TEMP/, '{T}')
+
+    # Escape compound names so numbers aren't subscripted
+    parsed = parsed.gsub(/([A-Z]+[1-9]+)/, '{\1}')
 
     # Use mhchem's ce environment for getting reaction arrow that stretches with rate
     "<div class='rxn-rate'>\\(\\ce{->[#{parsed}]}\\)</div>"
