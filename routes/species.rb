@@ -6,8 +6,7 @@ get '/species/:species' do
   @sink_rxns = get_reactions(params[:species], column: :Reactants)
   @precursor_rxns = get_reactions(params[:species], column: :Products)
   @precursor_page_size = 5
-  @max_pages_in_navbar = 5
-  @precursor_num_pages = (@precursor_rxns.size / @precursor_page_size.to_f).ceil()
+  @precursor_num_pages = (@precursor_rxns.size / @precursor_page_size.to_f).ceil
   @species = DB[:Species]
              .where(Name: params[:species])
              .select(:Name, :Smiles, :Inchi, :Mass)
