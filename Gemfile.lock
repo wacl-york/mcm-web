@@ -36,7 +36,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     aws-eventstream (1.2.0)
-    aws-partitions (1.745.0)
+    aws-partitions (1.737.0)
     aws-sdk-cloudwatchlogs (1.62.0)
       aws-sdk-core (~> 3, >= 3.165.0)
       aws-sigv4 (~> 1.1)
@@ -51,7 +51,7 @@ GEM
     aws-sdk-dynamodb (1.83.0)
       aws-sdk-core (~> 3, >= 3.165.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-rds (1.175.0)
+    aws-sdk-rds (1.174.0)
       aws-sdk-core (~> 3, >= 3.165.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-secretsmanager (1.73.0)
@@ -125,7 +125,7 @@ GEM
     parser (3.2.2.0)
       ast (~> 2.4.1)
     public_suffix (5.0.1)
-    puma (6.2.1)
+    puma (6.2.0)
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.6.4)
@@ -255,4 +255,4 @@ RUBY VERSION
    ruby 2.7.6p219
 
 BUNDLED WITH
-   2.3.26
+   2.4.9
