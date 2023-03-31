@@ -28,6 +28,12 @@ helpers do
       .select_map(:ParentToken)
   end
 
+  def get_children_from_parent(parents, _db)
+    DB[:TokenRelationships]
+      .join(parents, Child: :ParentToken)
+      .select(Sequel.lit('TopParent, ChildToken as Child'))
+  end
+
   def get_token_definition(token, _db)
     DB[:Tokens]
       .where(Token: token)
@@ -53,33 +59,43 @@ helpers do
       </div>"
   end
 
-  def parse_rate(rate)
+  # rubocop:disable Metrics/MethodLength
+  def parse_rate(rate, display_arrow: true)
     # Parses a raw rate string into a MathJAX formatted label with matching length arrow
     # Converts the FACSIMILIE rate equation into human readable math in 3 ways:
     # 1) converts x / y fractions into \frac{x}{y}
     # 2) replaces EXP with the \exp function
     # 3) replaces aD-b with a \times 10^{-b}
-    # NB: Should really hardcode this into DB rather than doing on fly
+    # NB: Should this be done in SQL as a View?
+    return if rate.nil?
 
-    # Replace @ with exponent
+    # Replace @ with exponent when it's just a number to the power
     parsed = rate.gsub(/@([0-9.+-]+)/, '^{\\1}')
-
-    # Convert EXP() and fractions
+    # Use Latex exp markup
     parsed = parsed.gsub(/EXP/, '\\exp')
-    parsed = parsed.gsub(%r{([a-zA-Z0-9.+-{}]+)/([a-zA-Z0-9.+-{}]+)}, '{\\frac{\1}{\2}}')
-
+    # Replace a / b with marked up fractions
+    parsed = replace_capture_group_multiple(parsed, %r{([a-zA-Z0-9.+-{}]+)/([a-zA-Z0-9.+-{}]+)}, '{\\frac{\1}{\2}}')
+    # Replace LOG10 with log_10
+    parsed = replace_capture_group_multiple(parsed, /LOG10\((.+)\)/, '\\log_{10}(\\1)')
     # Convert D to scientific notation
-    parsed = parsed.gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
-
+    parsed = replace_capture_group_multiple(parsed, /([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
+    # The only use of ** to indicate exponent is for squared
+    parsed = replace_capture_group_multiple(parsed, /\*\*2/, '^{2}')
+    # Replace @ with exponent when there's an expression in parentheses
+    parsed = replace_capture_group_multiple(parsed, /@\((.+)\)/, '^{\\1}')
     # Replace TEMP with T for brevity
     parsed = parsed.gsub(/TEMP/, '{T}')
 
-    # Escape compound names so numbers aren't subscripted
-    parsed = parsed.gsub(/([A-Z]+[1-9]+)/, '{\1}')
+    # Escape compound or rate names so numbers aren't subscripted
+    # Compound or rate names are defined as having at least 1 capital letter and
+    # at least 1 number in either order (is this realistic? would ever have 3H...?)
+    parsed = parsed.gsub(/([A-Z]+[0-9]+[A-Z0-9]*|[0-9]+[A-Z]+[A-Z0-9]*)/, '{\1}')
 
     # Use mhchem's ce environment for getting reaction arrow that stretches with rate
-    "<div class='rxn-rate'>\\(\\ce{->[#{parsed}]}\\)</div>"
+    inner = display_arrow ? "->[#{parsed}]" : parsed
+    "<div class='rxn-rate'>\\(\\ce{#{inner}}\\)</div>"
   end
+  # rubocop:enable Metrics/MethodLength
 
   def parse_multiple_species(values, species_page)
     # Parses an array of species into a '+' delimited string with hyperreferences
@@ -173,5 +189,15 @@ helpers do
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
+
+  def replace_capture_group_multiple(input, pattern, replacement)
+    # If the same capture group occurs multiple times in the string, gsub will only
+    # replace the first match. I'm sure there's a way of doing this in regex but
+    # I'm hacking it with a loop.
+    # i.e. if string is "LOG(5) + LOG(3)", then string.gsub(/LOG\((.+)\)/, 'log_{\1}')
+    # Will return log_{5} + LOG(3)
+    input = input.gsub(pattern, replacement) while input.match? pattern
+    input
+  end
 end
 # rubocop:enable Metrics/BlockLength

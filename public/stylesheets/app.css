@@ -1,3 +1,15 @@
+.rate-table {
+    margin-top: 2rem;
+}
+
+.rate-table td {
+    text-align: center;
+}
+
+.rate-table th {
+    text-align: center;
+}
+
 .rxn-container {
     display: flex;
     flex-flow: row nowrap;
