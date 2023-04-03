@@ -49,7 +49,7 @@ helpers do
         <div class='col-sm-11'>
           <div class='rxn-row'>
             #{parse_multiple_species(rxn[:Reactants], species_page)}
-            #{parse_rate(rxn[:Rate])}
+            <a#{rxn[:RateURL].nil? ? '' : " href=\'#{rxn[:RateURL]}\'"}>#{parse_rate(rxn[:Rate])}</a>
             #{parse_multiple_species(rxn[:Products], species_page)}
           </div>
         </div>
@@ -174,13 +174,20 @@ helpers do
                .left_join(:Products, [:ReactionID])
                .left_join(:Species, Name: :Species)
                .to_hash_groups(:ReactionID)
-    rxns = DB[:Reactions].where(ReactionID: reaction_ids).to_hash(:ReactionID)
+    rxns = DB[:Reactions]
+           .from_self(alias: :rxn)
+           .where(ReactionID: reaction_ids)
+           .left_join(DB[:RatesWeb].from_self(alias: :rw), Rate: :Rate)
+           .left_join(DB[:RateTypesWeb].from_self(alias: :rtw), RateTypeWeb: :RateTypeWeb)
+           .select(Sequel.lit('rxn.ReactionId, rxn.ReactionCategory, rxn.Rate, WebRoute'))
+           .to_hash(:ReactionID)
 
     # And parse into the desired output format
     reaction_ids.map do |id|
       {
         ReactionID: id,
         Rate: rxns[id][:Rate],
+        RateURL: rxns[id][:WebRoute],
         Category: rxns[id][:ReactionCategory],
         Products: products[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } },
         Reactants: reactants[id].map { |x| { Name: x[:Species], Category: x[:SpeciesCategory] } }
