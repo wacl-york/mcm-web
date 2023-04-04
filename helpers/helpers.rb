@@ -49,7 +49,7 @@ helpers do
         <div class='col-sm-11'>
           <div class='rxn-row'>
             #{parse_multiple_species(rxn[:Reactants], species_page)}
-            <a#{rxn[:RateURL].nil? ? '' : " href=\'#{rxn[:RateURL]}\'"}>#{parse_rate(rxn[:Rate])}</a>
+            <a#{rxn[:RateURL].nil? ? '' : " href='#{rxn[:RateURL]}'"}>#{parse_rate(rxn[:Rate])}</a>
             #{parse_multiple_species(rxn[:Products], species_page)}
           </div>
         </div>
