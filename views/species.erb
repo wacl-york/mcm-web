@@ -54,13 +54,13 @@
 <% end %>
 
 
-<% if @precursor_num_pages > 1 %>
-  <nav aria-label="...">
-    <ul class="pagination justify-content-center" id="precursor-pagination-nav">
-    </ul>
-  </nav>
-<% end %>
+<nav aria-label="...">
+  <ul class="pagination justify-content-center" id="precursor-pagination-nav">
+  </ul>
+</nav>
 
+<% if @precursor_num_pages > 1 %>
 <script>
   populateNav(1, <%= @precursor_num_pages %>, 2);
 </script>
+<% end %>
