@@ -10,8 +10,9 @@ function addToMarklist(x) {
   updateMarklistIconCount();
 
   // If marklist was previously empty, display it
-  if (getMarklistLengthFromCookie() == 1) {
+  if (getMarklistLengthFromCookie() > 0 && !marklistIsVisible()) {
     showMarklist();
+    enableExportButton();
   }
 }
 
@@ -84,8 +85,7 @@ function clearMarklist() {
   setCookie('marklist', '');
   refreshMarklist();
   updateMarklistIconCount();
-  // Hide marklist
-  hideMarklist();
+  disableExportButton();
 }
 
 function removeFromMarklist(x) {
@@ -98,20 +98,29 @@ function removeFromMarklist(x) {
 
   refreshMarklist();
   updateMarklistIconCount();
-  // If marklist was previously displayed, hide it
   if (getMarklistLengthFromCookie() == 0) {
-      hideMarklist();
+      disableExportButton();
   }
 }
 
-function showMarklist() {
-    const ml = document.getElementById('marklistCanvas');
-    ml.classList.add("show");
+function enableExportButton() {
+    const btn = document.getElementById('exportMarklistButton');
+    btn.classList.remove("disabled");
 }
 
-function hideMarklist() {
+function disableExportButton() {
+    const btn = document.getElementById('exportMarklistButton');
+    btn.classList.add("disabled");
+}
+
+function showMarklist() {
+    const ml = new bootstrap.Offcanvas('#marklistCanvas')
+    ml.show();
+}
+
+function marklistIsVisible() {
     const ml = document.getElementById('marklistCanvas');
-    ml.classList.remove("show");
+    ml.classList.contains("show");
 }
 
 function populateExportMarklist() {

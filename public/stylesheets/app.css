@@ -83,9 +83,16 @@
     margin-bottom: 1rem;
 }
 
-.marklist-clear {
+.marklist-btn-container {
     display: flex;
+    flex-flow: column nowrap;
+}
+
+.marklist-btn {
+    display: flex;
+    width: 100%;
     align-self: flex-start;
+    margin-bottom: 0.5rem;
 }
 
 #export-marklist {

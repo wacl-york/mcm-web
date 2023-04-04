@@ -1,9 +1,14 @@
 <div class='marklist-container'>
   <div id='marklist' class="marklist-list">
   </div>
-  <button class="btn btn-danger marklist-clear" onclick="clearMarklist()">
-    Clear mark list
-  </button>
+  <div class='marklist-btn-container'>
+    <button type="button" class="btn btn-danger marklist-btn" onclick="clearMarklist()">
+      Clear mark list
+    </button>
+    <a role="button" class="btn btn-outline-primary marklist-btn" id="exportMarklistButton" href="/export">
+      Export
+    </a>
+  </div>
 </div>
 
 <script>
