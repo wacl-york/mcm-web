@@ -1,3 +1,5 @@
+window.onload = updateMarklistIconCount;
+
 function addToMarklist(x) {
   var curr_marklist = getCookie('marklist');
   if (curr_marklist.search(x+'($|,)') == -1) {
@@ -5,6 +7,21 @@ function addToMarklist(x) {
     setCookie('marklist', curr_marklist + sep + x);
     refreshMarklist();
   }
+  updateMarklistIconCount();
+}
+
+function getMarklistLengthFromCookie() {
+  var curr_marklist = getCookie('marklist');
+  var n_items = 0;
+  if (curr_marklist != '') {
+      n_items = curr_marklist.split(",").length
+  }
+  return n_items;
+}
+
+function updateMarklistIconCount() {
+  var icon = document.getElementById('marklist-count');
+  icon.textContent = getMarklistLengthFromCookie();
 }
 
 function refreshMarklist() {
@@ -61,6 +78,7 @@ function getCookie(cname) {
 function clearMarklist() {
   setCookie('marklist', '');
   refreshMarklist();
+  updateMarklistIconCount();
 }
 
 function removeFromMarklist(x) {
@@ -72,6 +90,7 @@ function removeFromMarklist(x) {
   setCookie('marklist', curr_cookie);
 
   refreshMarklist();
+  updateMarklistIconCount();
 }
 
 function populateExportMarklist() {
