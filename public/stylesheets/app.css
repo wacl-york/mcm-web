@@ -52,6 +52,10 @@
     width: 500px;
 }
 
+#marklistCanvas {
+    width: 200px;
+}
+
 .marklist-row {
     display: flex;
     flex-flow: row nowrap;

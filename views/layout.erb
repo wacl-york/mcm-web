@@ -57,16 +57,18 @@
       <%== erb :navbar %>
     </header>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-8" role="main">
+    <main role="main" class="container">
           <%== yield %>
-        </div>
-        <div class="col-4">
-          <%== erb :marklist %>
-        </div>
-      </div>
-    </div>
+          <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="marklistCanvas" aria-labelledby="marklistCanvasLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="marklistCanvasLabel">Marklist</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <%== erb :marklist %>
+            </div>
+          </div>
+    </main>
 
   </body>
 

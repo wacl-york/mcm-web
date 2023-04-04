@@ -8,6 +8,11 @@ function addToMarklist(x) {
     refreshMarklist();
   }
   updateMarklistIconCount();
+
+  // If marklist was previously empty, display it
+  if (getMarklistLengthFromCookie() == 1) {
+    showMarklist();
+  }
 }
 
 function getMarklistLengthFromCookie() {
@@ -79,6 +84,8 @@ function clearMarklist() {
   setCookie('marklist', '');
   refreshMarklist();
   updateMarklistIconCount();
+  // Hide marklist
+  hideMarklist();
 }
 
 function removeFromMarklist(x) {
@@ -91,6 +98,20 @@ function removeFromMarklist(x) {
 
   refreshMarklist();
   updateMarklistIconCount();
+  // If marklist was previously displayed, hide it
+  if (getMarklistLengthFromCookie() == 0) {
+      hideMarklist();
+  }
+}
+
+function showMarklist() {
+    const ml = document.getElementById('marklistCanvas');
+    ml.classList.add("show");
+}
+
+function hideMarklist() {
+    const ml = document.getElementById('marklistCanvas');
+    ml.classList.remove("show");
 }
 
 function populateExportMarklist() {
