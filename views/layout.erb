@@ -62,16 +62,9 @@
           <%== yield %>
     </main>
 
-    <div id="mySidebar" class="sidebar" aria-labelledby="marklistCanvasLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="marklistCanvasLabel">Marklist</h5>
-        <a href="javascript:void(0)" class="closebtn" data-bs-dimiss="sidebar" aria-label="Close" onclick="closeNav()">&times;</a>
-      </div>
-      <div class="offcanvas-body">
-        <%== erb :marklist %>
-      </div>
+    <div id="marklistSidebar" class="sidebar" aria-labelledby="marklistCanvasLabel">
+      <%== erb :marklist %>
     </div>
-
 
   </body>
 

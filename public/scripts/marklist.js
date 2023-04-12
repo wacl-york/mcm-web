@@ -1,5 +1,9 @@
 window.onload = updateMarklistIconCount;
 
+function marklistIsVisible() {
+    return document.getElementById('marklistSidebar').offsetWidth == 250;
+}
+
 function addToMarklist(x) {
   var curr_marklist = getCookie('marklist');
   if (curr_marklist.search(x+'($|,)') == -1) {
@@ -113,19 +117,9 @@ function disableExportButton() {
     btn.classList.add("disabled");
 }
 
-function showMarklist() {
-    const ml = new bootstrap.Offcanvas('#marklistCanvas')
-    ml.show();
-}
-
-function marklistIsVisible() {
-    const ml = document.getElementById('marklistCanvas');
-    ml.classList.contains("show");
-}
-
 function populateExportMarklist() {
   // Remove all values from marklist and redraw
-  var ml = document.getElementById('export-marklist');
+  var ml = document.getElementById('exportMarklist');
   ml.replaceChildren();
   var species = getCookie('marklist').split(',');
   species.forEach(function(x) {
@@ -146,16 +140,25 @@ function populateExportMarklist() {
     ml.appendChild(label);
   });
 }
+
 /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
-function openNav() {
-  document.getElementById("mySidebar").style.width = "250px";
+function showMarklist() {
+  document.getElementById("marklistSidebar").style.width = "250px";
   document.getElementById("main").style.marginRight = "250px";
   document.getElementById("topNav").children[0].style.marginRight = "250px";
 }
 
 /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
-function closeNav() {
-  document.getElementById("mySidebar").style.width = "0";
+function hideMarklist() {
+  document.getElementById("marklistSidebar").style.width = "0";
   document.getElementById("main").style.marginRight = "auto";
   document.getElementById("topNav").children[0].style.marginRight = "0";
 } 
+
+function toggleMarklist() {
+  if (marklistIsVisible()) {
+      hideMarklist();
+  } else {
+      showMarklist();
+  }
+}

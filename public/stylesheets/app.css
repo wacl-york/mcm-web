@@ -52,16 +52,6 @@
     width: 500px;
 }
 
-#marklistCanvas {
-    width: 200px;
-}
-
-.marklist-row {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-}
-
 .marklist-container {
     display: flex;
     flex-flow: column nowrap;
@@ -85,17 +75,20 @@
 
 .marklist-btn-container {
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
+    justify-content: center;
 }
 
 .marklist-btn {
     display: flex;
-    width: 100%;
     align-self: flex-start;
     margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    justify-content: center;
 }
 
-#export-marklist {
+#exportMarklist {
     display: grid;
     grid-template-columns: max-content max-content;
     grid-gap: 5px;
@@ -139,19 +132,20 @@ button.btn-marklist {
   z-index: 1; /* Stay on top */
   top: 0;
   right: 0;
+  border-left: 5px groove #eee;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
-  padding-left: 20px; /* Place content 60px from the left */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+}
+
+.sidebar>div {
+  padding-left: 20px; 
+  padding-right: 20px; 
 }
 
 /* Position and style the close button (top right corner) */
 .sidebar .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
   font-size: 36px;
-  margin-left: 50px;
 }
 
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
