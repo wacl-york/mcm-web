@@ -54,6 +54,14 @@
 
   <body>
 
+    <header id="topNav">
+      <%== erb :navbar %>
+    </header>
+
+    <main role="main" class="container" id="main">
+          <%== yield %>
+    </main>
+
     <div id="mySidebar" class="sidebar" aria-labelledby="marklistCanvasLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="marklistCanvasLabel">Marklist</h5>
@@ -64,13 +72,6 @@
       </div>
     </div>
 
-    <header id="topNav">
-      <%== erb :navbar %>
-    </header>
-
-    <main role="main" class="container" id="main">
-          <%== yield %>
-    </main>
 
   </body>
 
