@@ -138,6 +138,10 @@ button.btn-marklist {
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
 }
 
+.openbtn {
+  margin-left: 0.5rem;
+}
+
 .sidebar>div {
   padding-left: 20px; 
   padding-right: 20px; 
