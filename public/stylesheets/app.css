@@ -10,17 +10,12 @@
     text-align: center;
 }
 
-.rxn-container {
-    display: flex;
-    flex-flow: row nowrap;
-    margin-bottom: 3em;
-}
-
-.rxn-row {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
+.rxn-grid {
+  display: grid;
+  grid-template-columns: 4fr min-content 2fr 2fr;
+  grid-gap: 3em 0.5em;
+  align-items: center;
+  margin-bottom: 3em;
 }
 
 .rxn-title {
@@ -35,11 +30,25 @@
 .rxn-rate {
     margin-left: 0.5em;
     margin-right: 0.5em;
+    justify-self: center;
+}
+
+.rxn-reactants {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-self: end;
+}
+
+.rxn-products {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-self: start;
 }
 
 .rxn-category {
-    display: flex;
-    justify-content: center;
+    justify-self: end;
 }
 
 .rxn-species-image {

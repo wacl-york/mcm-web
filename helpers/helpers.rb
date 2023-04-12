@@ -45,18 +45,14 @@ helpers do
   end
 
   def display_reaction(rxn, species_page)
-    "<div class='rxn-container'>
-        <div class='col-sm-11'>
-          <div class='rxn-row'>
-            #{parse_multiple_species(rxn[:Reactants], species_page)}
-            <a#{rxn[:RateURL].nil? ? '' : " href='#{rxn[:RateURL]}'"}>#{parse_rate(rxn[:Rate])}</a>
-            #{parse_multiple_species(rxn[:Products], species_page)}
-          </div>
-        </div>
-        <div class='rxn-category col-sm-1'>
-          <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
-        </div>
-      </div>"
+    "
+    <div class='rxn-reactants'>#{parse_multiple_species(rxn[:Reactants], species_page)}</div>
+    <div class='rxn-rate'><a#{rxn[:RateURL].nil? ? '' : " href='#{rxn[:RateURL]}'"}>#{parse_rate(rxn[:Rate])}</a></div>
+    <div class='rxn-products'>#{parse_multiple_species(rxn[:Products], species_page)}</div>
+    <div class='rxn-category'>
+      <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
+    </div>
+    "
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -93,7 +89,7 @@ helpers do
 
     # Use mhchem's ce environment for getting reaction arrow that stretches with rate
     inner = display_arrow ? "->[#{parsed}]" : parsed
-    "<div class='rxn-rate'>\\(\\ce{#{inner}}\\)</div>"
+    "\\(\\ce{#{inner}}\\)"
   end
   # rubocop:enable Metrics/MethodLength
 

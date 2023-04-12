@@ -34,14 +34,16 @@
 </div>
 
 <h3 class="rxn-title">Sink Reactions</h3>
+<div class="rxn-grid">
 <% @sink_rxns.each do |reaction| %>
   <%== display_reaction(reaction, @species[:Name]) %>
 <% end %>
+</div>
 
 
 <h3 class="rxn-title">Precursor Reactions</h3>
 <% for i in 1..@precursor_num_pages do %>
-  <div id="page-<%= i %>" <%= i > 1 ? 'hidden' : ''%>>
+  <div id="page-<%= i %>" <%= i > 1 ? 'hidden' : ''%> class="rxn-grid">
     <% @precursor_rxns[((i-1)*@precursor_page_size)..(i*@precursor_page_size-1)].each do |reaction| %>
       <%== display_reaction(reaction, @species[:Name]) %>
     <% end %>
