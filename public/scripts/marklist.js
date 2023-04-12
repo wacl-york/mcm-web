@@ -1,3 +1,9 @@
+window.onload = updateMarklistIconCount;
+
+function marklistIsVisible() {
+    return document.getElementById('marklistSidebar').offsetWidth == 250;
+}
+
 function addToMarklist(x) {
   var curr_marklist = getCookie('marklist');
   if (curr_marklist.search(x+'($|,)') == -1) {
@@ -5,6 +11,27 @@ function addToMarklist(x) {
     setCookie('marklist', curr_marklist + sep + x);
     refreshMarklist();
   }
+  updateMarklistIconCount();
+
+  // If marklist was previously empty, display it
+  if (getMarklistLengthFromCookie() > 0 && !marklistIsVisible()) {
+    showMarklist();
+    enableExportButton();
+  }
+}
+
+function getMarklistLengthFromCookie() {
+  var curr_marklist = getCookie('marklist');
+  var n_items = 0;
+  if (curr_marklist != '') {
+      n_items = curr_marklist.split(",").length
+  }
+  return n_items;
+}
+
+function updateMarklistIconCount() {
+  var icon = document.getElementById('marklist-count');
+  icon.textContent = getMarklistLengthFromCookie();
 }
 
 function refreshMarklist() {
@@ -61,6 +88,8 @@ function getCookie(cname) {
 function clearMarklist() {
   setCookie('marklist', '');
   refreshMarklist();
+  updateMarklistIconCount();
+  disableExportButton();
 }
 
 function removeFromMarklist(x) {
@@ -72,11 +101,25 @@ function removeFromMarklist(x) {
   setCookie('marklist', curr_cookie);
 
   refreshMarklist();
+  updateMarklistIconCount();
+  if (getMarklistLengthFromCookie() == 0) {
+      disableExportButton();
+  }
+}
+
+function enableExportButton() {
+    const btn = document.getElementById('exportMarklistButton');
+    btn.classList.remove("disabled");
+}
+
+function disableExportButton() {
+    const btn = document.getElementById('exportMarklistButton');
+    btn.classList.add("disabled");
 }
 
 function populateExportMarklist() {
   // Remove all values from marklist and redraw
-  var ml = document.getElementById('export-marklist');
+  var ml = document.getElementById('exportMarklist');
   ml.replaceChildren();
   var species = getCookie('marklist').split(',');
   species.forEach(function(x) {
@@ -96,4 +139,24 @@ function populateExportMarklist() {
     ml.appendChild(input);
     ml.appendChild(label);
   });
+}
+
+/* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+function showMarklist() {
+  document.getElementById("marklistSidebar").style.width = "250px";
+  document.getElementById("main").style.marginRight = "250px";
+}
+
+/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+function hideMarklist() {
+  document.getElementById("marklistSidebar").style.width = "0";
+  document.getElementById("main").style.marginRight = "auto";
+} 
+
+function toggleMarklist() {
+  if (marklistIsVisible()) {
+      hideMarklist();
+  } else {
+      showMarklist();
+  }
 }

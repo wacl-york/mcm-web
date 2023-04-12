@@ -53,19 +53,17 @@
   </head>
 
   <body>
-    <header>
+
+    <header id="topNav">
       <%== erb :navbar %>
     </header>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-8" role="main">
+    <main role="main" class="container" id="main">
           <%== yield %>
-        </div>
-        <div class="col-4">
-          <%== erb :marklist %>
-        </div>
-      </div>
+    </main>
+
+    <div id="marklistSidebar" class="sidebar" aria-labelledby="marklistCanvasLabel">
+      <%== erb :marklist %>
     </div>
 
   </body>

@@ -52,12 +52,6 @@
     width: 500px;
 }
 
-.marklist-row {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-}
-
 .marklist-container {
     display: flex;
     flex-flow: column nowrap;
@@ -79,12 +73,22 @@
     margin-bottom: 1rem;
 }
 
-.marklist-clear {
+.marklist-btn-container {
     display: flex;
-    align-self: flex-start;
+    flex-flow: row nowrap;
+    justify-content: center;
 }
 
-#export-marklist {
+.marklist-btn {
+    display: flex;
+    align-self: flex-start;
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    justify-content: center;
+}
+
+#exportMarklist {
     display: grid;
     grid-template-columns: max-content max-content;
     grid-gap: 5px;
@@ -115,47 +119,51 @@ button.btn-marklist {
     width: 100%;
 }
 
-.mytooltip {
-display: inline;
-position: relative;
-z-index: 999
-}
-.mytooltip .tooltip-item {
-display: inline-block;
-}
-.mytooltip .tooltip-content {
-position: absolute;
-z-index: 9999;
-bottom: 100%;
-margin: 0 0 20px -40px;
-left: 50%;
-opacity: 0;
-pointer-events: none
-}
-.mytooltip .tooltip-content::after {
-content: '';
-top: 100%;
-left: 50%;
-position: absolute;
-}
-.mytooltip .tooltip-content img {
-position: relative;
-display: block;
-}
-.mytooltip .tooltip-item::after {
-position: absolute;
-bottom: 100%;
-left: 50%;
-}
-.mytooltip:hover .tooltip-content {
-opacity: 1;
-}
-.tooltip-image {
-  border: 1px solid #000000;
-  border-radius: 1px;
-}
-
-#browse-tab-content ul {
+#browseTabContent ul {
     margin-left: 1rem;
     margin-top: 1rem;
+}
+
+ /* The sidebar menu */
+.sidebar {
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 50px;
+  right: 0;
+  border-left: 5px groove #eee;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 15px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+}
+
+.openbtn {
+  margin-left: 0.5rem;
+}
+
+.sidebar>div {
+  padding-left: 20px; 
+  padding-right: 20px; 
+}
+
+/* Position and style the close button (top right corner) */
+.sidebar .closebtn {
+  font-size: 36px;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+  transition: margin-right .5s; /* If you want a transition effect */
+  padding: 20px;
+}
+
+#topNav.nav {
+  transition: margin-right .5s; /* If you want a transition effect */
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
 }
