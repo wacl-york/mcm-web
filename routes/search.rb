@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-get '/search' do
-  erb :search
-end
-
 # rubocop:disable Metrics/BlockLength
 get '/search-synonym' do
   q = params[:q]
