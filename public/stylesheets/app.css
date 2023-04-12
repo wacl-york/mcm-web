@@ -126,47 +126,7 @@ button.btn-marklist {
     width: 100%;
 }
 
-.mytooltip {
-display: inline;
-position: relative;
-z-index: 999
-}
-.mytooltip .tooltip-item {
-display: inline-block;
-}
-.mytooltip .tooltip-content {
-position: absolute;
-z-index: 9999;
-bottom: 100%;
-margin: 0 0 20px -40px;
-left: 50%;
-opacity: 0;
-pointer-events: none
-}
-.mytooltip .tooltip-content::after {
-content: '';
-top: 100%;
-left: 50%;
-position: absolute;
-}
-.mytooltip .tooltip-content img {
-position: relative;
-display: block;
-}
-.mytooltip .tooltip-item::after {
-position: absolute;
-bottom: 100%;
-left: 50%;
-}
-.mytooltip:hover .tooltip-content {
-opacity: 1;
-}
-.tooltip-image {
-  border: 1px solid #000000;
-  border-radius: 1px;
-}
-
-#browse-tab-content ul {
+#browseTabContent ul {
     margin-left: 1rem;
     margin-top: 1rem;
 }
@@ -181,6 +141,7 @@ opacity: 1;
   left: 0;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
+  padding-left: 20px; /* Place content 60px from the left */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
 }
 
