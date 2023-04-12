@@ -1,6 +1,9 @@
-function createNavEntry(pageNumber, label, maxPage) {
+function createNavEntry(pageNumber, label, currentPage, maxPage) {
     let li = document.createElement('li');
     li.setAttribute('class', 'page-item');
+    if (pageNumber == currentPage) {
+        li.classList.add('active');
+    }
     li.setAttribute('id', 'list-button-' + pageNumber);
     let button = document.createElement("button");
     button.setAttribute("class", "page-link");
@@ -39,16 +42,16 @@ function populateNav(currentPage, maxPage, delta) {
     container.replaceChildren();
 
     if (startPage > 1)
-        container.appendChild(createNavEntry(1, '1', maxPage));
+        container.appendChild(createNavEntry(1, '1', currentPage, maxPage));
     if (startPage > 2)
-        container.appendChild(createNavEntry(startPage-1, '...', maxPage));
+        container.appendChild(createNavEntry(startPage-1, '...', currentPage, maxPage));
     for (let i=startPage; i <= endPage; i++) {
-        container.appendChild(createNavEntry(i, i, maxPage));
+        container.appendChild(createNavEntry(i, i, currentPage, maxPage));
     }
     if (endPage < maxPage - 1)
-        container.appendChild(createNavEntry(endPage+1, '...', maxPage));
+        container.appendChild(createNavEntry(endPage+1, '...', currentPage, maxPage));
     if (endPage < maxPage)
-        container.appendChild(createNavEntry(maxPage, maxPage, maxPage));
+        container.appendChild(createNavEntry(maxPage, maxPage, currentPage, maxPage));
 }
 
 function showPage(i, N) {
