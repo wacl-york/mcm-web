@@ -4,20 +4,28 @@ function marklistIsVisible() {
     return document.getElementById('marklistSidebar').offsetWidth == 250;
 }
 
-function addToMarklist(x) {
+function addSpeciesToCookie(x) {
   var curr_marklist = getCookie('marklist');
   if (curr_marklist.search(x+'($|,)') == -1) {
     let sep = curr_marklist == '' ? '' : ',';
     setCookie('marklist', curr_marklist + sep + x);
-    refreshMarklist();
   }
-  updateMarklistIconCount();
+}
 
-  // If marklist was previously empty, display it
-  if (getMarklistLengthFromCookie() > 0 && !marklistIsVisible()) {
-    showMarklist();
-    enableExportButton();
-  }
+function addToMarklist(x) {
+  addSpeciesToCookie(x);
+  refreshMarklist();
+}
+
+function addAllVOCsToMarklist() {
+  // Get all VOCs from their links on this page. The MCM name is only obtainable from their URL
+  // As the displayed text is their human readable name
+  let eles = document.querySelectorAll("#browseTabContent div div div a");
+  eles.forEach(function(x) {
+      let voc = x.getAttribute("href").replace("/species/", "")
+      addSpeciesToCookie(voc);
+  });
+  refreshMarklist();
 }
 
 function getMarklistLengthFromCookie() {
@@ -63,6 +71,17 @@ function refreshMarklist() {
     div.appendChild(species_label);
     ml.appendChild(div);
   });
+
+  updateMarklistIconCount();
+
+  if (getMarklistLengthFromCookie() == 0) {
+      disableExportButton();
+  }
+
+  if (getMarklistLengthFromCookie() > 0 && !marklistIsVisible()) {
+    showMarklist();
+    enableExportButton();
+  }
 }
 
 function setCookie(cname, cvalue) {
@@ -88,8 +107,6 @@ function getCookie(cname) {
 function clearMarklist() {
   setCookie('marklist', '');
   refreshMarklist();
-  updateMarklistIconCount();
-  disableExportButton();
 }
 
 function removeFromMarklist(x) {
@@ -101,10 +118,6 @@ function removeFromMarklist(x) {
   setCookie('marklist', curr_cookie);
 
   refreshMarklist();
-  updateMarklistIconCount();
-  if (getMarklistLengthFromCookie() == 0) {
-      disableExportButton();
-  }
 }
 
 function enableExportButton() {

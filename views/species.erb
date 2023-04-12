@@ -2,10 +2,8 @@
 <button class="btn btn-success" onclick="addToMarklist('<%= @species[:Name] %>')">
   Add to mark list
 </button>
-<br>
-<br>
 
-<div class="card">
+<div class="card species-card">
   <div class="card-header">
     Species information
   </div>
@@ -33,10 +31,7 @@
       <img src="/species_images/<%= @species[:Name] %>.png" class="img-fluid rounded-start species-image-large" alt="A drawing of the structure of <%= @species[:Name]%>"/>
     </div>
   </div>
-
 </div>
-
-<br>
 
 <h3 class="rxn-title">Sink Reactions</h3>
 <% @sink_rxns.each do |reaction| %>
