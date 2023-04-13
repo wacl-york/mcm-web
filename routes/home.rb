@@ -2,7 +2,6 @@
 
 get '/' do
   @links = {
-    '/search' => 'Search for a species',
     '/export' => 'Export a mechanism subset'
   }
 
