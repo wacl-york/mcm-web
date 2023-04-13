@@ -1,10 +1,45 @@
-function addToMarklist(x) {
+window.onload = updateMarklistIconCount;
+
+function marklistIsVisible() {
+    return document.getElementById('marklistSidebar').offsetWidth == 250;
+}
+
+function addSpeciesToCookie(x) {
   var curr_marklist = getCookie('marklist');
   if (curr_marklist.search(x+'($|,)') == -1) {
     let sep = curr_marklist == '' ? '' : ',';
     setCookie('marklist', curr_marklist + sep + x);
-    refreshMarklist();
   }
+}
+
+function addToMarklist(x) {
+  addSpeciesToCookie(x);
+  refreshMarklist();
+}
+
+function addAllVOCsToMarklist() {
+  // Get all VOCs from their links on this page. The MCM name is only obtainable from their URL
+  // As the displayed text is their human readable name
+  let eles = document.querySelectorAll("#browseTabContent div div div a");
+  eles.forEach(function(x) {
+      let voc = x.getAttribute("href").replace("/species/", "")
+      addSpeciesToCookie(voc);
+  });
+  refreshMarklist();
+}
+
+function getMarklistLengthFromCookie() {
+  var curr_marklist = getCookie('marklist');
+  var n_items = 0;
+  if (curr_marklist != '') {
+      n_items = curr_marklist.split(",").length
+  }
+  return n_items;
+}
+
+function updateMarklistIconCount() {
+  var icon = document.getElementById('marklist-count');
+  icon.textContent = getMarklistLengthFromCookie();
 }
 
 function refreshMarklist() {
@@ -21,10 +56,7 @@ function refreshMarklist() {
     if (x == '') return;
     var div = document.createElement("div");
     div.setAttribute("class", "marklist-item");
-
-    var li = document.createElement("li");
-    li.setAttribute("id", "ml-" + x);
-    li.textContent = x;
+    div.setAttribute("id", "ml-" + x);
 
     var remove_button = document.createElement("button");
     remove_button.setAttribute("type", "button");
@@ -32,10 +64,24 @@ function refreshMarklist() {
     remove_button.setAttribute("onclick", "removeFromMarklist('"+x+"')");
     remove_button.textContent = '-';
 
-    li.appendChild(remove_button);
-    div.appendChild(li);
+    var species_label = document.createElement("span");
+    species_label.textContent = x;
+
+    div.appendChild(remove_button);
+    div.appendChild(species_label);
     ml.appendChild(div);
   });
+
+  updateMarklistIconCount();
+
+  if (getMarklistLengthFromCookie() == 0) {
+      disableExportButton();
+  }
+
+  if (getMarklistLengthFromCookie() > 0 && !marklistIsVisible()) {
+    showMarklist();
+    enableExportButton();
+  }
 }
 
 function setCookie(cname, cvalue) {
@@ -74,9 +120,19 @@ function removeFromMarklist(x) {
   refreshMarklist();
 }
 
+function enableExportButton() {
+    const btn = document.getElementById('exportMarklistButton');
+    btn.classList.remove("disabled");
+}
+
+function disableExportButton() {
+    const btn = document.getElementById('exportMarklistButton');
+    btn.classList.add("disabled");
+}
+
 function populateExportMarklist() {
   // Remove all values from marklist and redraw
-  var ml = document.getElementById('export-marklist');
+  var ml = document.getElementById('exportMarklist');
   ml.replaceChildren();
   var species = getCookie('marklist').split(',');
   species.forEach(function(x) {
@@ -96,4 +152,24 @@ function populateExportMarklist() {
     ml.appendChild(input);
     ml.appendChild(label);
   });
+}
+
+/* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+function showMarklist() {
+  document.getElementById("marklistSidebar").style.width = "250px";
+  document.getElementById("main").style.marginRight = "250px";
+}
+
+/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+function hideMarklist() {
+  document.getElementById("marklistSidebar").style.width = "0";
+  document.getElementById("main").style.marginRight = "auto";
+} 
+
+function toggleMarklist() {
+  if (marklistIsVisible()) {
+      hideMarklist();
+  } else {
+      showMarklist();
+  }
 }

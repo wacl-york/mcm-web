@@ -1,0 +1,28 @@
+<h2>Photolysis Parameters</h2>
+
+
+<div class="row justify-content-center">
+  <div class="col-8">
+    <table class="table table-striped table-hover caption-top rate-table">
+      <caption>List of the l, m, and n values for different photolysis rates in the format \( J = l \cos(X)^{m} \exp(-n \sec(X)) \), where solar zenith angle X is in radians.</caption>
+      <thead>
+        <tr>
+          <th scope="col">J</th>
+          <th scope="col">l</th>
+          <th scope="col">m</th>
+          <th scope="col">n</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        <% @params.each do |param| %>
+          <tr>
+            <td scope="row">J<<%= param[:J] %>></td>
+            <td><%== "\\( #{param[:l].gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')} \\)" %></td>
+            <td><%= param[:m] %></td>
+            <td><%= param[:n] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

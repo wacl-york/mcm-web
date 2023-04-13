@@ -1,0 +1,30 @@
+<h2>Generic rate coefficients</h2>
+
+
+<div class="row justify-content-center">
+  <div class="col-8">
+    <table class="table table-striped table-hover caption-top rate-table">
+      <caption>Simple rate coefficients</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Rate</th>
+          <th scope="col">IUPAC Reference</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        <% @rates.each do |rate| %>
+          <tr>
+            <td scope="row"><%= rate[:Token] %></td>
+            <td><%== parse_rate(rate[:Definition]) %></td>
+            <td>
+              <a href="<%= "https://iupac-aeris.ipsl.fr/test/front-office/datasheets/pdf/#{rate[:NewDatasheet]}.pdf" %> ">
+                <%= rate[:NewDatasheet] %>
+              </a>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

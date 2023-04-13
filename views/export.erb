@@ -2,20 +2,15 @@
 
 Click below to export chosen mechanism subset for the selected species.
 
-<br>
-<br>
-
-<form method="post">
+<form class="export-form" method="post">
   <div class="form-group">
-      <label for="selected">Select species mechanisms to export:</label><br>
-      <div id="export-marklist">
-      </div>
-    <br>
-    <br>
+    <label for="selected">Select species mechanisms to export:</label><br>
+    <div id="exportMarklist">
+      <!-- Will get populated -->
+    </div>
     <input type="checkbox" name="inorganic">Include inorganic reactions?<br>
     <input type="checkbox" name="generic">Include generic rate coefficients?<br>
-    <br>
-    <input type="submit" value="Download">
+    <input class="export-btn-download" type="submit" value="Download">
     <!-- TODO ADD ERROR MSG IF NO VALUES -->
     <!--<p> Add species to the marklist for export</p>-->
    

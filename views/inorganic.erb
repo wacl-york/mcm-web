@@ -1,5 +1,7 @@
 <h1>Inorganic Reactions</h1>
 <h2 class='rxn-title'><%= @cat %> reactions</h2>
-<% @rxns.each do |reaction| %>
-  <%== display_reaction(reaction, '') %>
-<% end %>
+<div class="rxn-grid">
+  <% @rxns.each do |reaction| %>
+    <%== display_reaction(reaction, '') %>
+  <% end %>
+</div>
