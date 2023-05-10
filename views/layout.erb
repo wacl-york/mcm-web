@@ -52,7 +52,7 @@
 
   </head>
 
-  <body>
+  <body onload="refreshMarklist()">
 
     <header id="topNav">
       <%== erb :navbar %>
@@ -62,7 +62,7 @@
           <%== yield %>
     </main>
 
-    <div id="marklistSidebar" class="sidebar" aria-labelledby="marklistCanvasLabel">
+    <div>
       <%== erb :marklist %>
     </div>
 

@@ -1,9 +1,3 @@
-window.onload = updateMarklistIconCount;
-
-function marklistIsVisible() {
-    return document.getElementById('marklistSidebar').offsetWidth == 250;
-}
-
 function addSpeciesToCookie(x) {
   var curr_marklist = getCookie('marklist');
   if (curr_marklist.search(x+'($|,)') == -1) {
@@ -78,8 +72,7 @@ function refreshMarklist() {
       disableExportButton();
   }
 
-  if (getMarklistLengthFromCookie() > 0 && !marklistIsVisible()) {
-    showMarklist();
+  if (getMarklistLengthFromCookie() > 0) {
     enableExportButton();
   }
 }
@@ -152,24 +145,4 @@ function populateExportMarklist() {
     ml.appendChild(input);
     ml.appendChild(label);
   });
-}
-
-/* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
-function showMarklist() {
-  document.getElementById("marklistSidebar").style.width = "250px";
-  document.getElementById("main").style.paddingRight = "250px";
-}
-
-/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
-function hideMarklist() {
-  document.getElementById("marklistSidebar").style.width = "0px";
-  document.getElementById("main").style.paddingRight = "0px";
-} 
-
-function toggleMarklist() {
-  if (marklistIsVisible()) {
-      hideMarklist();
-  } else {
-      showMarklist();
-  }
 }

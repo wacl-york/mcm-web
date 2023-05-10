@@ -1,19 +1,21 @@
-<div class="offcanvas-header">
-  <h5 class="offcanvas-title" id="marklistCanvasLabel">Marklist</h5>
-  <button type="button" class="btn-close" aria-label="Close" onclick="hideMarklist()"></button>
-</div>
-
-<div class="offcanvas-body marklist-container">
-  <div id='marklist' class="marklist-list">
-    <!-- marklisted species are listed here -->
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="offcanvasExample" aria-labelledby="marklistCanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="marklistCanvasLabel">Marklist</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-  <hr class="marklist-btn-divider">
-  <div class='marklist-btn-container'>
-    <a role="button" class="btn btn-danger marklist-btn" onclick="clearMarklist()">
-      Clear
-    </a>
-    <a role="button" class="btn btn-outline-primary marklist-btn" id="exportMarklistButton" href="/export">
-      Export
-    </a>
+
+  <div class="offcanvas-body marklist-container">
+    <div id='marklist' class="marklist-list">
+      <!-- marklisted species are listed here -->
+    </div>
+    <hr class="marklist-btn-divider">
+    <div class='marklist-btn-container'>
+      <a role="button" class="btn btn-danger marklist-btn" onclick="clearMarklist()">
+        Clear
+      </a>
+      <a role="button" class="btn btn-outline-primary marklist-btn" id="exportMarklistButton" href="/export">
+        Export
+      </a>
+    </div>
   </div>
 </div>
