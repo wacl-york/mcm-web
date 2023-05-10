@@ -6,9 +6,16 @@ function addSpeciesToCookie(x) {
   }
 }
 
-function addToMarklist(x) {
+function updateMarklistButtonOnceAdded(element) {
+  element.classList.remove("btn-success");
+  element.classList.add("btn-primary");
+  element.innerHTML = "✓";
+}
+
+function addToMarklist(x, element) {
   addSpeciesToCookie(x);
   refreshMarklist();
+  updateMarklistButtonOnceAdded(element);
 }
 
 function addAllVOCsToMarklist() {
@@ -18,6 +25,11 @@ function addAllVOCsToMarklist() {
   eles.forEach(function(x) {
       let voc = x.getAttribute("href").replace("/species/", "")
       addSpeciesToCookie(voc);
+  });
+  // Also update the buttons to show that these items are in the marklist
+  let buttons = document.querySelectorAll("#browseTabContent .btn-marklist");
+  buttons.forEach(function(x) {
+      updateMarklistButtonOnceAdded(x);
   });
   refreshMarklist();
 }

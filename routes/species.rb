@@ -18,6 +18,7 @@ get '/species/:species' do
               .from_self(alias: :m3) # 'where' gets applied at wrong stage without this
               .where { n <= 5 }
               .map(:Synonym).join(', ')
+  @marklist = cookies[:marklist].split(',')
   erb :species
 end
 
