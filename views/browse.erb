@@ -49,7 +49,6 @@
       <div class="species-list">
         <% values.each do |species| %>
             <div class="marklist-item">
-              <!-- TODO when remove item from marklist should update this again -->
               <% if @marklist.include? species[0] %>
                 <button class="btn btn-primary btn-sm btn-marklist" id="ml-add-<%= species[0] %>">
                   ✓

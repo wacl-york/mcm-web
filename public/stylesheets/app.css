@@ -10,7 +10,7 @@
     text-align: center;
 }
 
-.rxn-grid {
+div.rxn-grid {
   display: grid;
   grid-template-columns: 4fr min-content 2fr 2fr;
   grid-gap: 3em 0.5em;
@@ -22,30 +22,30 @@
     margin-bottom: 1em;
 }
 
-.rxn-plus {
+div.rxn-plus {
     margin-left: 0.5em;
     margin-right: 0.5em;
 }
 
-.rxn-rate {
+div.rxn-rate {
     justify-self: center;
 }
 
-.rxn-reactants {
+div.rxn-reactants {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     justify-self: end;
 }
 
-.rxn-products {
+div.rxn-products {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     justify-self: start;
 }
 
-.rxn-category {
+div.rxn-category {
     justify-self: end;
 }
 
@@ -64,7 +64,7 @@
     flex-flow: column nowrap;
 }
 
-.species-list {
+div.species-list {
     display: flex;
     flex-flow: column nowrap;
     margin-left: 1rem;
@@ -73,21 +73,21 @@
     padding-left: 2rem;
 }
 
-.marklist-list {
+div.marklist-list {
     display: flex;
     flex-flow: column nowrap;
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
 
-.marklist-btn-container {
+div.marklist-btn-container {
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
     margin-bottom: 5rem;
 }
 
-.marklist-btn {
+a.marklist-btn {
     display: flex;
     align-self: flex-start;
     margin-bottom: 0.5rem;
@@ -96,7 +96,7 @@
     justify-content: center;
 }
 
-#exportMarklist {
+div#exportMarklist {
     display: grid;
     grid-template-columns: max-content max-content;
     grid-gap: 5px;
@@ -117,76 +117,26 @@ button.btn-marklist {
     color: white;
 }
 
-.species-image-large-container {
-    overflow: hidden;
-}
-
-.species-image-large {
-    object-fit: contain;
-    height: 100%;
-    width: 100%;
-}
-
-#browseTabContent ul {
+div#browseTabContent ul {
     margin-left: 1rem;
     margin-top: 1rem;
 }
 
- /* The sidebar menu */
-.sidebar {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
-  top: 50px;
-  right: 0;
-  border-left: 5px groove #eee;
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 15px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
-}
-
-.openbtn {
+a.openbtn {
   margin-left: 0.5rem;
 }
 
-.sidebar>div {
-  padding-left: 20px; 
-  padding-right: 20px; 
-}
-
-/* Position and style the close button (top right corner) */
-.sidebar .closebtn {
-  font-size: 36px;
-}
-
-/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
-#main {
-  transition: margin-right .5s; /* If you want a transition effect */
-  padding: 20px;
-}
-
-#topNav.nav {
-  transition: margin-right .5s; /* If you want a transition effect */
-}
-
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-  .sidebar {padding-top: 15px;}
-  .sidebar a {font-size: 18px;}
-}
-
-.inline-items {
+div.inline-items {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
 }
 
-.btn-marklist-add-all {
+button.btn-marklist-add-all {
     margin-left: 2rem;
 }
 
-.browse-content>div {
+div.browse-content>div {
     margin-top: 3rem;
 }
 
@@ -194,30 +144,30 @@ button.btn-marklist {
     margin-top: 1rem;
 }
 
-.species-card {
+div.species-card {
     margin-top: 2rem;
     margin-bottom: 3rem;
     width: fit-content;
 }
 
-.export-form {
+form.export-form {
     margin-top: 1rem;
 }
 
-.export-form #exportMarklist {
+form.export-form #exportMarklist {
     margin-bottom: 1rem;
 }
 
-.export-form .export-btn-download {
+form.export-form .export-btn-download {
     margin-top: 1rem;
 }
 
-.species-title {
+h1.species-title {
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0.5rem;
 }
 
-#sidebarOffcanvas {
+div#sidebarOffcanvas {
     width: auto;
 }

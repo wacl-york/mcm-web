@@ -1,6 +1,5 @@
 <div class="d-flex flex-row flex-nowrap align-items-center">
   <h1 class="species-title"><%= @species[:Name] %></h1>
-  <!-- TODO when remove item should update this -->
   <% if @marklist.include? @species[:Name] %>
     <button class="btn btn-primary btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>">
       ✓
