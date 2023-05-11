@@ -217,3 +217,7 @@ button.btn-marklist {
     margin-bottom: 0;
     margin-right: 0.5rem;
 }
+
+#sidebarOffcanvas {
+    width: auto;
+}
