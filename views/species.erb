@@ -1,7 +1,16 @@
-<h1><%= @species[:Name] %></h1>
-<button class="btn btn-success" onclick="addToMarklist('<%= @species[:Name] %>')">
-  Add to mark list
-</button>
+<div class="d-flex flex-row flex-nowrap align-items-center">
+  <h1 class="species-title"><%= @species[:Name] %></h1>
+  <!-- TODO when remove item should update this -->
+  <% if @marklist.include? @species[:Name] %>
+    <button class="btn btn-primary btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>">
+      ✓
+    </button>
+  <% else %>
+    <button class="btn btn-success btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>" onclick="addToMarklist('<%= @species[:Name] %>', this)">
+      +
+    </button>
+  <% end %>
+</div>
 
 <div class="card species-card">
   <div class="card-header">
