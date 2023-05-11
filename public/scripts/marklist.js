@@ -12,6 +12,12 @@ function updateMarklistButtonOnceAdded(element) {
   element.innerHTML = "✓";
 }
 
+function updateMarklistButtonOnceRemoved(element) {
+  element.classList.remove("btn-primary");
+  element.classList.add("btn-success");
+  element.innerHTML = "+";
+}
+
 function addToMarklist(x, element) {
   addSpeciesToCookie(x);
   refreshMarklist();
@@ -110,6 +116,17 @@ function getCookie(cname) {
 }
 
 function clearMarklist() {
+  // Firstly update all the add marklist buttons
+  // This could be done through multiple calls to
+  // removeFromMarklist but that would have unnecessary
+  // refreshes at each iteration
+  var species = getCookie('marklist').split(',');
+  species.forEach(function(x) {
+    let button = document.getElementById("ml-add-" + x);
+    if (button != null) {
+        updateMarklistButtonOnceRemoved(button);
+    }
+  });
   setCookie('marklist', '');
   refreshMarklist();
 }
@@ -121,6 +138,12 @@ function removeFromMarklist(x) {
   curr_cookie = curr_cookie.replace(re, "")
   curr_cookie = curr_cookie.replace(/,$/, "")  // If the target species was last there will be a trailing comma
   setCookie('marklist', curr_cookie);
+
+  // Reset the add to marklist button, if visible
+  var button = document.getElementById("ml-add-" + x);
+  if (button != null) {
+      updateMarklistButtonOnceRemoved(button);
+  }
 
   refreshMarklist();
 }
