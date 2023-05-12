@@ -114,6 +114,8 @@ button.btn-marklist {
     padding-top: 0em;
     padding-bottom: 0em;
     color: white;
+    width: 30px;
+    height: 30px;
 }
 
 div#browseTabContent ul {
@@ -133,6 +135,11 @@ div.inline-items {
 
 button.btn-marklist-add-all {
     margin-left: 2rem;
+    font-size: 1em;
+    margin-right: 0.5em;
+    padding-top: 0em;
+    padding-bottom: 0em;
+    color: white;
 }
 
 div.browse-content>div {

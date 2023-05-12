@@ -6,22 +6,30 @@ function addSpeciesToCookie(x) {
   }
 }
 
-function updateMarklistButtonOnceAdded(element) {
-  element.classList.remove("btn-success");
-  element.classList.add("btn-primary");
-  element.innerHTML = "✓";
+function updateMarklistButtonOnceAdded(species) {
+  var button = document.getElementById("ml-add-" + species);
+  if (button != null) {
+      button.classList.remove("btn-success");
+      button.classList.add("btn-danger");
+      button.innerHTML = "-";
+      button.setAttribute("onclick", "removeFromMarklist('"+species+"')");
+  }
 }
 
-function updateMarklistButtonOnceRemoved(element) {
-  element.classList.remove("btn-primary");
-  element.classList.add("btn-success");
-  element.innerHTML = "+";
+function updateMarklistButtonOnceRemoved(species) {
+  var button = document.getElementById("ml-add-" + species);
+  if (button != null) {
+      button.classList.remove("btn-danger");
+      button.classList.add("btn-success");
+      button.innerHTML = "+";
+      button.setAttribute("onclick", "addToMarklist('"+species+"')");
+  }
 }
 
-function addToMarklist(x, element) {
+function addToMarklist(x) {
   addSpeciesToCookie(x);
+  updateMarklistButtonOnceAdded(x);
   refreshMarklist();
-  updateMarklistButtonOnceAdded(element);
 }
 
 function addAllVOCsToMarklist() {
@@ -31,11 +39,7 @@ function addAllVOCsToMarklist() {
   eles.forEach(function(x) {
       let voc = x.getAttribute("href").replace("/species/", "")
       addSpeciesToCookie(voc);
-  });
-  // Also update the buttons to show that these items are in the marklist
-  let buttons = document.querySelectorAll("#browseTabContent .btn-marklist");
-  buttons.forEach(function(x) {
-      updateMarklistButtonOnceAdded(x);
+      updateMarklistButtonOnceAdded(voc);
   });
   refreshMarklist();
 }
@@ -122,10 +126,7 @@ function clearMarklist() {
   // refreshes at each iteration
   var species = getCookie('marklist').split(',');
   species.forEach(function(x) {
-    let button = document.getElementById("ml-add-" + x);
-    if (button != null) {
-        updateMarklistButtonOnceRemoved(button);
-    }
+    updateMarklistButtonOnceRemoved(x);
   });
   setCookie('marklist', '');
   refreshMarklist();
@@ -138,12 +139,7 @@ function removeFromMarklist(x) {
   curr_cookie = curr_cookie.replace(re, "")
   curr_cookie = curr_cookie.replace(/,$/, "")  // If the target species was last there will be a trailing comma
   setCookie('marklist', curr_cookie);
-
-  // Reset the add to marklist button, if visible
-  var button = document.getElementById("ml-add-" + x);
-  if (button != null) {
-      updateMarklistButtonOnceRemoved(button);
-  }
+  updateMarklistButtonOnceRemoved(x);
 
   refreshMarklist();
 }

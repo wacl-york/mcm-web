@@ -1,11 +1,11 @@
 <div class="d-flex flex-row flex-nowrap align-items-center">
   <h1 class="species-title"><%= @species[:Name] %></h1>
   <% if @marklist.include? @species[:Name] %>
-    <button class="btn btn-primary btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>">
-      ✓
+    <button class="btn btn-danger btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>" onclick="removeFromMarklist('<%= @species[:Name] %>')">
+      -
     </button>
   <% else %>
-    <button class="btn btn-success btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>" onclick="addToMarklist('<%= @species[:Name] %>', this)">
+    <button class="btn btn-success btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>" onclick="addToMarklist('<%= @species[:Name] %>')">
       +
     </button>
   <% end %>
