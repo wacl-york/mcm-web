@@ -177,3 +177,7 @@ h1.species-title {
 div#sidebarOffcanvas {
     width: auto;
 }
+
+#tom-select-search-ts-control {
+    cursor: text;
+}
