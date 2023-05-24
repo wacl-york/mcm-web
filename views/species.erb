@@ -1,5 +1,5 @@
 <div class="d-flex flex-row flex-nowrap align-items-center">
-  <h1 class="species-title"><%= @species[:Name] %></h1>
+  <h1 class="heading-no-vertical-margin"><%= @species[:Name] %></h1>
   <% if @marklist.include? @species[:Name] %>
     <button class="btn btn-danger btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>" onclick="removeFromMarklist('<%= @species[:Name] %>')">
       -
@@ -33,7 +33,7 @@
 
 </div>
 
-<h3 class="rxn-title">Sink Reactions</h3>
+<h3 class="rxn-title">Reactions</h3>
 <div class="rxn-grid">
 <% @sink_rxns.each do |reaction| %>
   <%== display_reaction(reaction, @species[:Name]) %>

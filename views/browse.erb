@@ -30,42 +30,44 @@
     </ul>
   </div>
 
-  <div class="inline-items">
-    <h2>Select a primary VOC</h2>
-    <button class="btn btn-success btn-sm btn-marklist-add-all" onclick="addAllVOCsToMarklist()">Add all</button>
-  </div>
+  <div>
+    <div class="d-flex flex-row flex-nowrap align-items-center">
+      <h2 class="heading-no-vertical-margin">Select a primary VOC</h2>
+      <button class="btn btn-success btn-sm btn-marklist-add-all" onclick="addAllVOCsToMarklist()">Add all primary VOCs</button>
+    </div>
 
-  <ul class="nav nav-tabs" id="browseTab" role="tablist">
-    <% @categories.each_with_index do |(category, values), index| %>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link<%= index == 0 ? ' active' : ''%>" id="<%= remove_spaces(category) %>-tab" data-bs-toggle="tab" data-bs-target="#<%= remove_spaces(category) %>-tab-pane" type="button" role="tab" aria-controls="<%= remove_spaces(category) %>-tab-pane" aria-selected=<%= index == 0 ? 'true' : 'false' %>><%= category %></button>
-    </li>
-    <% end %>
-  </ul>
+    <ul class="nav nav-tabs" id="browseTab" role="tablist">
+      <% @categories.each_with_index do |(category, values), index| %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link<%= index == 0 ? ' active' : ''%>" id="<%= remove_spaces(category) %>-tab" data-bs-toggle="tab" data-bs-target="#<%= remove_spaces(category) %>-tab-pane" type="button" role="tab" aria-controls="<%= remove_spaces(category) %>-tab-pane" aria-selected=<%= index == 0 ? 'true' : 'false' %>><%= category %></button>
+      </li>
+      <% end %>
+    </ul>
 
-  <div class="tab-content" id="browseTabContent">
-    <% @categories.each_with_index do |(category, values), index| %>
-    <div class="tab-pane fade<%= index == 0 ? ' show active' : '' %>" id="<%= remove_spaces(category) %>-tab-pane" role="tabpanel" aria-labelledby="<%= remove_spaces(category) %>-tab" tabindex="0">
-      <div class="species-list">
-        <% values.each do |species| %>
-            <div class="marklist-item">
-              <% if @marklist.include? species[0] %>
-                <button class="btn btn-danger btn-sm btn-marklist" id="ml-add-<%= species[0] %>" onclick="removeFromMarklist('<%= species[0] %>')">
-                  -
-                </button>
-              <% else %>
-                <button class="btn btn-success btn-sm btn-marklist" id="ml-add-<%= species[0] %>" onclick="addToMarklist('<%= species[0] %>')">
-                  +
-                </button>
-              <% end %>
-              <a href='/species/<%= species[0]%>'>
-                <%= species[1] %>
-              </a>
-            </div>
-        <% end %>
+    <div class="tab-content" id="browseTabContent">
+      <% @categories.each_with_index do |(category, values), index| %>
+      <div class="tab-pane fade<%= index == 0 ? ' show active' : '' %>" id="<%= remove_spaces(category) %>-tab-pane" role="tabpanel" aria-labelledby="<%= remove_spaces(category) %>-tab" tabindex="0">
+        <div class="species-list">
+          <% values.each do |species| %>
+              <div class="marklist-item">
+                <% if @marklist.include? species[0] %>
+                  <button class="btn btn-danger btn-sm btn-marklist" id="ml-add-<%= species[0] %>" onclick="removeFromMarklist('<%= species[0] %>')">
+                    -
+                  </button>
+                <% else %>
+                  <button class="btn btn-success btn-sm btn-marklist" id="ml-add-<%= species[0] %>" onclick="addToMarklist('<%= species[0] %>')">
+                    +
+                  </button>
+                <% end %>
+                <a href='/species/<%= species[0]%>'>
+                  <%= species[1] %>
+                </a>
+              </div>
+          <% end %>
+          </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 
 </div>

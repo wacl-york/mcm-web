@@ -5,3 +5,4 @@ vendor/
 packaged.yaml
 
 *.db
+.env
