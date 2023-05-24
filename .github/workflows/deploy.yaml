@@ -11,9 +11,22 @@ concurrency:
   group: deployment
   cancel-in-progress: true
 
-env:
-  DB_USER: mcmweb_app
-
+jobs:
+  cloudformation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Deploy CloudFormation Stack
+      uses: university-of-york/aws-cfn-deploy-action@v1.1
+      env:
+        TEMPLATE: cloudformation.yaml
+        AWS_STACK_NAME: MCMWebDevStack
+        AWS_REGION: eu-west-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        CAPABILITIES: CAPABILITY_IAM CAPABILITY_NAMED_IAM
+        ROLE_ARN: arn:aws:iam::${{ secrets.AWS_USER_ID }}:role/GithubActionsDeploymentRole
+        TAGS: group=RESEARCHIT project=mcm status=dev pushed_by=githubaction defined_in=cloudformation repo_name=wacl-york/mcm-web user=sl561 team=rhpc
     #jobs:
     #  dev-deployment:
     #    name: Deploy to Dev Environment
@@ -80,7 +93,6 @@ env:
 #          ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
 #          PARAMETER_OVERRIDES:
 #            Deployment=${{ env.AWS_ENVIRONMENT }}
-#            RDSUsername=${{ env.DB_USER }}
 #            DomainName=${{ env.DOMAIN_NAME }}
 #            AppName=${{ github.event.repository.name }}
 #            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}
@@ -118,7 +130,6 @@ env:
 #          ROLE_ARN: ${{ format('arn:aws:iam::{0}:role/GithubActionsDeploymentRole', env.AWS_ACCOUNT_ID) }}
 #          PARAMETER_OVERRIDES:
 #            Deployment=${{ env.AWS_ENVIRONMENT }}
-#            RDSUsername=${{ env.DB_USER }}
 #            DomainName=${{ env.DOMAIN_NAME }}
 #            AppName=${{ github.event.repository.name }}
 #            CognitoClientID=${{ secrets.COGNITO_CLIENT_ID }}

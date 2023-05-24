@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: MCM Dev Website
+Resources:
+  DevCNAME:
+    Type: Custom::CNAME
+    Properties:
+      ServiceToken: "arn:aws:sns:eu-west-1:230504789214:DevRequestRecordSet"
+      Source: "mcm.app-dev.york.ac.uk."
+      Target: "mcm-dev.7len7talcdudk.eu-west-1.cs.amazonlightsail.com/"
