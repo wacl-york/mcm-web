@@ -44,6 +44,17 @@ function addAllVOCsToMarklist() {
   refreshMarklist();
 }
 
+function addCurrentVOCGroupToMarklist() {
+  // Find all species from the active tab item
+  let eles = document.querySelectorAll("div.active .species-list .marklist-item a");
+  eles.forEach(function(x) {
+      let voc = x.getAttribute("href").replace("/species/", "")
+      addSpeciesToCookie(voc);
+      updateMarklistButtonOnceAdded(voc);
+  });
+  refreshMarklist();
+}
+
 function getMarklistLengthFromCookie() {
   var curr_marklist = getCookie('marklist');
   var n_items = 0;

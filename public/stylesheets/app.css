@@ -127,13 +127,17 @@ a.openbtn {
   margin-left: 0.5rem;
 }
 
-div.inline-items {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
+button.btn-marklist-add-all {
+    margin-left: 2rem;
+    font-size: 1em;
+    margin-right: 0.5em;
+    padding-top: 0em;
+    padding-bottom: 0em;
+    color: white;
 }
 
-button.btn-marklist-add-all {
+button.btn-marklist-add-all-category {
+    margin-top: 1.5em;
     margin-left: 2rem;
     font-size: 1em;
     margin-right: 0.5em;
@@ -147,7 +151,7 @@ div.browse-content>div {
 }
 
 #browseTab {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 }
 
 div.species-card {
@@ -168,7 +172,7 @@ form.export-form .export-btn-download {
     margin-top: 1rem;
 }
 
-h1.species-title {
+.heading-no-vertical-margin {
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0.5rem;
