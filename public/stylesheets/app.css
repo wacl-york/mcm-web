@@ -181,3 +181,7 @@ form.export-form .export-btn-download {
 div#sidebarOffcanvas {
     width: auto;
 }
+
+#tom-select-search-ts-control {
+    cursor: text;
+}
