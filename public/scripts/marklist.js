@@ -1,9 +1,3 @@
-window.onload = updateMarklistIconCount;
-
-function marklistIsVisible() {
-    return document.getElementById('marklistSidebar').offsetWidth == 250;
-}
-
 function addSpeciesToCookie(x) {
   var curr_marklist = getCookie('marklist');
   if (curr_marklist.search(x+'($|,)') == -1) {
@@ -12,8 +6,29 @@ function addSpeciesToCookie(x) {
   }
 }
 
+function updateMarklistButtonOnceAdded(species) {
+  var button = document.getElementById("ml-add-" + species);
+  if (button != null) {
+      button.classList.remove("btn-success");
+      button.classList.add("btn-danger");
+      button.innerHTML = "-";
+      button.setAttribute("onclick", "removeFromMarklist('"+species+"')");
+  }
+}
+
+function updateMarklistButtonOnceRemoved(species) {
+  var button = document.getElementById("ml-add-" + species);
+  if (button != null) {
+      button.classList.remove("btn-danger");
+      button.classList.add("btn-success");
+      button.innerHTML = "+";
+      button.setAttribute("onclick", "addToMarklist('"+species+"')");
+  }
+}
+
 function addToMarklist(x) {
   addSpeciesToCookie(x);
+  updateMarklistButtonOnceAdded(x);
   refreshMarklist();
 }
 
@@ -24,6 +39,7 @@ function addAllVOCsToMarklist() {
   eles.forEach(function(x) {
       let voc = x.getAttribute("href").replace("/species/", "")
       addSpeciesToCookie(voc);
+      updateMarklistButtonOnceAdded(voc);
   });
   refreshMarklist();
 }
@@ -78,8 +94,7 @@ function refreshMarklist() {
       disableExportButton();
   }
 
-  if (getMarklistLengthFromCookie() > 0 && !marklistIsVisible()) {
-    showMarklist();
+  if (getMarklistLengthFromCookie() > 0) {
     enableExportButton();
   }
 }
@@ -105,6 +120,14 @@ function getCookie(cname) {
 }
 
 function clearMarklist() {
+  // Firstly update all the add marklist buttons
+  // This could be done through multiple calls to
+  // removeFromMarklist but that would have unnecessary
+  // refreshes at each iteration
+  var species = getCookie('marklist').split(',');
+  species.forEach(function(x) {
+    updateMarklistButtonOnceRemoved(x);
+  });
   setCookie('marklist', '');
   refreshMarklist();
 }
@@ -116,6 +139,7 @@ function removeFromMarklist(x) {
   curr_cookie = curr_cookie.replace(re, "")
   curr_cookie = curr_cookie.replace(/,$/, "")  // If the target species was last there will be a trailing comma
   setCookie('marklist', curr_cookie);
+  updateMarklistButtonOnceRemoved(x);
 
   refreshMarklist();
 }
@@ -152,24 +176,4 @@ function populateExportMarklist() {
     ml.appendChild(input);
     ml.appendChild(label);
   });
-}
-
-/* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
-function showMarklist() {
-  document.getElementById("marklistSidebar").style.width = "250px";
-  document.getElementById("main").style.marginRight = "250px";
-}
-
-/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
-function hideMarklist() {
-  document.getElementById("marklistSidebar").style.width = "0";
-  document.getElementById("main").style.marginRight = "auto";
-} 
-
-function toggleMarklist() {
-  if (marklistIsVisible()) {
-      hideMarklist();
-  } else {
-      showMarklist();
-  }
 }
