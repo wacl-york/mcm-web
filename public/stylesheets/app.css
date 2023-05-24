@@ -136,6 +136,16 @@ button.btn-marklist-add-all {
     color: white;
 }
 
+button.btn-marklist-add-all-category {
+    margin-top: 1.5em;
+    margin-left: 2rem;
+    font-size: 1em;
+    margin-right: 0.5em;
+    padding-top: 0em;
+    padding-bottom: 0em;
+    color: white;
+}
+
 div.browse-content>div {
     margin-top: 3rem;
 }
