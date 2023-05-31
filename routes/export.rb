@@ -86,10 +86,14 @@ post '/export' do
   # Flatten into a single list of complex tokens, but in reverse order (i.e. starting with parents)
   # and using set union to combine. That way if a token was found in multiple iterations, it is only
   # kept in the latest generation so there is no chance of it being defined before a parent refers to it
-  # Finally reverse it back into child -> parent order for output
   # rubocop:disable Performance/Sum
-  children = all_children.reverse.reduce(:+).to_a.reverse
+  children = all_children.reverse.reduce(:+)
   # rubocop:enable Performance/Sum
+  # Remove the CRI specific rates that aren't used in the MCM
+  children = children.difference(%w[KHO2 KNO3 KNO KTR K16ISOM].to_set)
+  # Finally reverse it back into child -> parent order for output
+  children = children.to_a.reverse
+
   # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
   # than a batch query that returns in order
   complex_rates = children.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
