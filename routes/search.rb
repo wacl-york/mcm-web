@@ -95,11 +95,14 @@ get '/search-synonym' do
                                 .from_self(alias: :m5)
                                 .where(n: 1)
                                 .select(:Species, :Synonym, :score)
+                                .select_append(Sequel.lit('Species as Name'))
 
-             # Combine the top 5 synonyms and the top matched synonym
-             syns_all = syns5.full_join(matched_synonyms, %i[Species score Synonym])
+             # Combine the top 5 synonyms and the top matched synonym in case the search matched a synonym that wasn't
+             # # in top 5, still want to display it in the results box so the user knows why it was returned
+             syns_all = syns5.full_join(matched_synonyms, %i[Name Species score Synonym])
              # Collapse synonyms to single comma separated string
              # NB: GROUP_CONCAT is SQLite specific, but the string_agg extension doesn't work here
+
              syns_all
                .from_self(alias: :m7)
                .group(Sequel[:m7][:Name], :score)
