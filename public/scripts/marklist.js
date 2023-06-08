@@ -11,7 +11,15 @@ function updateMarklistButtonOnceAdded(species) {
   if (button != null) {
       button.classList.remove("btn-success");
       button.classList.add("btn-danger");
-      button.innerHTML = "-";
+
+      let current_text = button.innerHTML.trim();
+      let new_text = '-';
+      if (current_text == '+') {
+          new_text = '-';
+      } else if (current_text == 'Add to marklist') {
+          new_text = "Remove from marklist";
+      }
+      button.innerHTML = new_text;
       button.setAttribute("onclick", "removeFromMarklist('"+species+"')");
   }
 }
@@ -21,7 +29,16 @@ function updateMarklistButtonOnceRemoved(species) {
   if (button != null) {
       button.classList.remove("btn-danger");
       button.classList.add("btn-success");
-      button.innerHTML = "+";
+
+      let current_text = button.innerHTML.trim();
+      let new_text = '+';
+      if (current_text == '-') {
+          new_text = '+';
+      } else if (current_text == 'Remove from marklist') {
+          new_text = "Add to marklist";
+      }
+      button.innerHTML = new_text;
+
       button.setAttribute("onclick", "addToMarklist('"+species+"')");
   }
 }
@@ -36,6 +53,8 @@ function addAllVOCsToMarklist() {
   // Get all VOCs from their links on this page. The MCM name is only obtainable from their URL
   // As the displayed text is their human readable name
   let eles = document.querySelectorAll("#browseTabContent div div div a");
+  // This could be achieved with calling addToMarklist inside the loop
+  // But that will lead to multiple redundant calls to refreshMarklist()
   eles.forEach(function(x) {
       let voc = x.getAttribute("href").replace("/species/", "")
       addSpeciesToCookie(voc);
@@ -47,6 +66,8 @@ function addAllVOCsToMarklist() {
 function addCurrentVOCGroupToMarklist() {
   // Find all species from the active tab item
   let eles = document.querySelectorAll("div.active .species-list .marklist-item a");
+  // This could be achieved with calling addToMarklist inside the loop
+  // But that will lead to multiple redundant calls to refreshMarklist()
   eles.forEach(function(x) {
       let voc = x.getAttribute("href").replace("/species/", "")
       addSpeciesToCookie(voc);
@@ -87,7 +108,7 @@ function refreshMarklist() {
 
     var remove_button = document.createElement("button");
     remove_button.setAttribute("type", "button");
-    remove_button.setAttribute("class", "btn btn-danger btn-small btn-marklist");
+    remove_button.setAttribute("class", "btn btn-danger btn-small btn-marklist btn-marklist-sm");
     remove_button.setAttribute("onclick", "removeFromMarklist('"+x+"')");
     remove_button.textContent = '-';
 
@@ -131,7 +152,6 @@ function getCookie(cname) {
 }
 
 function clearMarklist() {
-  // Firstly update all the add marklist buttons
   // This could be done through multiple calls to
   // removeFromMarklist but that would have unnecessary
   // refreshes at each iteration
@@ -139,6 +159,7 @@ function clearMarklist() {
   species.forEach(function(x) {
     updateMarklistButtonOnceRemoved(x);
   });
+  // Remove all species from the marklist by explicitly clearing cookie
   setCookie('marklist', '');
   refreshMarklist();
 }

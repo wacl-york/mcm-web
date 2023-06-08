@@ -52,11 +52,11 @@
           <% values.each do |species| %>
               <div class="marklist-item">
                 <% if @marklist.include? species[0] %>
-                  <button class="btn btn-danger btn-sm btn-marklist" id="ml-add-<%= species[0] %>" onclick="removeFromMarklist('<%= species[0] %>')">
+                  <button class="btn btn-danger btn-sm btn-marklist btn-marklist-sm" id="ml-add-<%= species[0] %>" onclick="removeFromMarklist('<%= species[0] %>')">
                     -
                   </button>
                 <% else %>
-                  <button class="btn btn-success btn-sm btn-marklist" id="ml-add-<%= species[0] %>" onclick="addToMarklist('<%= species[0] %>')">
+                  <button class="btn btn-success btn-sm btn-marklist btn-marklist-sm" id="ml-add-<%= species[0] %>" onclick="addToMarklist('<%= species[0] %>')">
                     +
                   </button>
                 <% end %>

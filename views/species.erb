@@ -2,11 +2,11 @@
   <h1 class="heading-no-vertical-margin"><%= @species[:Name] %></h1>
   <% if @marklist.include? @species[:Name] %>
     <button class="btn btn-danger btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>" onclick="removeFromMarklist('<%= @species[:Name] %>')">
-      -
+      Remove from marklist
     </button>
   <% else %>
     <button class="btn btn-success btn-sm btn-marklist" id="ml-add-<%= @species[:Name] %>" onclick="addToMarklist('<%= @species[:Name] %>')">
-      +
+      Add to marklist
     </button>
   <% end %>
 </div>

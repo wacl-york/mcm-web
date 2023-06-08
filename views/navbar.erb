@@ -41,8 +41,8 @@
     maxOptions: 50,
     loadThrottle: 500,
     closeAfterSelect: true,
-    valueField: 'Species',
-    searchField: ['Species', 'Synonyms', 'Smiles', 'Inchi'],
+    valueField: 'Name',
+    searchField: ['Name', 'Synonyms', 'Smiles', 'Inchi'],
     sortField: [{field: 'score', direction: 'desc'}, {field: '$score'}],
     options: [],
     create: false,
@@ -62,12 +62,12 @@
       option: function(item, escape) {
           return `<div class="py-2 d-flex">
                       <div class="icon me-3">
-                          <img class="img-fluid" src="/species_images/${ escape(item.Species) }.png" />
+                          <img class="img-fluid" src="/species_images/${ escape(item.Name) }.png" />
                       </div>
                       <div>
                           <div class="mb-1">
                               <span class="h4">
-                                  ${ escape(item.Species) }
+                                  ${ escape(item.Name) }
                               </span>
                           </div>
                           <div class="description">
@@ -83,12 +83,12 @@
       item: function(item, escape) {
           return `<div class="py-2 d-flex">
                       <div class="icon me-3">
-                          <img class="img-fluid" src="/species_images/${ escape(item.Species) }.png" />
+                          <img class="img-fluid" src="/species_images/${ escape(item.Name) }.png" />
                       </div>
                       <div>
                           <div class="mb-1">
                               <span class="h4">
-                                  ${ escape(item.Species) }
+                                  ${ escape(item.Name) }
                               </span>
                           </div>
                           <div class="description">

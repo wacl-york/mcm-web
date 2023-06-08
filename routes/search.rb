@@ -75,7 +75,7 @@ get '/search-synonym' do
              # First find the top 5 synonyms per species
              syns5 = all_matches
                      .from_self(alias: :matches)
-                     .join(:SpeciesSynonyms, { Species: :Name }, table_alias: :syn)
+                     .left_join(:SpeciesSynonyms, { Species: :Name }, table_alias: :syn)
                      .select_append(Sequel.function(:row_number).over(partition: :Species,
                                                                       order: Sequel.desc(:NumReferences)).as(:n))
                      .from_self(alias: :m3) # 'where' gets applied at wrong stage without this
@@ -95,17 +95,24 @@ get '/search-synonym' do
                                 .from_self(alias: :m5)
                                 .where(n: 1)
                                 .select(:Species, :Synonym, :score)
+                                .select_append(Sequel.lit('Species as Name'))
 
-             # Combine the top 5 synonyms and the top matched synonym
-             syns_all = syns5.full_join(matched_synonyms, %i[Species score Synonym])
-
+             # Combine the top 5 synonyms and the top matched synonym in case the search matched a synonym that wasn't
+             # # in top 5, still want to display it in the results box so the user knows why it was returned
+             syns_all = syns5.full_join(matched_synonyms, %i[Name Species score Synonym])
              # Collapse synonyms to single comma separated string
              # NB: GROUP_CONCAT is SQLite specific, but the string_agg extension doesn't work here
+
              syns_all
                .from_self(alias: :m7)
-               .group(:Species, :score)
-               .select(:Species, :score, Sequel.lit('GROUP_CONCAT(Synonym, \', \')').as(:Synonyms))
-               .inner_join(:Species, Name: :Species)
+               .group(Sequel[:m7][:Name], :score)
+               .select(Sequel[:m7][:Name], :score,
+                       Sequel.lit('CASE WHEN
+                                  GROUP_CONCAT(Synonym, \', \') IS NULL
+                                  THEN \'\'
+                                  ELSE GROUP_CONCAT(Synonym, \', \')
+                                  END').as(:Synonyms))
+               .inner_join(:Species, Sequel.lit('m7.Name = Species.Name'))
                .select_append(:Smiles, :Inchi)
                .order(Sequel.desc(:score))
            end
