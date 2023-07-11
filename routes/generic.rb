@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-get '/rates/generic' do
+get '/?:mechanism?/rates/generic' do
+  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
   @rates = DB[:GenericRatesWeb]
            .join(Sequel[:Tokens], Token: :Token)
   erb :generic

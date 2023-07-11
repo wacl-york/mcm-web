@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
-get '/search-synonym' do
+get '/?:mechanism/search-synonym' do
+  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
+
   q = params[:q]
   output = if q.nil?
              nil

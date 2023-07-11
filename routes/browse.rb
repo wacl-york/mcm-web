@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-get '/browse' do
+get '/:mechanism?/browse/?' do
+  # TODO redirect instead?
+  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
+
   @categories = DB[:FrontPageSpecies]
                 .join(:Species, Name: :Species)
                 .to_hash_groups(:CompoundClass, %i[Species HumanReadable Inchi])

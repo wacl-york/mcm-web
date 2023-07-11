@@ -50,7 +50,7 @@ helpers do
     <div class='rxn-products'>#{parse_multiple_species(rxn[:Products], species_page)}</div>"
     if doc_link
       output += "<div class='rxn-category'>
-        <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
+        <a href='/#{@mechanism}/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
       </div>"
     end
     output
@@ -112,7 +112,7 @@ helpers do
                        if name == species_page
                          "<div class='rxn-species-image'>"
                        else
-                         "<a class='rxn-species-image' href='/species/#{name}'>"
+                         "<a class='rxn-species-image' href='/#{@mechanism}/species/#{name}'>"
                        end
                      else
                        ''
@@ -176,7 +176,7 @@ helpers do
            .where(ReactionID: reaction_ids)
            .left_join(DB[:RatesWeb].from_self(alias: :rw), Rate: :Rate)
            .left_join(DB[:RateTypesWeb].from_self(alias: :rtw), RateTypeWeb: :RateTypeWeb)
-           .select(Sequel.lit('rxn.ReactionId, rxn.ReactionCategory, rxn.Rate, WebRoute'))
+           .select(Sequel.lit('rxn.ReactionId, rxn.ReactionCategory, rxn.Rate, \'/\' || rxn.Mechanism || WebRoute AS WebRoute'))
            .to_hash(:ReactionID)
 
     # And parse into the desired output format

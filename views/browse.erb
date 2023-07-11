@@ -6,13 +6,13 @@
     <h2>Generic Rate Parameters</h2>
     <ul>
       <li>
-        <a href="/rates/generic">Simple Rate Coefficients</a>
+        <a href=<%= "/#{@mechanism}/rates/generic"%>>Simple Rate Coefficients</a>
       </li>
       <li>
-        <a href="/rates/complex">Complex Rate Coefficients</a>
+        <a href=<%= "/#{@mechanism}/rates/complex"%>>Complex Rate Coefficients</a>
       </li>
       <li>
-        <a href="/rates/photolysis">Photolysis Rates</a>
+        <a href=<%= "/#{@mechanism}/rates/photolysis"%>>Photolysis Rates</a>
       </li>
     </ul>
   </div>
@@ -22,7 +22,7 @@
     <ul>
     <% @inorganic_categories.each do | cat | %>
       <li>
-        <a href="/inorganic?category=<%= cat %>">
+          <a href=<%= "/#{@mechanism}/inorganic?category=#{cat}" %>>
           <%= cat %>
         </a>
       </li>
@@ -60,7 +60,7 @@
                     +
                   </button>
                 <% end %>
-                <a href='/species/<%= species[0]%>'>
+                <a href=<%= "/#{@mechanism}/species/#{species[0]}" %>>
                   <%= species[1] %>
                 </a>
               </div>

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-get '/' do
+get '/:mechanism?/?' do
+  # TODO redirect instead?
+  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
   @links = {
     '/export' => 'Export a mechanism subset'
   }

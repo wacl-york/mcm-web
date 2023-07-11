@@ -56,7 +56,7 @@ function addAllVOCsToMarklist() {
   // This could be achieved with calling addToMarklist inside the loop
   // But that will lead to multiple redundant calls to refreshMarklist()
   eles.forEach(function(x) {
-      let voc = x.getAttribute("href").replace("/species/", "")
+      let voc = x.getAttribute("href").replace("/?.?/species/", "")
       addSpeciesToCookie(voc);
       updateMarklistButtonOnceAdded(voc);
   });
@@ -69,7 +69,7 @@ function addCurrentVOCGroupToMarklist() {
   // This could be achieved with calling addToMarklist inside the loop
   // But that will lead to multiple redundant calls to refreshMarklist()
   eles.forEach(function(x) {
-      let voc = x.getAttribute("href").replace("/species/", "")
+      let voc = x.getAttribute("href").replace("/?.?/species/", "")
       addSpeciesToCookie(voc);
       updateMarklistButtonOnceAdded(voc);
   });

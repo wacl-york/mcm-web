@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-get '/export' do
+get '/?:mechanism?/export' do
+  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
   erb :export
 end
 
