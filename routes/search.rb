@@ -2,7 +2,7 @@
 
 # rubocop:disable Metrics/BlockLength
 get '/?:mechanism/search-synonym' do
-  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
+  @mechanism = params[:mechanism] || 'mcm'
 
   q = params[:q]
   output = if q.nil?

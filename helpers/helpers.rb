@@ -176,7 +176,10 @@ helpers do
            .where(ReactionID: reaction_ids)
            .left_join(DB[:RatesWeb].from_self(alias: :rw), Rate: :Rate)
            .left_join(DB[:RateTypesWeb].from_self(alias: :rtw), RateTypeWeb: :RateTypeWeb)
-           .select(Sequel.lit('rxn.ReactionId, rxn.ReactionCategory, rxn.Rate, \'/\' || rxn.Mechanism || WebRoute AS WebRoute'))
+           .select(Sequel.lit('rxn.ReactionId, ' \
+                              'rxn.ReactionCategory, ' \
+                              'rxn.Rate, ' \
+                              '\'/\' || rxn.Mechanism || WebRoute AS WebRoute'))
            .to_hash(:ReactionID)
 
     # And parse into the desired output format

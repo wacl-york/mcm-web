@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 get '/?:mechanism?/reaction_category' do
-  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
+  @mechanism = params[:mechanism] || 'mcm'
 
   cat = params[:category]
   reactionid = params[:reactionid].to_i

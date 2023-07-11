@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 get '/:mechanism?/browse/?' do
-  # TODO redirect instead?
-  @mechanism = params[:mechanism] ? params[:mechanism] : 'mcm'
+  # TODO: redirect instead?
+  @mechanism = params[:mechanism] || 'mcm'
 
   @categories = DB[:FrontPageSpecies]
                 .join(:Species, Name: :Species)
