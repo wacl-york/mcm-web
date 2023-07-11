@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
+# rubocop:disable Lint/UselessAssignment
 get '/?:mechanism?/search' do
   mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
 
@@ -115,13 +116,14 @@ get '/?:mechanism?/search' do
                                   ELSE GROUP_CONCAT(Synonym, \', \')
                                   END').as(:Synonyms))
                .inner_join(:Species, Sequel.lit('m7.Name = Species.Name'))
-               # TODO only find species in current mechanism
+               # TODO: only find species in current mechanism
                .select_append(:Smiles, :Inchi)
                .order(Sequel.desc(:score))
            end
   content_type :json
   output.all.to_json
 end
+# rubocop:enable Lint/UselessAssignment
 # rubocop:enable Metrics/BlockLength
 
 def find_species(term, preceeding: false)
