@@ -6,6 +6,10 @@ get '/?:mechanism?/species/:species' do
   # For every species get a list of reactions they are either reactants in (sink)
   # or products in (precursor), along with any relevant metadata
   @sink_rxns = get_reactions(params[:species], column: :Reactants)
+
+  puts "SINK RXNS" 
+  puts @sink_rxns
+
   @precursor_rxns = get_reactions(params[:species], column: :Products)
   @precursor_page_size = 5
   @precursor_num_pages = (@precursor_rxns.size / @precursor_page_size.to_f).ceil
