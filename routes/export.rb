@@ -6,7 +6,8 @@ get '/?:mechanism?/export' do
 end
 
 # rubocop:disable Metrics/BlockLength
-post '/export' do
+post '/?:mechanism?/export' do
+  mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
   prods = Set[]
   stack = params[:selected].to_set
 
@@ -16,10 +17,12 @@ post '/export' do
     prods = prods.union(stack)
     # Have to use literal SQL for the WHERE filter as can't seem to get the table name qualifier working, see below
     voc_prods = DB[:Reactants]
+                .join(:Reactions, [:ReactionID])
                 .join(:Products, [:ReactionID])
                 .join(:Species, Name: Sequel[:Products][:Species])
                 .where(Sequel.lit('Reactants.Species IN ?', stack.to_a))
-                .where(SpeciesCategory: 'VOC').select(Sequel[:Products][:Species]).map(:Species)
+                .where(SpeciesCategory: 'VOC',
+                       Mechanism: mechanism).select(Sequel[:Products][:Species]).map(:Species)
                 .to_set
     stack = voc_prods.difference(prods)
   end
@@ -28,12 +31,14 @@ post '/export' do
   all_rxns = DB[:Reactants]
              .join(:ReactionsWide, [:ReactionID])
              .where(Sequel.lit('Reactants.Species IN ?', prods.to_a))
+             .where(Mechanism: mechanism)
              .select(:ReactionID, :Reaction, :Rate) # Distinct first generates DISTINCT ON - unsupported in SQLite
              .distinct
 
   # Include all inorganic reactions if user requested
   if params[:inorganic]
     inorg_rxns = DB[:ReactionsWide]
+                 .where(Mechanism: mechanism)
                  .exclude(InorganicCategory: nil)
                  .select(:ReactionID, :Reaction, :Rate)
                  .distinct
