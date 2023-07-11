@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 get '/?:mechanism?/export' do
-  @mechanism = params[:mechanism] || 'mcm'
+  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
   erb :export
 end
 

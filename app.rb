@@ -19,6 +19,9 @@ configure do
   LOGGER = Logger.new $stdout
   $stdout.sync = true if development?
 
+  # Constants for app
+  set :DEFAULT_MECHANISM, 'MCM'
+
   # Param setup
   enable :raise_sinatra_param_exceptions
   # Erubi setup - escape html when using <%= %>

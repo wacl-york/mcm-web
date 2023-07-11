@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 get '/?:mechanism?/inorganic' do
-  @mechanism = params[:mechanism] || 'mcm'
+  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
   @cat = params[:category]
 
   @rxns = if @cat.nil?

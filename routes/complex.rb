@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 get '/?:mechanism?/rates/complex' do
-  @mechanism = params[:mechanism] || 'mcm'
+  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
 
   # The starting parents are stored in a separate table
   parents = DB[:ComplexRatesWeb]

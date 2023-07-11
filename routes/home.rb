@@ -2,7 +2,8 @@
 
 get '/:mechanism?/?' do
   # TODO: redirect instead?
-  @mechanism = params[:mechanism] || 'mcm'
+  # TODO possible to apply this in one place to all routes?
+  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
   @links = {
     '/export' => 'Export a mechanism subset'
   }

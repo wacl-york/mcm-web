@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 get '/?:mechanism?/species/:species' do
-  @mechanism = params[:mechanism] || 'mcm'
+  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
 
   # For every species get a list of reactions they are either reactants in (sink)
   # or products in (precursor), along with any relevant metadata

@@ -2,7 +2,7 @@
 
 get '/:mechanism?/browse/?' do
   # TODO: redirect instead?
-  @mechanism = params[:mechanism] || 'mcm'
+  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
 
   @categories = DB[:FrontPageSpecies]
                 .join(:Species, Name: :Species)
