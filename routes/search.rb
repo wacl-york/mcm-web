@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
-get '/?:mechanism/search-synonym' do
-  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
+get '/?:mechanism?/search' do
+  mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
 
   q = params[:q]
   output = if q.nil?
@@ -115,6 +115,7 @@ get '/?:mechanism/search-synonym' do
                                   ELSE GROUP_CONCAT(Synonym, \', \')
                                   END').as(:Synonyms))
                .inner_join(:Species, Sequel.lit('m7.Name = Species.Name'))
+               # TODO only find species in current mechanism
                .select_append(:Smiles, :Inchi)
                .order(Sequel.desc(:score))
            end

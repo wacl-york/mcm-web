@@ -49,7 +49,7 @@
     load: function(query, callback) {
       // Clear previously found results, otherwise they will be kept at the top regardless of their match
       this.clearOptions();
-      var url = "/search-synonym?q=" + encodeURIComponent(query);
+      var url = '<%= "/#{@mechanism}/search?q=" %>' + encodeURIComponent(query);
       fetch(url)
         .then(response => response.json())
         .then(json => {
@@ -103,7 +103,7 @@
       }
     },
     onItemAdd: function(value, item) {
-      window.location.href = <%= "/#{@mechanism}/species/" %> + value;
+      window.location.href = '<% "/#{@mechanism}/species/" %>' + value;
     }
   };
 new TomSelect('#tom-select-search', settings);
