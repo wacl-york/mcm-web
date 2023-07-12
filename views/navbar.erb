@@ -103,7 +103,7 @@
       }
     },
     onItemAdd: function(value, item) {
-      window.location.href = '<% "/#{@mechanism}/species/" %>' + value;
+      window.location.href = '<%= "/#{@mechanism}/species/" %>' + value;
     }
   };
 new TomSelect('#tom-select-search', settings);
