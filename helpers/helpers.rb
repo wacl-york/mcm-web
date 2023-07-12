@@ -69,7 +69,7 @@ helpers do
     # Replace @ with exponent when it's just a number to the power
     parsed = rate.gsub(/@([0-9.+-]+)/, '^{\\1}')
     # Use Latex exp markup
-    parsed = parsed.gsub(/EXP/, '\\exp')
+    parsed = parsed.gsub('EXP', '\\exp')
     # Replace a / b with marked up fractions
     parsed = replace_capture_group_multiple(parsed, %r{([a-zA-Z0-9.+-{}]+)/([a-zA-Z0-9.+-{}]+)}, '{\\frac{\1}{\2}}')
     # Replace LOG10 with log_10
@@ -81,7 +81,7 @@ helpers do
     # Replace @ with exponent when there's an expression in parentheses
     parsed = replace_capture_group_multiple(parsed, /@\((.+)\)/, '^{\\1}')
     # Replace TEMP with T for brevity
-    parsed = parsed.gsub(/TEMP/, '{T}')
+    parsed = parsed.gsub('TEMP', '{T}')
 
     # Escape compound or rate names so numbers aren't subscripted
     # Compound or rate names are defined as having at least 1 capital letter and

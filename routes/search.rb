@@ -118,7 +118,7 @@ get '/?:mechanism?/search' do
                # Restrict to the selected mechanism. NB: would likely be more efficient to filter earlier
                # when searching for each matching condition (synonym, name, etc...), but it makes the code more
                # legible do it in one location
-               .inner_join(:SpeciesMechanisms, [[:Name, :Name], [:Mechanism, mechanism]])
+               .inner_join(:SpeciesMechanisms, [%i[Name Name], [:Mechanism, mechanism]])
                .select_append(:Smiles, :Inchi)
                .order(Sequel.desc(:score))
            end
