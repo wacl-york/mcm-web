@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-get '/:mechanism?/browse/?' do
-  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
-
+get '/:mechanism/browse/?' do
   @categories = DB[:FrontPageSpecies]
                 .where(Mechanism: @mechanism)
                 .join(:Species, Name: :Species)

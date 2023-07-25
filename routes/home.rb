@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-get '/:mechanism?/?' do
-  # TODO: redirect instead?
-  # TODO possible to apply this in one place to all routes?
-  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
+get '/:mechanism/?' do
   @links = {
     '/export' => 'Export a mechanism subset'
   }

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-get '/?:mechanism?/reaction_category' do
-  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
-
+get '/:mechanism/reaction_category' do
   cat = params[:category]
   reactionid = params[:reactionid].to_i
 

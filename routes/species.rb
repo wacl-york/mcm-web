@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-get '/?:mechanism?/species/:species' do
-  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
-
+get '/:mechanism/species/:species' do
   # For every species get a list of reactions they are either reactants in (sink)
   # or products in (precursor), along with any relevant metadata
   @sink_rxns = get_reactions(params[:species], @mechanism, column: :Reactants)

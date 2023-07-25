@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-get '/?:mechanism?/rates/complex' do
-  @mechanism = params[:mechanism] || settings.DEFAULT_MECHANISM
-
+get '/:mechanism/rates/complex' do
   # The starting parents are stored in a separate table
   parents = DB[:ComplexRatesWeb]
             .select(Sequel.lit('Token as TopParent, Token as Child'))
