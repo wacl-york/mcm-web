@@ -28,6 +28,16 @@ helpers do
       .select_map(:ParentToken)
   end
 
+  def get_children_from_parents_set(parents, _db)
+    # Difference between and similarily named function
+    # below is this accepts the children as a set of Token names,
+    # whereas the other accepts a SQL dataset
+    DB[:TokenRelationships]
+      .where(ParentToken: parents)
+      .distinct
+      .select_map(:ChildToken)
+  end
+
   def get_children_from_parent(parents, _db)
     DB[:TokenRelationships]
       .join(parents, Child: :ParentToken)
