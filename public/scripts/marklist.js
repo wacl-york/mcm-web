@@ -1,6 +1,6 @@
 function addSpeciesToCookie(x) {
   var curr_marklist = getCookie('marklist');
-  if (curr_marklist.search(x+'($|,)') == -1) {
+  if (curr_marklist.search('(^|,)'+x+'($|,)') == -1) {
     let sep = curr_marklist == '' ? '' : ',';
     setCookie('marklist', curr_marklist + sep + x);
   }
@@ -56,7 +56,7 @@ function addAllVOCsToMarklist() {
   // This could be achieved with calling addToMarklist inside the loop
   // But that will lead to multiple redundant calls to refreshMarklist()
   eles.forEach(function(x) {
-      let voc = x.getAttribute("href").replace("/?.?/species/", "")
+      let voc = x.getAttribute("href").replace(/\/.+\/species\//, "")
       addSpeciesToCookie(voc);
       updateMarklistButtonOnceAdded(voc);
   });
@@ -69,7 +69,7 @@ function addCurrentVOCGroupToMarklist() {
   // This could be achieved with calling addToMarklist inside the loop
   // But that will lead to multiple redundant calls to refreshMarklist()
   eles.forEach(function(x) {
-      let voc = x.getAttribute("href").replace("/?.?/species/", "")
+      let voc = x.getAttribute("href").replace(/\/.+\/species\//, "")
       addSpeciesToCookie(voc);
       updateMarklistButtonOnceAdded(voc);
   });
