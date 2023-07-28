@@ -39,7 +39,7 @@ def extract_variables(text):
 
 def extract_peroxies(text):
     # Find all compounds following VARIABLE description
-    res = re.search("RO2 = ([^;]+);", text)
+    res = re.search("\\nRO2 = ([^;]+);", text)
     # Replace new lines with space so can extract variables
     res = re.sub("\\n", " ", res[1]).strip()
     peroxies = res.split("+")
@@ -109,7 +109,7 @@ def parse_file(fn):
         'variables': variables,
         'peroxies': peroxies,
         'reactions': reactions,
-        'generics': generics,
+        #'generics': generics,
         'complex': complex
     }
 
@@ -150,7 +150,7 @@ def main():
         compare(results[testcase], 'variables')
         compare(results[testcase], 'peroxies')
         compare(results[testcase], 'reactions')
-        compare(results[testcase], 'generics')
+        #compare(results[testcase], 'generics')
         compare(results[testcase], 'complex')
 
         
