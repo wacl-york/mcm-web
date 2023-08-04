@@ -154,6 +154,8 @@ post '/:mechanism/export' do
   # Complex rate coefficients
   if params[:generic]
     out += empty_comment
+    out += "* Generic Rate Coefficients ;\n"
+    out += empty_comment
     out += "* Complex reactions ;\n"
     out += empty_comment
     out += complex_rates_out
