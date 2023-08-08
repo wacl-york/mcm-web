@@ -14,5 +14,9 @@ function redirectMechanism(obj) {
 
     // Have to assume that the first route of the current page is the mechanism
     var new_path = curr_path.replace(/^\/[A-Z0-9a-z]+\//, "/" + new_mechanism + "/");
+
+    // Clear marklist to avoid any conflicts of species that aren't available in multiple mechanisms
+    clearMarklist();
+
     window.location = new_path;
 }
