@@ -19,6 +19,9 @@ configure do
   LOGGER = Logger.new $stdout
   $stdout.sync = true if development?
 
+  # Constants for app
+  set :DEFAULT_MECHANISM, 'MCM'
+
   # Param setup
   enable :raise_sinatra_param_exceptions
   # Erubi setup - escape html when using <%= %>
@@ -50,6 +53,14 @@ helpers FacultyHelpers
 
 before do
   cache_control :no_cache
+
+  # Force all routes to have explicitly have mechanism
+  @all_mechanisms = DB[:Mechanisms].select_map(:Mechanism)
+  @mechanism = request.path_info.split('/')[1]
+  unless @all_mechanisms.include? @mechanism
+    new_route = "/#{settings.DEFAULT_MECHANISM}" + request.path_info
+    redirect new_route
+  end
 
   # unless request.path_info.start_with? '/auth/'
   #   # Faculty-specific

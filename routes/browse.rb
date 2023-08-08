@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-get '/browse' do
+get '/:mechanism/browse/?' do
   @categories = DB[:FrontPageSpecies]
+                .where(Mechanism: @mechanism)
                 .join(:Species, Name: :Species)
                 .to_hash_groups(:CompoundClass, %i[Species HumanReadable Inchi])
   @inorganic_categories = DB[:InorganicReactionCategories].map(:InorganicReactionCategory)

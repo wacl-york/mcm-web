@@ -28,6 +28,16 @@ helpers do
       .select_map(:ParentToken)
   end
 
+  def get_children_from_parents_set(parents, _db)
+    # Difference between and similarily named function
+    # below is this accepts the children as a set of Token names,
+    # whereas the other accepts a SQL dataset
+    DB[:TokenRelationships]
+      .where(ParentToken: parents)
+      .distinct
+      .select_map(:ChildToken)
+  end
+
   def get_children_from_parent(parents, _db)
     DB[:TokenRelationships]
       .join(parents, Child: :ParentToken)
@@ -50,7 +60,7 @@ helpers do
     <div class='rxn-products'>#{parse_multiple_species(rxn[:Products], species_page)}</div>"
     if doc_link
       output += "<div class='rxn-category'>
-        <a href='/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
+        <a href='/#{@mechanism}/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
       </div>"
     end
     output
@@ -69,7 +79,7 @@ helpers do
     # Replace @ with exponent when it's just a number to the power
     parsed = rate.gsub(/@([0-9.+-]+)/, '^{\\1}')
     # Use Latex exp markup
-    parsed = parsed.gsub(/EXP/, '\\exp')
+    parsed = parsed.gsub('EXP', '\\exp')
     # Replace a / b with marked up fractions
     parsed = replace_capture_group_multiple(parsed, %r{([a-zA-Z0-9.+-{}]+)/([a-zA-Z0-9.+-{}]+)}, '{\\frac{\1}{\2}}')
     # Replace LOG10 with log_10
@@ -81,7 +91,7 @@ helpers do
     # Replace @ with exponent when there's an expression in parentheses
     parsed = replace_capture_group_multiple(parsed, /@\((.+)\)/, '^{\\1}')
     # Replace TEMP with T for brevity
-    parsed = parsed.gsub(/TEMP/, '{T}')
+    parsed = parsed.gsub('TEMP', '{T}')
 
     # Escape compound or rate names so numbers aren't subscripted
     # Compound or rate names are defined as having at least 1 capital letter and
@@ -112,7 +122,7 @@ helpers do
                        if name == species_page
                          "<div class='rxn-species-image'>"
                        else
-                         "<a class='rxn-species-image' href='/species/#{name}'>"
+                         "<a class='rxn-species-image' href='/#{@mechanism}/species/#{name}'>"
                        end
                      else
                        ''
@@ -176,7 +186,10 @@ helpers do
            .where(ReactionID: reaction_ids)
            .left_join(DB[:RatesWeb].from_self(alias: :rw), Rate: :Rate)
            .left_join(DB[:RateTypesWeb].from_self(alias: :rtw), RateTypeWeb: :RateTypeWeb)
-           .select(Sequel.lit('rxn.ReactionId, rxn.ReactionCategory, rxn.Rate, WebRoute'))
+           .select(Sequel.lit('rxn.ReactionId, ' \
+                              'rxn.ReactionCategory, ' \
+                              'rxn.Rate, ' \
+                              '\'/\' || rxn.Mechanism || WebRoute AS WebRoute'))
            .to_hash(:ReactionID)
 
     # And parse into the desired output format

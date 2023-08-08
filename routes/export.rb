@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-get '/export' do
+get '/:mechanism/export' do
   erb :export
 end
 
 # rubocop:disable Metrics/BlockLength
-post '/export' do
+post '/:mechanism/export' do
   prods = Set[]
   stack = params[:selected].to_set
 
@@ -15,10 +15,12 @@ post '/export' do
     prods = prods.union(stack)
     # Have to use literal SQL for the WHERE filter as can't seem to get the table name qualifier working, see below
     voc_prods = DB[:Reactants]
+                .join(:Reactions, [:ReactionID])
                 .join(:Products, [:ReactionID])
                 .join(:Species, Name: Sequel[:Products][:Species])
                 .where(Sequel.lit('Reactants.Species IN ?', stack.to_a))
-                .where(SpeciesCategory: 'VOC').select(Sequel[:Products][:Species]).map(:Species)
+                .where(SpeciesCategory: 'VOC',
+                       Mechanism: @mechanism).select(Sequel[:Products][:Species]).map(:Species)
                 .to_set
     stack = voc_prods.difference(prods)
   end
@@ -27,12 +29,14 @@ post '/export' do
   all_rxns = DB[:Reactants]
              .join(:ReactionsWide, [:ReactionID])
              .where(Sequel.lit('Reactants.Species IN ?', prods.to_a))
+             .where(Mechanism: @mechanism)
              .select(:ReactionID, :Reaction, :Rate) # Distinct first generates DISTINCT ON - unsupported in SQLite
              .distinct
 
   # Include all inorganic reactions if user requested
   if params[:inorganic]
     inorg_rxns = DB[:ReactionsWide]
+                 .where(Mechanism: @mechanism)
                  .exclude(InorganicCategory: nil)
                  .select(:ReactionID, :Reaction, :Rate)
                  .distinct
@@ -54,52 +58,42 @@ post '/export' do
 
   species = reactants.union(products)
 
-  # Generic rates are those that are not used in any other rate equations, either as a parent or child
-  # Complex rates can be used either as a parent or a child
-  tokenized_rates = DB[:Tokens]
-                    .left_join(Sequel[:TokenRelationships].as(:tr1), ChildToken: Sequel[:Tokens][:Token])
-                    .left_join(Sequel[:TokenRelationships].as(:tr2), ParentToken: Sequel[:Tokens][:Token])
-  generic_rates = tokenized_rates
-                  .where(Sequel.lit('tr1.ChildToken IS NULL AND tr2.ParentToken IS NULL')) # can't get working in ORM
-                  .select(Sequel[:Tokens][:Token], Sequel[:Tokens][:Definition])
-                  .distinct
-
   #------------------- Complex Rates
-  # Complex rates need to be listed in order from leaf nodes up to the top of the tree
-  # in order to parse correctly
-  # Since some tokens can be used by multiple parents, need to take care
-  all_children = []
-  # Start by finding all tokens that are only ever used as children
-  new_children = tokenized_rates
-                 .where(Sequel.lit('tr1.ChildToken IS NOT NULL AND tr2.ParentToken IS NULL'))
-                 .distinct
-                 .select_map(Sequel[:tr1][:ChildToken])
-  all_children.append(new_children.to_set)
-  # Iteratively find the parents of each generation of children
+  # Only find tokenized rates that were used in this sub-mechanism
+  used_tokens = all_rxns
+                .inner_join(:Rates, [:Rate])
+                .inner_join(:TokenizedRates, [:Rate])
+                .inner_join(:RateTokens, [:Rate])
+                .select_map(:Token)
+
+  # Iteratively find the children of each generation of tokens so they are all
+  # fully defined
+  all_tokens = [used_tokens.to_set]
   loop do
-    new_children = get_parent_from_children(new_children, DB)
-    break if new_children.empty?
+    used_tokens = get_children_from_parents_set(used_tokens, DB)
+    break if used_tokens.empty?
 
-    all_children.append(new_children.to_set)
+    all_tokens.append(used_tokens.to_set)
   end
-
-  # Flatten into a single list of complex tokens, but in reverse order (i.e. starting with parents)
-  # and using set union to combine. That way if a token was found in multiple iterations, it is only
-  # kept in the latest generation so there is no chance of it being defined before a parent refers to it
-  # rubocop:disable Performance/Sum
-  children = all_children.reverse.reduce(:+)
-  # rubocop:enable Performance/Sum
-  # Remove the CRI specific rates that aren't used in the MCM
-  children = children.difference(%w[KHO2 KNO3 KNO KTR K16ISOM].to_set)
-  # Finally reverse it back into child -> parent order for output
-  children = children.to_a.reverse
-
+  # This line ensures that all rates are defined before they are used in parent
+  # rates.
+  # Say rate A is defined as a function of rate B, but both A and B are used
+  # directly in the sub-mechanism and thus both returned in the first
+  # used_tokens assignment. Since this query isn't ordered it could easily
+  # return A before B, which would cause the FACSIMILE to fail to build.
+  # Reversing the array ensures that all parent rates are located at the end of
+  # the array because the tree traversal was top-down, while children can be
+  # scattered throughout.
+  # The Reduce(Union) restricts multiple copies of a child rate to its first
+  # appearance since the Union function is ordered and returns all items of the
+  # first input and then any from the second that weren't in the first.
+  tokens = all_tokens.reverse.reduce(:union).to_a
+  #
   # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
   # than a batch query that returns in order
-  complex_rates = children.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
-  #------------------- End complex rates
+  complex_rates = tokens.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
 
-  # Obtain peroxy information
+  #------------------- Peroxy radicals
   peroxies = species
              .where(PeroxyRadical: true)
   missing_peroxies = species
@@ -118,7 +112,6 @@ post '/export' do
   # Format sections for export
   species_out = wrap_lines(species.map(:Name))
   rxns_out = all_rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
-  generic_rates_out = generic_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
   complex_rates_out = complex_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
 
   params_out = wrap_lines(params[:selected],
@@ -158,12 +151,10 @@ post '/export' do
   out += species_out
   out += spacer
 
-  # Generic rate coefficients
+  # Complex rate coefficients
   if params[:generic]
     out += empty_comment
     out += "* Generic Rate Coefficients ;\n"
-    out += empty_comment
-    out += generic_rates_out
     out += empty_comment
     out += "* Complex reactions ;\n"
     out += empty_comment

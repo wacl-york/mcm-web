@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-get '/rates/photolysis' do
+get '/:mechanism/rates/photolysis' do
   @params = DB[:PhotolysisParameters]
             .exclude(l: nil)
   erb :photolysis

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-get '/inorganic' do
+get '/:mechanism/inorganic' do
   @cat = params[:category]
 
   @rxns = if @cat.nil?

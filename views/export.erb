@@ -2,10 +2,10 @@
 
 Click below to export chosen mechanism subset for the selected species.
 
-<form class="export-form" method="post">
+<form class="export-form" method="post" action=<%= "/#{@mechanism}/export"%>>
   <div class="form-group">
     <div id="exportMarklist" hidden>
-      <!-- Will get populated -->
+      <!-- Will get populated with hidden list so can easily include in form submission -->
     </div>
     <input type="checkbox" name="inorganic" checked>Include inorganic reactions?<br>
     <input type="checkbox" name="generic" checked>Include generic rate coefficients?<br>

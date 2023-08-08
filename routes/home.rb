@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-get '/' do
+get '/:mechanism/?' do
   @links = {
     '/export' => 'Export a mechanism subset'
   }
