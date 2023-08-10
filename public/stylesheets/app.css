@@ -192,3 +192,11 @@ div#sidebarOffcanvas {
 #marklist-count {
     color: black;
 }
+
+.navbar-MCM {
+    background-color: #9B9BFF;
+}
+
+.navbar-CRI {
+    background-color: #FF9B9B;
+}
