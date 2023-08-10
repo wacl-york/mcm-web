@@ -1,0 +1,121 @@
+<div id="body">
+  <h1>The MCM Project</h1>
+
+  <p>This page contains information on various aspects of the MCM, as follows 
+  <ul>
+<li><font size="4"><a href="#Introduction">Introduction</a> to the 
+    Master Chemical Mechanism (MCM)</font></li>
+<li><font size="4"><a href="#methodology">MCM construction methodology</a></font></li>
+<li><font size="4"><a href="#Status">Current status and ongoing developments</a> </font></li>
+<li><font size="4"><a href="#New_3.3.1">What's new in MCMv3.3.1?</a> </font></li>
+
+  </ul>
+  </p>
+  <hr>
+
+  
+  
+  <h1><a name="Introduction">Introduction</a></h1>
+  
+  
+  
+  <p ALIGN="JUSTIFY">The MCM is a near-explicit chemical mechanism which describes the detailed gas-phase chemical processes involved in the atmospheric degradation of a series of primary emitted VOCs. These include a large number of major emitted anthropogenic species (hydrocarbons and oxygenated VOCs), based primarily on the speciation defined by the <a href="http://www.naei.org.uk" target="_blank">UK National Atmospheric Emissions Inventory</a>, NAEI (Passant, 2002). it also includes the following primarily biogenic species: isoprene, three monoterpenes (&alpha;-pinene, &beta;-pinene, limonene), one sesquiterpene (&beta;-caryophyllene), one oxygenated VOC (2-methyl-but-3-ene-2-ol) and one organosuphur species (dimethyl sulphide, DMS). The resultant mechanism contains about 17000 elementary reactions of 6700 primary, secondary and radical species.</p>
+  
+  <p ALIGN="JUSTIFY">Because the mechanism aims to be explicit, it provides a direct means of utilising published laboratory and theoretical data on the kinetics and mechanisms of elementary chemical reactions relevant to VOC oxidation in atmospheric models. The philosophy behind the construction of the MCM is to use such information to build up the near-explicit representation of the degradation mechanisms. However, because not all the reactions involved in atmospheric VOC chemistry have been, or indeed can be studied, a fundamental assumption in the construction of the MCM is that the kinetics and products of a large number of unstudied chemical reactions can be defined on the basis of the studied reactions of a smaller subset of similar chemical species, by analogy and with the use of structure-reactivity correlations (structure activity relationships  SARs) to estimate the otherwise unknown parameters. The way that this is achieved is described in more detail in below.</p>
+  
+   <p ALIGN="JUSTIFY">The MCM also acts as a reference benchmark mechanism to assist the development and/or evaluation of reduced mechanisms which are required for many applications (e.g., Pöschl et al., <a href="http://dx.doi.org/10.1023/A:1006391009798" target="_blank">2000</a>; Whitehouse et al.,  <a href="http://www.atmos-chem-phys.net/4/2025/2004/acp-4-2025-2004.pdf" target="_blank">2004a</a>, <a href="http://www.atmos-chem-phys.net/4/2057/2004/acp-4-2057-2004.pdf" target="_blank">b</a>; Bonn et al., <a href="http://dx.doi.org/10.1029/2003GL019172" target="_blank">2004</a>; Jenkin et al., <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.028" target="_blank">2008</a>; Taraborrelli et al., <a href="http://www.atmos-chem-phys.net/9/2751/2009/acp-9-2751-2009.pdf" target="_blank">2009</a>). Therefore, the MCM provides a primary link in the transfer of experimental/theoretical knowledge, and a means by which mechanisms used in atmospheric models can be traceable to the elementary reaction studies without directly applying the MCM. A reduced “lumped chemistry” mechanism framework, called the Common Representative Intermediates (CRI) mechanism, has recently been developed with reference to the MCM to provide a more economical description of ozone formation from VOC degradation. This includes a detailed speciation version, CRI v2, which treats a suite of 115 emitted non-methane VOCs (Jenkin et al., <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.028" target="_blank">2008</a>), and a set of lumped emissions versions (CRI v2-R1 to CRI v2-R5), the most reduced of which (R5) uses 22 emitted non-methane VOCs to represent the speciation (Watson et al., <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.034" target="_blank">2008</a>).</p>
+  
+  <hr>
+
+
+
+  <h1><a name="methodology">MCM construction methodology</a></h1>
+    
+  <p align="JUSTIFY">The method used to construct the MCM is broadly a two-stage process involving (i) the development of a protocol for mechanism construction, and (ii) application of the protocol to a series of emitted VOCs to develop the mechanism/database. The series of versions of the MCM (v1, v2, v3, v3.1, v3.2) have therefore been directly related to updates/supplements to the MCM protocol (Jenkin et al., <a href="http://dx.doi.org/10.1016/S1352-2310(96)00105-7" target="_blank">1997</a>, <a href="http://www.atmos-chem-phys.net/3/181/2003/acp-3-181-2003.pdf" target="_blank">2003</a>; Saunders et al., <a href="http://www.atmos-chem-phys.net/3/161/2003/acp-3-161-2003.pdf" target="_blank">2003</a>; Bloss et al., <a href="http://www.atmos-chem-phys.net/5/641/2005/acp-5-641-2005.pdf" target="_blank">2005</a>), or to an extension of the list of VOCs to which the prevailing protocol is applied. These references should be consulted for full details of the mechanism construction methodology, of which a brief overview is now provided.</p>
+  
+  <p ALIGN="JUSTIFY">The protocol defines a set of rules which guide the development of the gas-phase degradation mechanisms, allowing two or more people to write consistent and compatible chemistry schemes. The following flow chart summarises the main types of reaction considered and classes of organic intermediate and product which are potentially generated.</p>
+
+ <p class="figure"><img src="pics/pic3.jpg"></p><br>
+  
+      
+  <p align="JUSTIFY">The chemistry of a given VOC is thus developed within this framework, based on the predefined set of rules (i.e. the protocol). The flow chart essentially represents the degradation of the given VOC into a set of first generation products, which are themselves further degraded within the same general framework. This process is continued until the chemistry either yields the ultimate carbon-containing product, CO2, or until an organic product or radical is generated for which the subsequent chemistry is already represented in the mechanism. The emboldened sections in the above figure contain the major free-radical propagated cycle shown in the following figure, which illustrates the essential hub of reactions which form ozone in the atmosphere. </p>
+  
+<p class="figure"><img src="pics/pic4.jpg"></p><br>
+  
+  <p align="JUSTIFY">The framework of the protocol thus allows this type of chemistry to be included explicitly for a large number of specific intermediates, whilst also representing relevant competing and supplementing processes in a rigorous and well-documented way.</p>
+  
+    
+  
+  <p ALIGN="JUSTIFY">The protocol also recognises that the rigorous application of a series of rules can lead to an unmanageably large number of reactions, particularly for larger VOCs. The ideal of a fully explicit mechanism is therefore impractical, and a degree of simplification is required even for so-called explicit mechanisms. The protocol therefore defines strategic simplification measures, to control the ultimate size of the mechanism. These fall into the following three general categories: (i) non-proliferation of low-probability reaction channels; (ii) simplified degradation of product classes deemed to be minor, or for which chemistry is poorly established; and (iii) parameterisation of the reactions of peroxy radicals (RO<sub>2</sub>) with each other (of which there would otherwise be approximately 0.6 million in MCM v3.2). Because of the need to implement a degree of simplification and parameterisation, the MCM is usually referred to as near-explicit.</p>
+  
+  
+  
+  <p ALIGN="JUSTIFY">The MCM construction methodology, as defined in the protocol, makes use of a number of sources of information, which are summarised in the table below. </p>
+  
+  <table border="1"><tr><th>Source of information</th><th>Description </th></tr>
+  <tr><th>1. Experimental data - evaluated</th><td>Parameters based on experimental studies of elementary reactions, which have been evaluated by an expert group such as the IUPAC subcommittee for gas kinetic data evaluation (<a href="http://iupac.pole-ether.fr/" target="_blank">http://iupac.pole-ether.fr/</a>). Such evaluated data are based on all published measurements of a given parameter, and are thus likely to represent the most reliable values. </td></tr>
+  <tr><th>2. Experimental data - direct</th><td>Parameters taken directly from a published experimental study, or based on a group of experimental studies, when no independent evaluation is available. When only limited experimental data exist, a parameter based on an SAR<sup>(a)</sup> may be used in preference.</td></tr>
+   <tr><th>3. Structure-Activity Relationships (SARs)<sup>(a)</sup> - published</th><td>Parameters estimated on the basis of published methods which relate the parameter values to chemical structure.</td></tr>
+  <tr><th>4. Structure-Activity Relationships (SARs)<sup>(a)</sup> - defined in protocol</th><td>Parameters estimated on the basis of a newly-defined and justified method, which relates the parameter values to chemical structure.</td></tr>
+  <tr><th>5. Theoretical studies</th><td>Parameters for specific structures/reactions are occasionally based on theoretical studies of that structure/reaction. Such methods are not widely applied for practical reasons, although their accuracy has substantially improved in recent years</td></tr>
+  <tr><td colspan="2">(a) A structure-activity relationship (SAR) allows parameters such as rate coefficients to be related to structural properties of chemical species, thereby providing a method of parameter estimation. SARs are developed from datasets of experimentally-determined parameters.</td></tr>
+  </table>
+  
+  <br>
+  <p ALIGN="JUSTIFY">Where possible, published experimental data for elementary reactions (e.g. rate coefficients; branching ratios) are generally applied, adopting parameters evaluated by expert groups, where available (including formally via the <a href="http://www.iupac-kinetic.ch.cam.ac.uk/kt_project.html" target="_blank">MCM-IUPAC link</a>). However, only a comparatively small fraction of the required parameters have been studied experimentally, such that the MCM construction necessarily relies heavily on the use of parameters estimated using structure-activity relationships (SARs). This allows the kinetics and products of a large number of unstudied chemical reactions to be defined on the basis of the studied reactions of a smaller subset of similar chemical species, either using methods documented in the literature or on the basis of newly-defined methods which are presented in the protocol. The publication of the protocol in the scientific literature ensures that all methods used in the construction of the MCM are peer-reviewed and available to the scientific community.</p>
+  
+  
+  
+
+  
+  
+  <hr>
+
+
+  
+  <h1><a name="Status">Current status and ongoing developments</a> </h1>
+  
+  
+  <p ALIGN="JUSTIFY">Through the development and implementation of updates to the MCM protocol, the aim has been for the MCM to evolve in-line with improving understanding of the elementary processes involved in the atmospheric degradation of VOCs. A revision of the mechanism construction methodology is currently in progress to take account of the enormous quantity of experimental and theoretical information relevant to VOC degradation which has been published in recent years, and which continues to emerge. Additional feedback on mechanism performance has also resulted from testing and evaluation of relevant portions of the MCM against available data from a number of environmental chambers, particularly within the framework of the <a href="http://www.eurochamp.org/" target="_blank">EUROCHAMP  project</a>. Although it is recognised that chamber data can be subject to interferences which are not directly relevant to processes which occur in the real atmosphere, such evaluation studies do help to identify gaps and uncertainties in the mechanism where some revision or updating is necessary.  In addition, a number of mechanisms used widely in policy models are developed and optimised on the basis of chamber data, and it is important that the MCM has been evaluated alongside these mechanisms, both in relation to the chamber data and for atmospheric conditions.</p>
+
+<p ALIGN="JUSTIFY">A rigorous appraisal and implementation of the latest developments is being achieved through a thorough overhaul of the MCM protocol. This activity has been initiated and is ongoing, with guidance from an international panel of experts established by the EU Network of Excellence, ACCENT, which includes members of the core MCM team (see <a href="contributors.htt">contributors</a> page). The overall aim of the work is to develop a series of modular protocols, each treating a specific area of atmospheric organic chemistry. The aim is to make the MCM construction methodology robust and sustainable, and to ensure that it continues to be fully endorsed by the international community. Once these new protocols have been established, the task of applying them to the development of the next-generation MCM will commence.</p>
+
+<p ALIGN="JUSTIFY">A substantial number of the rate coefficients used in the MCM rely on evaluations, in particular those of the IUPAC Sub-Committee for Gas Kinetic Data Evaluation. An ongoing development parallel to that discussed in the last paragraph is establishing a <a href="http://iupac.pole-ether.fr/projects.html" target="_blank">direct link between the MCM and the IUPAC database</a> that will facilitate direct updating of the appropriate rate coefficients in the MCM. </p>
+
+  <hr>
+  
+<!--  <h1><a name="New_3.2">Major updates in MCM v3.2</a></h1>
+
+<p ALIGN="JUSTIFY">The following major mechanistic updates have been implemented since MCM v3.1:</p>
+<ul><li>Integration of newly-developed schemes for limonene, beta-caryophyllene and dimethyl sulphide (DMS).</li>
+<li>A general update of isoprene degradation chemistry, including integration of revised chemistry for isoprene-derived hydroperoxides and nitrates. The major isoprene product, methacrolein, is now represented as a primary VOC and its chemistry is treated in greater detail.</li>
+<li>Integration of new schemes for acrolein, crotonaldehyde, ethylene oxide and vinyl chloride.</li>
+<li>Formal linkage of the MCM and IUPAC gas kinetics evaluation databases, to facilitate regular updating of kinetic parameters on the basis of expert evaluated recommendations (<a href="http://www.iupac-kinetic.ch.cam.ac.uk/projects.html" target="_blank">http://www.iupac-kinetic.ch.cam.ac.uk/projects.html</a>).</li>
+</ul>
+<p ALIGN="JUSTIFY">The following updates are in progress and will be implemented soon:</p>
+<ul><li>A full revision of photolysis parameters, with the applied wavelength-dependent absorption cross-sections and quantum yields available to download.</li>
+<li>Access to the Common Representative Intermediates mechanism (CRI v2) via a parallel searchable and extractable facility.</li>
+</ul>-->
+<h1><a name="New_3.3.1">Major updates in MCM v3.3.1</a></h1>
+  
+  <p ALIGN="JUSTIFY">The chemistry of isoprene degradation has been systematically refined and updated to reflect recent advances in understanding, with these updates 
+  appearing in MCM v3.3. A detailed overview of the updates is in the process of being published (<a href="http://www.atmos-chem-phys.net/15/11433/2015/acp-15-11433-2015.html">Jenkin et al., 2015<a>). The revisions mainly relate to the 
+  OH-initiated chemistry, which tends to dominate under atmospheric conditions and have impacts in a number of key areas, including:</p>
+  
+  <ul><li><b>HO<sub>x</sub> recycling:</b> a number of new mechanisms have been implemented, particularly those involving H atom shift isomerisation reactions of peroxy radicals. 
+  These updates have a collectively significant impact on OH radical regeneration at lower NO<sub>x</sub> levels.</li>
+  <li><b>NO<sub>x</sub> recycling:</b> the formation and degradation chemistry of organic nitrates has been fully revised and updated, providing a more rigorous representation of the 
+  sequestering and regeneration of NO<sub>x</sub>.</li>
+  <li>The updates also include the formation of species that have been reported to play a role in SOA-formation mechanisms, including epoxydiols (initially implemented in MCM v3.2),
+  hydroxymethyl-methyl-a-lactone (HMML) and methacrylic acid epoxide (MAE).</li>
+  </ul>
+  <p>The ozonolysis rate constants (k(O<sub>3</sub>)) for the following biogenic species have been updated in MCMv3.3.1 in line with <a href="http://iupac.pole-ether.fr/htdocs/show_datasheets.php?category=Gas-phase+organics%3A+Ox+%2B+VOC">IUPAC datasheet</a> updates on the 1st of September 2013 and 1st of June 2015:
+  <ul><li>alpha-pinene + O<sub>3</sub></li>
+  <li>beta-pinene + O<sub>3</sub></li>
+  <li>limonene + O<sub>3</sub></li>
+  <li>beta-caryophyllene  + O<sub>3</sub></li>
+  </ul>
+ <p ALIGN="JUSTIFY">In addition:</p>
+ <ul><li>Since release of MCM v3.2, the <a href="http://dev.mcm.york.ac.uk/CRI/">Common Representative Intermediates mechanism (CRI v2.1)</a> has been made available via a parallel searchable and extractable facility.</li>
+ </ul>
+</div>

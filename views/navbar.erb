@@ -19,6 +19,18 @@
           <a class="nav-link <%= 'active' if current_url? '/export' %>" aria-current="page"
            href="<%= rel "/#{@mechanism}/export" %>">Export</a>
         </li>
+        <!-- TODO add active link highlight to About or to lower level? -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">About</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/construction" %>">Construction Method</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/links" %>">Useful links</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/cite" %>">Cite</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/contributors" %>">Contributors</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/funding" %>">Funding</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/archive" %>">Previous versions</a></li>
+            </ul>
+          </li>
 
         <li class="nav-item">
           <label for="mechanisms">Select mechanism:</label>
@@ -32,7 +44,7 @@
         </li>
       </ul>
     </div>
-    <select class="form-inline search-bar" id="tom-select-search" placeholder="Start typing a species formula or name...">
+    <select class="form-inline search-bar" id="tom-select-search" placeholder="Start typing a species formula or name..." aria-label="Search for a species">
     </select>
     <div>
 
