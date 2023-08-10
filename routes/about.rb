@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 get '/:mechanism/about/:file' do
   fn = File.join('public', 'static', params[:mechanism], "#{params[:file]}.html")
-  # TODO error handle file doesn't exist
-  @content = File.read(fn)
+  @content = File.file?(fn) ? File.read(fn) : "<h1>Error</h1><p>Unknown page '#{params[:file]}'.</p>"
   erb :about
 end
