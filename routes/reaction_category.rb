@@ -11,7 +11,7 @@ get '/:mechanism/reaction_category' do
                if fn.nil?
                  "<p>Unknown reaction category '#{cat}'.</p>"
                else
-                 full_fn = File.join('public', 'reaction_categories', fn)
+                 full_fn = File.join('public', 'static', 'reaction_categories', fn)
                  File.read(full_fn)
                end
              end
