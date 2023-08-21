@@ -200,3 +200,8 @@ div#sidebarOffcanvas {
 .navbar-CRI {
     background-color: #FF9B9B;
 }
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+}
