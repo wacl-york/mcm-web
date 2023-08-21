@@ -58,7 +58,7 @@ helpers do
     output = "<div class='rxn-reactants'>#{parse_multiple_species(rxn[:Reactants], species_page)}</div>
     <div class='rxn-rate'><a#{rxn[:RateURL].nil? ? '' : " href='#{rxn[:RateURL]}'"}>#{parse_rate(rxn[:Rate])}</a></div>
     <div class='rxn-products'>#{parse_multiple_species(rxn[:Products], species_page)}</div>"
-    if doc_link
+    if doc_link && !rxn[:Category].nil?
       output += "<div class='rxn-category'>
         <a href='/#{@mechanism}/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
       </div>"
