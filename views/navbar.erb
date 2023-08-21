@@ -32,16 +32,15 @@
             </ul>
           </li>
 
-        <li class="nav-item">
-          <label for="mechanisms">Select mechanism:</label>
-          <select name="mechanisms" id="mechanisms" onchange="redirectMechanism(this);">
-            <% @all_mechanisms.each do |mech| %>
-              <option value="<%= mech %>"<%= mech == @mechanism ? 'selected' : ''%>>
-                <%= mech %>
-              </option>
-            <% end %>
-          </select>
-        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Select Mechanism</a>
+            <ul class="dropdown-menu">
+              <% @all_mechanisms.each do |mech| %>
+                <li><a class="dropdown-item nav-link <%= mech == @mechanism ? 'active' : ''%>" onclick="redirectMechanism('<%= mech %>');"><%= mech %></a></li>
+              <% end %>
+            </ul>
+          </li>
+
       </ul>
     </div>
     <select class="form-inline search-bar" id="tom-select-search" placeholder="Start typing a species formula or name..." aria-label="Search for a species">
