@@ -8,20 +8,19 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link <%= 'active' if current_url? '/' %>" aria-current="page"
+          <a class="nav-link <%= 'active' if (current_url? "/#{@mechanism}/") || (current_url? "/#{@mechanism}") %>" aria-current="page"
            href="<%= rel "/#{@mechanism}" %>">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <%= 'active' if current_url? '/browse' %>" aria-current="page"
+          <a class="nav-link <%= 'active' if current_url? "/#{@mechanism}/browse" %>" aria-current="page"
            href="<%= rel "/#{@mechanism}/browse" %>">Browse</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <%= 'active' if current_url? '/export' %>" aria-current="page"
+          <a class="nav-link <%= 'active' if current_url? "/#{@mechanism}/export" %>" aria-current="page"
            href="<%= rel "/#{@mechanism}/export" %>">Export</a>
         </li>
-        <!-- TODO add active link highlight to About or to lower level? -->
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">About</a>
+            <a class="nav-link dropdown-toggle <%= 'active' if request.path_info.include? "/#{@mechanism}/about" %>" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">About</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/construction" %>">Construction Method</a></li>
               <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/links" %>">Useful links</a></li>
@@ -36,7 +35,7 @@
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Select Mechanism</a>
             <ul class="dropdown-menu">
               <% @all_mechanisms.each do |mech| %>
-                <li><a class="dropdown-item nav-link <%= mech == @mechanism ? 'active' : ''%>" onclick="redirectMechanism('<%= mech %>');"><%= mech %></a></li>
+                <li><a class="dropdown-item nav-link" onclick="redirectMechanism('<%= mech %>');"><%= mech %></a></li>
               <% end %>
             </ul>
           </li>
