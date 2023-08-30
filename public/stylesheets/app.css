@@ -204,6 +204,8 @@ div#sidebarOffcanvas {
 .footer {
     display: flex;
     justify-content: space-between;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 img.figure {
@@ -211,4 +213,20 @@ img.figure {
     margin-left: auto;
     margin-right: auto;
     max-width: 500px
+}
+
+.logo-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-row > div {
+    margin: 20px;
+}
+
+.logo-row img {
+    height: 100px;
+    width: 100%;
 }
