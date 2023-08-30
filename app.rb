@@ -55,7 +55,7 @@ before do
   cache_control :no_cache
 
   # Force all routes to have explicitly have mechanism
-  @all_mechanisms = DB[:Mechanisms].select_map(:Mechanism)
+  @all_mechanisms = DB[:Mechanisms].order(:DropdownOrder).select_map(:Mechanism)
   @mechanism = request.path_info.split('/')[1]
   mech = @mechanism # Need normal variable to be able to be used in Sequel
   @mechanism_version = DB[:Mechanisms].where(Mechanism: mech).get(:CurrentVersion)
