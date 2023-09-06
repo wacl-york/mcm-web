@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody class="table-group-divider">
-        <% @params.each do |param| %>
+        <% @photo_params.each do |param| %>
           <tr>
             <td scope="row">J<<%= param[:J] %>></td>
             <td><%== "\\( #{param[:l].gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')} \\)" %></td>
