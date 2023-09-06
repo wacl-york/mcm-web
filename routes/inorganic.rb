@@ -6,7 +6,7 @@ get '/:mechanism/inorganic' do
   @rxns = if @cat.nil?
             []
           else
-            ids = DB[:Reactions].where(InorganicReactionCategory: @cat).map(:ReactionID)
+            ids = DB[:Reactions].where(InorganicReactionCategory: @cat, Mechanism: params[:mechanism]).map(:ReactionID)
             if ids.nil?
               []
             else
