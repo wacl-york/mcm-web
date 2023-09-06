@@ -45,7 +45,7 @@ get '/:mechanism/?' do
                       },
                       {
                         url: 'https://www.bristol.ac.uk/',
-                        logo: '/static/logos/bristol_colour.png',
+                        logo: '/static/logos/bristol_colour.svg',
                         alt: 'University of Bristol logo'
                       },
                       {
