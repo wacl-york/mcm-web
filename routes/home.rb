@@ -26,9 +26,9 @@ get '/:mechanism/?' do
                         alt: 'NCAS logo'
                       },
                       {
-                        url: 'https://www.leeds.ac.uk/',
-                        logo: '/static/logos/uol_black.svg',
-                        alt: 'University of Leeds logo'
+                        url: 'https://www.york.ac.uk/chemistry/research/wacl/',
+                        logo: '/static/logos/wacl.png',
+                        alt: 'WACL logo'
                       }
                     ]
                   when 'CRI'
@@ -49,9 +49,9 @@ get '/:mechanism/?' do
                         alt: 'University of Bristol logo'
                       },
                       {
-                        url: 'https://www.leeds.ac.uk/',
-                        logo: '/static/logos/uol_black.svg',
-                        alt: 'University of Leeds logo'
+                        url: 'https://www.york.ac.uk/chemistry/research/wacl/',
+                        logo: '/static/logos/wacl.png',
+                        alt: 'WACL logo'
                       }
                     ]
                   end
