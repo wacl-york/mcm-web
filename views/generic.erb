@@ -16,7 +16,7 @@
         <% @rates.each do |rate| %>
           <tr>
             <td scope="row"><%= rate[:Token] %></td>
-            <td><%== parse_rate(rate[:Definition]) %></td>
+            <td><%== parse_rate(rate[:Definition], display_arrow: false) %></td>
             <td>
               <a href="<%= "https://iupac-aeris.ipsl.fr/test/front-office/datasheets/pdf/#{rate[:NewDatasheet]}.pdf" %> ">
                 <%= rate[:NewDatasheet] %>
