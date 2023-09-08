@@ -61,6 +61,11 @@ function showPage(i, N) {
     let ele = document.getElementById("page-" + i);
     ele.hidden = false;
 
+    // Keep state of currently viewed page for toggling display of all the reactions
+    // i.e. so can hide all reactions, then when toggle again will revert back to the previously
+    // opened page rather than defaulting to first
+    current_precursor_reaction_page = i;
+
     // Update the navigation buttons list
     populateNav(i, N, 2);
 }
@@ -70,4 +75,18 @@ function hideAllPages(N) {
         let reaction_list = document.getElementById("page-" + i);
         reaction_list.hidden = true;
     }
+}
+
+function togglePrecursorReactions(but, max_page) {
+    let container = document.getElementById("precursorRxnsCollapse");
+    // Toggle container visibility
+    container.hidden = !container.hidden;
+
+    // Show the current page
+    if (!container.hidden) {
+        showPage(current_precursor_reaction_page, max_page);
+    }
+
+    // Update button text to reflect status
+    but.textContent = container.hidden ? 'Show precursor reactions' : 'Hide precursor reactions';
 }
