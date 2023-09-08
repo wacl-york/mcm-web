@@ -9,7 +9,6 @@
           <tr>
             <th scope="col">Name</th>
             <th scope="col">MCM Rate</th>
-            <th scope="col">IUPAC Rate</th>
           </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -17,7 +16,6 @@
             <tr>
               <td scope="row"><%= child[:Child] %></td>
               <td><%== parse_rate(child[:Definition], display_arrow: false) %></td>
-              <td><%== parse_rate(child[:IUPACDefinition], display_arrow: false) %></td>
             </tr>
           <% end %>
         </tbody>

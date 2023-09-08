@@ -13,11 +13,11 @@ get '/:mechanism/rates/complex' do
     complex_tokens = complex_tokens.union(parents)
   end
 
-  # Child level data: TopParent, Child, Definition, IUPACDefinition
+  # Child level data: TopParent, Child, Definition
   complex_children = complex_tokens
                      .distinct
                      .join(DB[:Tokens], Token: :Child)
-                     .select(:TopParent, :Child, :Definition, :IUPACDefinition)
+                     .select(:TopParent, :Child, :Definition)
 
   # Parent level data: (which complex rates to show and in which order, source, and datasheet)
   complex_parents = DB[:ComplexRatesWeb]
