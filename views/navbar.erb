@@ -32,10 +32,10 @@
           </li>
 
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Select Mechanism</a>
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Select Mechanism (<%= @all_mechanisms.map(:Mechanism).join(', ') %>)</a>
             <ul class="dropdown-menu">
               <% @all_mechanisms.each do |mech| %>
-                <li><a class="dropdown-item nav-link" onclick="redirectMechanism('<%= mech %>');"><%= mech %></a></li>
+                <li><a class="dropdown-item nav-link" onclick="redirectMechanism('<%= mech[:Mechanism] %>');"><%= "#{mech[:Mechanism]} (v#{mech[:CurrentVersion]})" %></a></li>
               <% end %>
             </ul>
           </li>
