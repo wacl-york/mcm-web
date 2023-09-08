@@ -1,5 +1,15 @@
 <h1><%= @mechanism_details[:MechanismLong] %> (v<%= @mechanism_details[:CurrentVersion] %>)</h1>
 
+<div class="logo-row">
+<% @institutions.each do | institution | %>
+    <div>
+      <a href="<%= institution[:url] %>">
+      <img src="<%= institution[:logo] %>" alt="<%= institution[:alt] %>">
+      </a>
+    </div>
+<% end %>
+</div>
+
 <h2>Mechanism</h2>
 <%== @content %>
 
@@ -23,12 +33,3 @@ There are alternative mechanisms that can be browsed in the same way by changing
 For any scientific questions about the mechanisms, please contact <a href="mailto:andrew.rickard@york.ac.uk">Andrew Rickard</a>.
 For any technical issues regarding the website itself, please open an issue on our GitHub repository: <a href="https://github.com/wacl-york/mcm-web">https://github.com/wacl-york/mcm-web</a>.
 
-<div class="logo-row">
-<% @institutions.each do | institution | %>
-    <div>
-      <a href="<%= institution[:url] %>">
-      <img src="<%= institution[:logo] %>" alt="<%= institution[:alt] %>">
-      </a>
-    </div>
-<% end %>
-</div>
