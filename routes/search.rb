@@ -141,6 +141,8 @@ def find_synonym(term, preceeding: false)
 end
 
 def find_smiles(term)
+  # TODO: Should this search for sub patterns?
+  # Should it be doing more involved molecular search like the current app seems to?
   search_pattern = "#{term}%"
   DB[:species]
     .where(Sequel.ilike(:Smiles, search_pattern))
@@ -148,6 +150,8 @@ def find_smiles(term)
 end
 
 def find_inchi(term)
+  # TODO: should append Inchi string if not available (i.e. should users be expected to
+  # search for InChI=1S/C3H2...., or should C3H2 return results?
   search_pattern = "#{term}%"
   DB[:species]
     .where(Sequel.ilike(:Inchi, search_pattern))
