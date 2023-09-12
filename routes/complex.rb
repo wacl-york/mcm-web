@@ -11,7 +11,7 @@ get '/:mechanism/rates/complex' do
 
   # Combine, reorder, and restructure
   @complex_rates = parents
-                   .join(children, TopParent: :Token)
+                   .join(children, RootToken: :Token)
                    .order(:parent_order, Sequel.desc(:depth))
                    .to_hash_groups(%i[Token Source NewDatasheet])
   erb :complex

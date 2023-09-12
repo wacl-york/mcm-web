@@ -41,7 +41,7 @@ helpers do
   def get_children_from_parent(parents, _db)
     DB[:TokenRelationships]
       .join(parents, Child: :ParentToken)
-      .select(Sequel.lit('TopParent, ChildToken as Child'))
+      .select(Sequel.lit('RootToken, ChildToken as Child'))
   end
 
   def get_token_definition(token, _db)
@@ -235,14 +235,14 @@ helpers do
     #
     # Returns:
     #   - A dataset with 4 columns and 1 row per child token.
-    #     - TopParent: The root parent token
+    #     - RootToken: The root parent token
     #     - Child: The child's token name
     #     - Definition: The child's rate definition
     #     - Depth: How many branches down the tree from the root parent was this child
     depth = 0
     new_children = DB[:Tokens]
                    .where(Token: parents)
-                   .select(Sequel.lit("Token as TopParent, Token as Child, #{depth} as depth"))
+                   .select(Sequel.lit("Token as RootToken, Token as Child, #{depth} as depth"))
     all_tokens = new_children
     loop do
       depth += 1
@@ -253,16 +253,31 @@ helpers do
       all_tokens = all_tokens.union(new_children)
     end
 
-    # Get each child's rate Definition
-    # For each child token want the lowest depth.
+    # Get each child's rate Definition and limit each child to highest depth
     # In SQLite when using Max or Min in a grouped select, it only returns the corresponding row with the max or min
     # So no need to add a WHERE clause. Madness.
+    all_tokens = all_tokens
+                 .distinct
+                 .join(DB[:Tokens], Token: :Child)
+                 .group_by(:RootToken, :Child, :Definition)
+                 .select_append(Sequel.lit('max(depth) as Depth'))
+                 .from_self(alias: :all)
+
+    # Identify which root tokens are simple or complex for later ordering
+    simple_generic_order = all_tokens
+                           .group_and_count(:RootToken)
+                           .from_self(alias: :sim)
+                           .select_append(Sequel.lit('count > 1 as IsComplex'))
+
+    # Want to order by 3 conditions:
+    #   - Whether simple or complex (simple has a tree with depth=1)
+    #   - By root parent token
+    #   - By depth of child token
     all_tokens
-      .distinct
-      .join(DB[:Tokens], Token: :Child)
-      .group_by(:TopParent, :Child, :Definition)
-      .select(:TopParent, :Child, :Definition, Sequel.lit('max(depth) as Depth'))
-      .order(:TopParent, Sequel.desc(:depth))
+      .join(simple_generic_order, RootToken: :RootToken)
+      .order(:IsComplex, :RootToken, Sequel.desc(:depth))
+      .from_self(alias: :out)
+      .select(:RootToken, :Child, :Definition, :depth)
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
