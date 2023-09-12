@@ -67,6 +67,10 @@
     sortField: [{field: 'score', direction: 'desc'}, {field: '$score'}],
     options: [],
     create: false,
+    shouldLoad: function(query, callback) {
+      // Only search if have at least 2 characters
+      return query.length >= 2;
+    },
     load: function(query, callback) {
       // Clear previously found results, otherwise they will be kept at the top regardless of their match
       this.clearOptions();
