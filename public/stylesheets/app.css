@@ -230,3 +230,9 @@ img.figure {
     height: 100px;
     width: 100%;
 }
+
+td.photo-table-group {
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+}
