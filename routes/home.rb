@@ -27,7 +27,7 @@ get '/:mechanism/?' do
                       },
                       {
                         url: 'https://www.york.ac.uk/chemistry/research/wacl/',
-                        logo: '/static/logos/wacl.png',
+                        logo: '/static/logos/wacl_cropped.png',
                         alt: 'WACL logo'
                       }
                     ]
@@ -50,7 +50,7 @@ get '/:mechanism/?' do
                       },
                       {
                         url: 'https://www.york.ac.uk/chemistry/research/wacl/',
-                        logo: '/static/logos/wacl.png',
+                        logo: '/static/logos/wacl_cropped.png',
                         alt: 'WACL logo'
                       }
                     ]
