@@ -221,5 +221,50 @@ helpers do
   def generate_photolysis_link(species)
     "<a href='/static/MCM/download/#{species}.zip'>#{species}</a>"
   end
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def traverse_complex_rates(parents)
+    # Traverses complex tokenized rates from parents (i.e. KMT04) down to children.
+    # Returns in order firstly by parent, and then by child depth
+    # (highest depth first, i.e. FCC, KCO, KCI, KRC, NC, FC, KFPAN)
+    # Iterate down the tree, finding sub-rates
+    #
+    # Args:
+    #   - parents: Array of strings with Token names to use as initial parents
+    #
+    # Returns:
+    #   - A dataset with 4 columns and 1 row per child token.
+    #     - TopParent: The root parent token
+    #     - Child: The child's token name
+    #     - Definition: The child's rate definition
+    #     - Depth: How many branches down the tree from the root parent was this child
+    depth = 0
+    new_children = DB[:Tokens]
+                   .where(Token: parents)
+                   .select(Sequel.lit("Token as TopParent, Token as Child, #{depth} as depth"))
+    all_tokens = new_children
+    loop do
+      depth += 1
+      new_children = get_children_from_parent(new_children, DB)
+                     .select_append(Sequel.lit("#{depth} as depth"))
+      break if new_children.empty?
+
+      all_tokens = all_tokens.union(new_children)
+    end
+
+    # Get each child's rate Definition
+    # For each child token want the lowest depth.
+    # In SQLite when using Max or Min in a grouped select, it only returns the corresponding row with the max or min
+    # So no need to add a WHERE clause. Madness.
+    all_tokens
+      .distinct
+      .join(DB[:Tokens], Token: :Child)
+      .group_by(:TopParent, :Child, :Definition)
+      .select(:TopParent, :Child, :Definition, Sequel.lit('max(depth) as Depth'))
+      .order(:TopParent, Sequel.desc(:depth))
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end
 # rubocop:enable Metrics/BlockLength

@@ -65,33 +65,7 @@ post '/:mechanism/export' do
                 .inner_join(:TokenizedRates, [:Rate])
                 .inner_join(:RateTokens, [:Rate])
                 .select_map(:Token)
-
-  # Iteratively find the children of each generation of tokens so they are all
-  # fully defined
-  all_tokens = [used_tokens.to_set]
-  loop do
-    used_tokens = get_children_from_parents_set(used_tokens, DB)
-    break if used_tokens.empty?
-
-    all_tokens.append(used_tokens.to_set)
-  end
-  # This line ensures that all rates are defined before they are used in parent
-  # rates.
-  # Say rate A is defined as a function of rate B, but both A and B are used
-  # directly in the sub-mechanism and thus both returned in the first
-  # used_tokens assignment. Since this query isn't ordered it could easily
-  # return A before B, which would cause the FACSIMILE to fail to build.
-  # Reversing the array ensures that all parent rates are located at the end of
-  # the array because the tree traversal was top-down, while children can be
-  # scattered throughout.
-  # The Reduce(Union) restricts multiple copies of a child rate to its first
-  # appearance since the Union function is ordered and returns all items of the
-  # first input and then any from the second that weren't in the first.
-  tokens = all_tokens.reverse.reduce(:union).to_a
-  #
-  # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
-  # than a batch query that returns in order
-  complex_rates = tokens.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
+  complex_rates = traverse_complex_rates(used_tokens)
 
   #------------------- Peroxy radicals
   peroxies = species
@@ -112,7 +86,7 @@ post '/:mechanism/export' do
   # Format sections for export
   species_out = wrap_lines(species.map(:Name))
   rxns_out = all_rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
-  complex_rates_out = complex_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
+  complex_rates_out = complex_rates.map { |row| "#{row[:Child]} = #{row[:Definition]} ;\n" }.join
 
   params_out = wrap_lines(params[:selected],
                           starting_char: '* ',
