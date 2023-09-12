@@ -6,3 +6,5 @@ packaged.yaml
 
 *.db
 .env
+
+param*.json

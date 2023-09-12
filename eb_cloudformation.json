@@ -1,0 +1,153 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "MCM Stack Deploying through Elastic Beanstalk",
+  "Parameters" : {
+    "Subnets": {
+      "Type": "CommaDelimitedList",
+      "Description": "Subnets"
+    },
+    "VpcId": {
+      "Type": "String",
+      "Description": "VPC Id"
+    },
+    "S3Bucket": {
+      "Type": "String",
+      "Description": "S3 Bucket name"
+    },
+    "S3Key": {
+      "Type": "String",
+      "Description": "S3 Key name"
+    }
+  },
+  "Resources" : {
+    "MCMApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "ApplicationName": "MCM",
+        "Description": "The MCM web-application running in Docker"
+      }
+    },
+    "MCMApplicationVersion": {
+      "Type" : "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties" : {
+        "ApplicationName": {
+          "Ref": "MCMApplication"
+        },
+        "Description" : "MCM Application Version",
+        "SourceBundle" : {
+          "S3Bucket" : {"Ref": "S3Bucket"},
+          "S3Key": {"Ref": "S3Key"}
+        }
+      }
+    },
+    "MCMEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "MCMApplication" },
+        "Description" :  "AWS Elastic Beanstalk Environment running MCM",
+        "VersionLabel" : { "Ref": "MCMApplicationVersion" },
+        "TemplateName" : { "Ref": "MCMConfigurationTemplate" }
+      }
+    },
+    "MCMConfigurationTemplate": {
+        "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
+        "Properties": {
+            "ApplicationName": { "Ref": "MCMApplication" },
+            "Description": "MCM Configuration Template",
+            "OptionSettings": [
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "InstanceType",
+                "Value": "t4g.micro"
+              },
+              {
+                "Namespace": "aws:autoscaling:asg",
+                "OptionName": "MinSize",
+                "Value": "1"
+              },
+              {
+                "Namespace": "aws:autoscaling:asg",
+                "OptionName": "MaxSize",
+                "Value": "1"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "EnvironmentType",
+                "Value": "SingleInstance"
+              },
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "IamInstanceProfile",
+                "Value": {
+                  "Ref": "MyInstanceProfile"
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "VPCId",
+                "Value": { "Ref" : "VpcId" }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "Subnets",
+                "Value" : {
+                  "Fn::Join": [",", { "Ref" : "Subnets" }]
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "ELBSubnets",
+                "Value" : {
+                  "Fn::Select": ["0", {"Ref" : "Subnets" }]
+                }
+              }
+            ],
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker"
+        }
+    },
+    "MyInstanceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+                 {
+                     "Effect": "Allow",
+                     "Principal": {
+                         "Service": [
+                             "ec2.amazonaws.com"
+                         ]
+                     },
+                     "Action": [
+                         "sts:AssumeRole"
+                     ]
+                 }
+             ]
+         },
+         "Description": "Beanstalk EC2 role",
+         "ManagedPolicyArns": [
+             "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier",
+             "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker",
+             "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier",
+             "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+         ]
+     }
+    },
+    "MyInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "MyInstanceRole"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs" : {
+    "URL" : {
+      "Description" : "The URL of the Elastic Beanstalk environment",
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["MCMEnvironment", "EndpointURL"] }]]}
+    }
+  }
+}
