@@ -141,9 +141,7 @@ def find_synonym(term, preceeding: false)
 end
 
 def find_smiles(term)
-  # TODO: Should this search for sub patterns?
-  # Should it be doing more involved molecular search like the current app seems to?
-  search_pattern = "#{term}%"
+  search_pattern = "%#{term}%"
   DB[:species]
     .where(Sequel.ilike(:Smiles, search_pattern))
     .select(:Name)
