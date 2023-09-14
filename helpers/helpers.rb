@@ -21,6 +21,7 @@ helpers do
   end
   # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
 
+  # TODO: refactor all of these. Remove unused, add docs, rename to include 'Token' etc...
   def get_parent_from_children(children, _db)
     DB[:TokenRelationships]
       .where(ChildToken: children)
@@ -228,7 +229,7 @@ helpers do
     # Traverses complex tokenized rates from parents (i.e. KMT04) down to children.
     # Returns in order firstly by parent, and then by child depth
     # (highest depth first, i.e. FCC, KCO, KCI, KRC, NC, FC, KFPAN)
-    # Iterate down the tree, finding sub-rates
+    # This is a breadth-first traversal, finding all root tokens, then all tokens at the next level down, etc...
     #
     # Args:
     #   - parents: Array of strings with Token names to use as initial parents
@@ -244,6 +245,7 @@ helpers do
                    .where(Token: parents)
                    .select(Sequel.lit("Token as RootToken, Token as Child, #{depth} as depth"))
     all_tokens = new_children
+    # TODO: change to while loop with new children being empty
     loop do
       depth += 1
       new_children = get_children_from_parent(new_children, DB)

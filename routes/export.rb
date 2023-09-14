@@ -6,57 +6,23 @@ end
 
 # rubocop:disable Metrics/BlockLength
 post '/:mechanism/export' do
-  prods = Set[]
-  stack = params[:selected].to_set
-
-  # Find all products from reactions where the user-selected species are reactants
-  # and iterate down the reaction tree until reach a non-VOC or run out of reactions
-  until stack.empty?
-    prods = prods.union(stack)
-    # Have to use literal SQL for the WHERE filter as can't seem to get the table name qualifier working, see below
-    voc_prods = DB[:Reactants]
-                .join(:Reactions, [:ReactionID])
-                .join(:Products, [:ReactionID])
-                .join(:Species, Name: Sequel[:Products][:Species])
-                .where(Sequel.lit('Reactants.Species IN ?', stack.to_a))
-                .where(SpeciesCategory: 'VOC',
-                       Mechanism: @mechanism).select(Sequel[:Products][:Species]).map(:Species)
-                .to_set
-    stack = voc_prods.difference(prods)
-  end
-
-  # Now find reactions where these species are reactants
-  all_rxns = DB[:Reactants]
-             .join(:ReactionsWide, [:ReactionID])
-             .where(Sequel.lit('Reactants.Species IN ?', prods.to_a))
-             .where(Mechanism: @mechanism)
-             .select(:ReactionID, :Reaction, :Rate) # Distinct first generates DISTINCT ON - unsupported in SQLite
-             .distinct
+  submechanism = traverse_submechanism(params[:selected], @mechanism)
 
   # Include all inorganic reactions if user requested
   if params[:inorganic]
-    inorg_rxns = DB[:ReactionsWide]
-                 .where(Mechanism: @mechanism)
-                 .exclude(InorganicCategory: nil)
-                 .select(:ReactionID, :Reaction, :Rate)
-                 .distinct
-    all_rxns = all_rxns.union(inorg_rxns)
+    inorganic_rxns = DB[:Reactions].exclude(InorganicReactionCategory: nil).select(:ReactionID)
+    submechanism = inorganic_rxns.union(submechanism)
   end
 
-  # The export needs to include ALL species involved in this mechanism, not just
-  # the user selected ones
-  reactants = all_rxns
-              .join(Sequel[:Reactants].as(:rea), [:ReactionID])
-              .select(Sequel[:rea][:Species].as(:spec))
-              .join(:Species, Name: Sequel[:rea][:Species])
-              .select(:Name, :PeroxyRadical)
-  products = all_rxns
-             .join(Sequel[:Products].as(:pro), [:ReactionID])
-             .select(Sequel[:pro][:Species].as(:spec))
-             .join(:Species, Name: Sequel[:pro][:Species])
-             .select(:Name, :PeroxyRadical)
+  # Get full reaction info
+  all_rxns = submechanism
+             .join(DB[:ReactionsWide], [:ReactionID])
+             .select(:ReactionID, :Reaction, :Rate)
 
-  species = reactants.union(products)
+  # Get all species involved inthis submechanism
+  species = get_species_from_reactions(submechanism)
+            .join(:Species, Name: :Species)
+            .select(:Name, :PeroxyRadical)
 
   #------------------- Complex Rates
   # Only find tokenized rates that were used in this sub-mechanism
@@ -161,3 +127,56 @@ post '/:mechanism/export' do
   #---------------------- End write facsimile file
 end
 # rubocop:enable Metrics/BlockLength
+
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
+def traverse_submechanism(root_species, mechanism)
+  # Traverses a sub-mechanism from a collection of starting species down to sink species
+  #
+  # TODO: Get breadth first search working. Say export CH4, the 2 CH4 reactions won't be consecutive
+  #
+  # Args:
+  #   - root_species: Array of strings with the starting Species names
+  #   - mechanism: String with the mechanism name to traverse.
+  #
+  # Returns:
+  #   - A Sequel dataset with 1 column
+  #     - ReactionId: A set of ReactionIDs, ordered by first appearance in the submechanism
+  DB[:get_submechanism]
+    .with_recursive(
+      :get_submechanism,
+      DB[:Reactants]
+      .join(:Species, Name: :Species)
+      .join(:Reactions, [:ReactionID])
+      .where(Mechanism: mechanism, SpeciesCategory: 'VOC', Species: root_species)
+      .select(:ReactionID),
+      DB[:get_submechanism]
+        .join(:Products, ReactionID: Sequel[:get_submechanism][:ReactionID])
+        .join(:Reactants, Species: Sequel[:Products][:Species])
+        .join(:Reactions, ReactionID: Sequel[:Reactants][:ReactionID])
+        .join(:Species, Name: Sequel[:Reactants][:Species])
+        .where(Mechanism: mechanism, SpeciesCategory: 'VOC')
+        .select(Sequel[:Reactants][:ReactionID]),
+      args: [:ReactionID],
+      union_all: false
+    )
+end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
+
+def get_species_from_reactions(ids)
+  # Finds unique species involved in given reactions
+  #
+  # Args:
+  #   - ids: Sequel dataset with the column ReactionID.
+  #
+  # Returns:
+  #   - A Sequel dataset with the column Species
+  reactants = ids
+              .join(DB[:Reactants], [:ReactionID])
+              .select(:Species)
+  products = ids
+             .join(DB[:products], [:ReactionID])
+             .select(:Species)
+  reactants.union(products)
+end
