@@ -222,6 +222,5 @@ helpers do
   def generate_photolysis_link(species)
     "<a href='/static/MCM/download/#{species}.zip'>#{species}</a>"
   end
-
 end
 # rubocop:enable Metrics/BlockLength

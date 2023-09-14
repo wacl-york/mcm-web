@@ -12,16 +12,11 @@ post '/:mechanism/export' do
 
   # Include all inorganic reactions and species if user requested
   if params[:inorganic]
-    inorg_submech = extract_inorganic_submechanism
+    inorg_submech = extract_inorganic_submechanism(@mechanism)
     # Can safely do a union all as we explicitly didn't include inorganic rxns in the initial submechanism extract
     submech_rxns = inorg_submech[:rxns].union(submech_rxns, all: true)
     submech_species = inorg_submech[:species].union(submech_species)
   end
-
-  # Get Peroxy information
-  submech_species = submech_species
-                    .join(:Species, Name: :Species)
-                    .select(:Name, :PeroxyRadical)
 
   #------------------- Complex Rates
   # Only find tokenized rates that were used in this sub-mechanism
@@ -32,7 +27,23 @@ post '/:mechanism/export' do
                 .select_map(:Token)
   complex_rates = traverse_complex_rates(used_tokens)
 
-  #------------------- Peroxy radicals
+  #------------------- Species
+  # We want a list of species that were present in the submechanism.
+  # The extract submechanism is missing 2 edge cases:
+  #   - Species that were reactants alongside the root VOC
+  #   - Any reactions where a species is a reactant alongside a VOC but hasn't been the product of a previous reaction
+  #     This should only impact inorganic species, and in particular only seems to really affect CL in practice.
+  # Extract all species that are reactants in submechanism reactions and combine with the previously pulled values
+  all_reactants = DB[:Reactants]
+                  .join(submech_rxns, [:ReactionID])
+                  .select(Sequel[:Reactants][:Species])
+  puts "ROOT: #{all_reactants.all}"
+
+  # Get Peroxy information
+  submech_species = submech_species
+                    .union(all_reactants)
+                    .join(:Species, Name: :Species)
+                    .select(:Name, :PeroxyRadical)
   peroxies = submech_species
              .where(PeroxyRadical: true)
   missing_peroxies = submech_species
@@ -204,17 +215,18 @@ end
 # rubocop:enable Metrics/MethodLength
 
 # rubocop:disable Metrics/MethodLength
-def extract_inorganic_submechanism
+def extract_inorganic_submechanism(mechanism)
   # Extracts inorganic reactions and the species involved within
   #
   # Args:
-  #   - None
+  #   - mechanism: Mechanism name as string.
   #
   # Returns:
   #   - An object with attributes:
   #     - rxns: Sequel Dataset with ReactionID, Reaction, Rate columns
   #     - species: Sequel Dataset with Species column
   rxns = DB[:ReactionsWide]
+         .where(Mechanism: mechanism)
          .exclude(InorganicCategory: nil)
          .select(:ReactionID, :Reaction, :Rate)
          .from_self(alias: :inorg)
