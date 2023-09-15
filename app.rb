@@ -35,7 +35,6 @@ configure do
   #  register Sinatra::BasicPasswordlessAuth
   #  use Rack::Session::Cookie, secret: 'local_secret'
   # end
-  register Sinatra::BasicPasswordlessAuth
   use Rack::Session::Cookie, secret: 'local_secret'
 
   use Rack::Protection::StrictTransport
