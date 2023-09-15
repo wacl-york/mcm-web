@@ -240,7 +240,7 @@ DEPENDENCIES
   capybara
   erubi
   public_suffix (~> 5.0)
-  puma
+  puma (>= 6.3.1)
   rack (~> 2.2.6, >= 2.2.6.3)
   rack-test
   rest-client

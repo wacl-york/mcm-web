@@ -1,38 +1,48 @@
 
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+<nav class="<%= "navbar-#{@mechanism}" %> navbar navbar-expand-md fixed-top">
   <div class="container">
-    <a class="navbar-brand" href=<%= "/#{@mechanism}"%>>MCM</a>
+    <a class="navbar-brand" href=<%= "/#{@mechanism}"%>><%= "#{@mechanism} (v#{@mechanism_version})"%></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link <%= 'active' if current_url? '/' %>" aria-current="page"
+          <a class="nav-link <%= 'active' if (current_url? "/#{@mechanism}/") || (current_url? "/#{@mechanism}") %>" aria-current="page"
            href="<%= rel "/#{@mechanism}" %>">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <%= 'active' if current_url? '/browse' %>" aria-current="page"
+          <a class="nav-link <%= 'active' if current_url? "/#{@mechanism}/browse" %>" aria-current="page"
            href="<%= rel "/#{@mechanism}/browse" %>">Browse</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <%= 'active' if current_url? '/export' %>" aria-current="page"
+          <a class="nav-link <%= 'active' if current_url? "/#{@mechanism}/export" %>" aria-current="page"
            href="<%= rel "/#{@mechanism}/export" %>">Export</a>
         </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle <%= 'active' if request.path_info.include? "/#{@mechanism}/about" %>" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">About</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/construction" %>">Construction Method</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/links" %>">Useful links</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/cite" %>">Cite</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/contributors" %>">Contributors</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/funding" %>">Funding</a></li>
+              <li><a class="dropdown-item" href="<%= rel "/#{@mechanism}/about/archive" %>">Previous versions</a></li>
+            </ul>
+          </li>
 
-        <li class="nav-item">
-          <label for="mechanisms">Select mechanism:</label>
-          <select name="mechanisms" id="mechanisms" onchange="redirectMechanism(this);">
-            <% @all_mechanisms.each do |mech| %>
-              <option value="<%= mech %>"<%= mech == @mechanism ? 'selected' : ''%>>
-                <%= mech %>
-              </option>
-            <% end %>
-          </select>
-        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Select Mechanism (<%= @all_mechanisms.map(:Mechanism).join(', ') %>)</a>
+            <ul class="dropdown-menu">
+              <% @all_mechanisms.each do |mech| %>
+                <li><a class="dropdown-item nav-link" onclick="redirectMechanism('<%= mech[:Mechanism] %>');"><%= "#{mech[:Mechanism]} (v#{mech[:CurrentVersion]})" %></a></li>
+              <% end %>
+            </ul>
+          </li>
+
       </ul>
     </div>
-    <select class="form-inline search-bar" id="tom-select-search" placeholder="Start typing a species formula or name...">
+    <select class="form-inline search-bar" id="tom-select-search" placeholder="Start typing a species formula or name..." aria-label="Search for a species">
     </select>
     <div>
 
@@ -53,10 +63,14 @@
     loadThrottle: 500,
     closeAfterSelect: true,
     valueField: 'Name',
-    searchField: ['Name', 'Synonyms', 'Smiles', 'Inchi'],
+    searchField: [],
     sortField: [{field: 'score', direction: 'desc'}, {field: '$score'}],
     options: [],
     create: false,
+    shouldLoad: function(query, callback) {
+      // Only search if have at least 2 characters
+      return query.length >= 2;
+    },
     load: function(query, callback) {
       // Clear previously found results, otherwise they will be kept at the top regardless of their match
       this.clearOptions();

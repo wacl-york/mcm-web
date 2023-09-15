@@ -5,6 +5,7 @@ saml2aws login
 aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 733046350245.dkr.ecr.eu-west-1.amazonaws.com
 
 # Push docker images
+docker compose build
 docker compose push
 
 # Create a new deployment. NB: likely will require installing lightsailctl

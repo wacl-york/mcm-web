@@ -1,15 +1,15 @@
 <h2>Complex rate coefficients</h2>
+<p>The following are complex rate coefficients used in the mechanism. Please refer to this <a href="https://iupac-aeris.ipsl.fr/htdocs/supp_info/Guide_to_Gas-Phase_Datasheets_Final_Oct_2017.pdf">IUPAC Guide</a> for information on how these are defined.</p>
 
 <% @complex_rates.each do |parent, children| %>
   <div class="row justify-content-center">
     <div class="col-8">
       <table class="table table-striped table-hover caption-top rate-table table-bordered">
-        <caption><%== "#{parent[0]}: (source: <a href='https://iupac-aeris.ipsl.fr/test/front-office/datasheets/pdf/#{parent[3]}.pdf'>#{parent[1]} - #{parent[3]}</a>)" %></caption>
+        <caption><%== "#{parent[0]}: (source: <a href='https://iupac-aeris.ipsl.fr/htdocs/datasheets/pdf/#{parent[2]}.pdf'>#{parent[1]} - #{parent[2]}</a>)" %></caption>
         <thead>
           <tr>
             <th scope="col">Name</th>
             <th scope="col">MCM Rate</th>
-            <th scope="col">IUPAC Rate</th>
           </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -17,7 +17,6 @@
             <tr>
               <td scope="row"><%= child[:Child] %></td>
               <td><%== parse_rate(child[:Definition], display_arrow: false) %></td>
-              <td><%== parse_rate(child[:IUPACDefinition], display_arrow: false) %></td>
             </tr>
           <% end %>
         </tbody>

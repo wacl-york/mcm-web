@@ -6,127 +6,150 @@ end
 
 # rubocop:disable Metrics/BlockLength
 post '/:mechanism/export' do
-  prods = Set[]
-  stack = params[:selected].to_set
+  # Traverse submechanism to obtain species involved and the reactions
+  submech_species = traverse_submechanism(params[:selected], @mechanism)
+  submech_rxns = get_reactions_from_species(submech_species, @mechanism)
 
-  # Find all products from reactions where the user-selected species are reactants
-  # and iterate down the reaction tree until reach a non-VOC or run out of reactions
-  until stack.empty?
-    prods = prods.union(stack)
-    # Have to use literal SQL for the WHERE filter as can't seem to get the table name qualifier working, see below
-    voc_prods = DB[:Reactants]
-                .join(:Reactions, [:ReactionID])
-                .join(:Products, [:ReactionID])
-                .join(:Species, Name: Sequel[:Products][:Species])
-                .where(Sequel.lit('Reactants.Species IN ?', stack.to_a))
-                .where(SpeciesCategory: 'VOC',
-                       Mechanism: @mechanism).select(Sequel[:Products][:Species]).map(:Species)
-                .to_set
-    stack = voc_prods.difference(prods)
-  end
-
-  # Now find reactions where these species are reactants
-  all_rxns = DB[:Reactants]
-             .join(:ReactionsWide, [:ReactionID])
-             .where(Sequel.lit('Reactants.Species IN ?', prods.to_a))
-             .where(Mechanism: @mechanism)
-             .select(:ReactionID, :Reaction, :Rate) # Distinct first generates DISTINCT ON - unsupported in SQLite
-             .distinct
-
-  # Include all inorganic reactions if user requested
+  # Include all inorganic reactions and species if user requested
   if params[:inorganic]
-    inorg_rxns = DB[:ReactionsWide]
-                 .where(Mechanism: @mechanism)
-                 .exclude(InorganicCategory: nil)
-                 .select(:ReactionID, :Reaction, :Rate)
-                 .distinct
-    all_rxns = all_rxns.union(inorg_rxns)
+    inorg_submech = extract_inorganic_submechanism(@mechanism)
+    # Can safely do a union all as we explicitly didn't include inorganic rxns in the initial submechanism extract
+    submech_rxns = inorg_submech[:rxns].union(submech_rxns, all: true)
+    submech_species = inorg_submech[:species].union(submech_species)
   end
-
-  # The export needs to include ALL species involved in this mechanism, not just
-  # the user selected ones
-  reactants = all_rxns
-              .join(Sequel[:Reactants].as(:rea), [:ReactionID])
-              .select(Sequel[:rea][:Species].as(:spec))
-              .join(:Species, Name: Sequel[:rea][:Species])
-              .select(:Name, :PeroxyRadical)
-  products = all_rxns
-             .join(Sequel[:Products].as(:pro), [:ReactionID])
-             .select(Sequel[:pro][:Species].as(:spec))
-             .join(:Species, Name: Sequel[:pro][:Species])
-             .select(:Name, :PeroxyRadical)
-
-  species = reactants.union(products)
 
   #------------------- Complex Rates
   # Only find tokenized rates that were used in this sub-mechanism
-  used_tokens = all_rxns
+  used_tokens = submech_rxns
                 .inner_join(:Rates, [:Rate])
                 .inner_join(:TokenizedRates, [:Rate])
                 .inner_join(:RateTokens, [:Rate])
                 .select_map(:Token)
+  complex_rates = traverse_complex_rates(used_tokens)
 
-  # Iteratively find the children of each generation of tokens so they are all
-  # fully defined
-  all_tokens = [used_tokens.to_set]
-  loop do
-    used_tokens = get_children_from_parents_set(used_tokens, DB)
-    break if used_tokens.empty?
+  #------------------- Species
+  # We want a list of species that were present in the submechanism.
+  # The extract submechanism is missing 2 edge cases:
+  #   - Species that were reactants alongside the root VOC
+  #   - Any reactions where a species is a reactant alongside a VOC but hasn't been the product of a previous reaction
+  #     This should only impact inorganic species, and in particular only seems to really affect CL in practice.
+  # Extract all species that are reactants in submechanism reactions and combine with the previously pulled values
+  all_reactants = DB[:Reactants]
+                  .join(submech_rxns, [:ReactionID])
+                  .select(Sequel[:Reactants][:Species])
+  puts "ROOT: #{all_reactants.all}"
 
-    all_tokens.append(used_tokens.to_set)
-  end
-  # This line ensures that all rates are defined before they are used in parent
-  # rates.
-  # Say rate A is defined as a function of rate B, but both A and B are used
-  # directly in the sub-mechanism and thus both returned in the first
-  # used_tokens assignment. Since this query isn't ordered it could easily
-  # return A before B, which would cause the FACSIMILE to fail to build.
-  # Reversing the array ensures that all parent rates are located at the end of
-  # the array because the tree traversal was top-down, while children can be
-  # scattered throughout.
-  # The Reduce(Union) restricts multiple copies of a child rate to its first
-  # appearance since the Union function is ordered and returns all items of the
-  # first input and then any from the second that weren't in the first.
-  tokens = all_tokens.reverse.reduce(:union).to_a
-  #
-  # Get the token definitions. It's a bit ugly to iteratively call the DB, but it's cleaner code
-  # than a batch query that returns in order
-  complex_rates = tokens.map { |x| { Token: x, Definition: get_token_definition(x, DB) } }
-
-  #------------------- Peroxy radicals
-  peroxies = species
+  # Get Peroxy information
+  submech_species = submech_species
+                    .union(all_reactants)
+                    .join(:Species, Name: :Species)
+                    .select(:Name, :PeroxyRadical)
+  peroxies = submech_species
              .where(PeroxyRadical: true)
-  missing_peroxies = species
+  missing_peroxies = submech_species
                      .where(PeroxyRadical: nil)
-  peroxy_out = wrap_lines(peroxies.map(:Name),
-                          starting_char: 'RO2 = ',
-                          ending_char: ';',
-                          sep: ' + ',
-                          max_line_length: 65,
-                          every_line_start: ' ' * 6)
 
+  export_func = exporter_factory(params[:format])
+  export_func.call(
+    submech_species.select_map(:Name),
+    submech_rxns.all,
+    complex_rates.all,
+    params[:selected],
+    missing_peroxies.select_map(:Name),
+    peroxies.select_map(:Name),
+    generic: params[:generic]
+  )
+end
+# rubocop:enable Metrics/BlockLength
+
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
+def traverse_submechanism(root_species, mechanism)
+  # Traverses a sub-mechanism from a collection of starting species down to sink species
+  #
+  # This is a breadth-first search despite not explicitly ordering as such by using a depth counter (3.4 https://www.sqlite.org/lang_with.html)
+  # For some unknown reason, adding a depth counter causes an infinite loop and runs out of memory
+  #
+  # Args:
+  #   - root_species: Array of strings with the starting Species names
+  #   - mechanism: String with the mechanism name to traverse.
+  #
+  # Returns:
+  #   - A Sequel dataset with 2 column
+  #     - Species: Any species that are involved in this submechanism, ordered breadth first.
+  DB[:get_submechanism]
+    .with_recursive(
+      :get_submechanism,
+      DB[:Species] # Assures that the user selected species exist in the DB
+        .where(Name: root_species)
+        .select(:Name),
+      DB[:get_submechanism]
+        .join(:Reactants, Species: Sequel[:get_submechanism][:Species])
+        .join(:Products, [:ReactionID])
+        .join(:Reactions, [:ReactionID])
+        .join(:Species, Name: Sequel[:Reactants][:Species])
+        .where(Mechanism: mechanism, SpeciesCategory: 'VOC')
+        .select(Sequel[:Products][:Species]),
+      args: [:Species],
+      union_all: false
+    )
+    .from_self(alias: :sub)
+end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
+
+def get_reactions_from_species(species, mechanism)
+  # Retrieves reaction information from species that are reactants, preserving the order that the species were in.
+  #
+  # Args:
+  #   - Species: Sequel dataset with 1 column, Species
+  #
+  # Returns:
+  #   - Sequel dataset with 3 columns: ReactionID, Reaction, Rate
+  species
+    .select_append(Sequel.lit('row_number() over() AS i'))
+    .from_self(alias: :ord) # Needed to ensure row_number applied at correct time
+    .join(:Reactants, [:Species])
+    .join(:Species, Name: Sequel[:Reactants][:Species])
+    .join(:ReactionsWide, [:ReactionID])
+    .where(SpeciesCategory: 'VOC', Mechanism: mechanism)
+    .order_by(:i)
+    .select(Sequel[:ReactionsWide][:ReactionID], :Reaction, :Rate)
+    .from_self(alias: :rea)
+end
+
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/ParameterLists
+# rubocop:disable Metrics/MethodLength
+def export_facsimile(species, rxns, rates, root_species, missing_peroxies, peroxies, generic: false)
   # Make available to download
   content_type 'text/plain'
-  attachment 'mcm_export.fac'
+  filename = 'mcm_export.fac'
+  attachment filename
 
   # Format sections for export
-  species_out = wrap_lines(species.map(:Name))
-  rxns_out = all_rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
-  complex_rates_out = complex_rates.map { |row| "#{row[:Token]} = #{row[:Definition]} ;\n" }.join
-
-  params_out = wrap_lines(params[:selected],
+  species_out = wrap_lines(species)
+  rxns_out = rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
+  complex_rates_out = rates.map { |row| "#{row[:Child]} = #{row[:Definition]} ;\n" }.join
+  params_out = wrap_lines(root_species,
                           starting_char: '* ',
                           every_line_start: '* ',
                           every_line_end: ' ;',
                           ending_char: ' ;',
                           sep: ' ')
-
-  missing_peroxies_out = wrap_lines(missing_peroxies.map(:Name),
+  missing_peroxies_out = wrap_lines(missing_peroxies,
                                     starting_char: '* ',
                                     every_line_start: '* ',
                                     every_line_end: ' ;',
                                     ending_char: ' ;',
                                     sep: ' ')
+  peroxy_out = wrap_lines(peroxies,
+                          starting_char: 'RO2 = ',
+                          ending_char: ';',
+                          sep: ' + ',
+                          max_line_length: 65,
+                          every_line_start: ' ' * 6)
 
   spacer = "#{'*' * 77} ;\n"
   empty_comment = "*;\n"
@@ -152,7 +175,7 @@ post '/:mechanism/export' do
   out += spacer
 
   # Complex rate coefficients
-  if params[:generic]
+  if generic
     out += empty_comment
     out += "* Generic Rate Coefficients ;\n"
     out += empty_comment
@@ -183,7 +206,120 @@ post '/:mechanism/export' do
   out += empty_comment
 
   # Summary
-  out + "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{all_rxns.count} ;"
+  out + "* End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count} ;"
   #---------------------- End write facsimile file
 end
-# rubocop:enable Metrics/BlockLength
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/ParameterLists
+# rubocop:enable Metrics/MethodLength
+
+# rubocop:disable Metrics/MethodLength
+def extract_inorganic_submechanism(mechanism)
+  # Extracts inorganic reactions and the species involved within
+  #
+  # Args:
+  #   - mechanism: Mechanism name as string.
+  #
+  # Returns:
+  #   - An object with attributes:
+  #     - rxns: Sequel Dataset with ReactionID, Reaction, Rate columns
+  #     - species: Sequel Dataset with Species column
+  rxns = DB[:ReactionsWide]
+         .where(Mechanism: mechanism)
+         .exclude(InorganicCategory: nil)
+         .select(:ReactionID, :Reaction, :Rate)
+         .from_self(alias: :inorg)
+
+  reactants = rxns
+              .join(:Reactants, [:ReactionID])
+              .select(:Species)
+  products = rxns
+             .join(:Products, [:ReactionID])
+             .select(:Species)
+  species = reactants.union(products)
+  { species: species, rxns: rxns }
+end
+# rubocop:enable Metrics/MethodLength
+
+def export_default(*)
+  'Unknown format'
+end
+
+def exporter_factory(format)
+  # Returns the selected export format
+  #
+  # Args:
+  #   - format: String representing which format to use
+  #
+  # Returns:
+  #   A function that can export the mechanism
+  case format
+  when 'facsimile'
+    method(:export_facsimile)
+  else
+    puts "Unknown export format '#{format}'"
+    method(:export_default)
+  end
+end
+
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
+def traverse_complex_rates(parents)
+  # Traverses complex tokenized rates from parents (i.e. KMT04) down to children.
+  # Returns in order firstly by parent, and then by child depth
+  # (highest depth first, i.e. FCC, KCO, KCI, KRC, NC, FC, KFPAN)
+  # This is a breadth-first traversal, finding all root tokens, then all tokens at the next level down, etc...
+  #
+  # Args:
+  #   - parents: Array of strings with Token names to use as initial parents
+  #
+  # Returns:
+  #   - A dataset with 4 columns and 1 row per child token.
+  #     - RootToken: The root parent token
+  #     - Child: The child's token name
+  #     - Definition: The child's rate definition
+  #     - Depth: How many branches down the tree from the root parent was this child
+  depth = 0
+  new_children = DB[:Tokens]
+                 .where(Token: parents)
+                 .select(Sequel.lit("Token as RootToken, Token as Child, #{depth} as depth"))
+  all_tokens = new_children
+  # TODO: change to while loop with new children being empty
+  loop do
+    depth += 1
+    new_children = get_children_from_parent(new_children, DB)
+                   .select_append(Sequel.lit("#{depth} as depth"))
+    break if new_children.empty?
+
+    all_tokens = all_tokens.union(new_children)
+  end
+
+  # Get each child's rate Definition and limit each child to highest depth
+  # In SQLite when using Max or Min in a grouped select, it only returns the corresponding row with the max or min
+  # So no need to add a WHERE clause. Madness.
+  all_tokens = all_tokens
+               .distinct
+               .join(DB[:Tokens], Token: :Child)
+               .group_by(:RootToken, :Child, :Definition)
+               .select_append(Sequel.lit('max(depth) as Depth'))
+               .from_self(alias: :all)
+
+  # Identify which root tokens are simple or complex for later ordering
+  simple_generic_order = all_tokens
+                         .group_and_count(:RootToken)
+                         .from_self(alias: :sim)
+                         .select_append(Sequel.lit('count > 1 as IsComplex'))
+
+  # Want to order by 3 conditions:
+  #   - Whether simple or complex (simple has a tree with depth=1)
+  #   - By root parent token
+  #   - By depth of child token
+  all_tokens
+    .join(simple_generic_order, RootToken: :RootToken)
+    .order(:IsComplex, :RootToken, Sequel.desc(:depth))
+    .from_self(alias: :out)
+    .select(:RootToken, :Child, :Definition, :depth)
+end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize

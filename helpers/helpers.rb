@@ -21,6 +21,7 @@ helpers do
   end
   # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
 
+  # TODO: refactor all of these. Remove unused, add docs, rename to include 'Token' etc...
   def get_parent_from_children(children, _db)
     DB[:TokenRelationships]
       .where(ChildToken: children)
@@ -41,7 +42,7 @@ helpers do
   def get_children_from_parent(parents, _db)
     DB[:TokenRelationships]
       .join(parents, Child: :ParentToken)
-      .select(Sequel.lit('TopParent, ChildToken as Child'))
+      .select(Sequel.lit('RootToken, ChildToken as Child'))
   end
 
   def get_token_definition(token, _db)
@@ -57,12 +58,13 @@ helpers do
   def display_reaction(rxn, species_page, doc_link: true)
     output = "<div class='rxn-reactants'>#{parse_multiple_species(rxn[:Reactants], species_page)}</div>
     <div class='rxn-rate'><a#{rxn[:RateURL].nil? ? '' : " href='#{rxn[:RateURL]}'"}>#{parse_rate(rxn[:Rate])}</a></div>
-    <div class='rxn-products'>#{parse_multiple_species(rxn[:Products], species_page)}</div>"
-    if doc_link
-      output += "<div class='rxn-category'>
-        <a href='/#{@mechanism}/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>Doc</a>
-      </div>"
+    <div class='rxn-products'>#{parse_multiple_species(rxn[:Products], species_page)}</div>
+    <div class='rxn-category'>"
+    if doc_link && !rxn[:Category].nil?
+      output += "<a href='/#{@mechanism}/reaction_category?category=#{rxn[:Category]}&reactionid=#{rxn[:ReactionID]}'>
+                 Doc</a>"
     end
+    output += '</div>'
     output
   end
 
@@ -215,6 +217,10 @@ helpers do
     # Will return log_{5} + LOG(3)
     input = input.gsub(pattern, replacement) while input.match? pattern
     input
+  end
+
+  def generate_photolysis_link(species)
+    "<a href='/static/MCM/download/#{species}.zip'>#{species}</a>"
   end
 end
 # rubocop:enable Metrics/BlockLength

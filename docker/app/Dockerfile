@@ -20,4 +20,4 @@ RUN bundle install
 ADD . $APP_ROOT
 
 EXPOSE 5000
-CMD ["bundle", "exec", "rackup", "config.ru", "-p", "5000", "-s", "puma", "-o", "0.0.0.0"]
+CMD ["bundle", "exec", "rackup", "config.ru", "-p", "5000", "-s", "puma", "-o", "0.0.0.0", "-E", "production"]

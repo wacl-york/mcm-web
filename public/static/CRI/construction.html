@@ -1,0 +1,86 @@
+<h1>CRI development and reduction methodology</h1>
+<div>
+  <p>This page contains information on various aspects of CRI development, as follows 
+  <h2>Navigation</h2>
+  <ul>
+<li><font size="4"><a href="#Introduction">The CRI index</a> </font></li>
+<li><font size="4"><a href="#methodology">Construction of the CRI mechanism</a></font></li>
+    <li><font size="4"><a href="#isoprene_updates">CRI v2.2 Mechanism - Updated Isoprene Chemistry</a></font></li>
+<li><font size="4"><a href="#Reduction">Reduction of the CRI mechanism through emissions lumping</a> </font></li>
+  </ul>
+  </p>
+  <hr>
+
+  <h2><a name="Introduction">The CRI index</a></h2>
+  <p ALIGN="JUSTIFY">The complete oxidation of a given VOC through to CO<sub>2</sub> and H<sub>2</sub>O normally proceeds via a series of intermediate oxidised products. At each stage, the chemistry can be propagated by reactions of free radicals leading to the oxidation of NO to NO<sub>2</sub> and resultant formation of O<sub>3</sub> as a by-product, following the photolysis of NO<sub>2</sub>:</p>
+  
+  <p ALIGN="JUSTIFY">The total quantity of O<sub>3</sub> potentially generated from the free radical propagated chemistry is therefore dependent on the number of NO-to-NO<sub>2</sub> conversions which can occur during the degradation. As described in more detail by <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.028" target="_blank">Jenkin et al. (2008)</a>, understanding of the detailed chemistry for simple hydrocarbons suggests that the total molecular yield of O<sub>3</sub> potentially formed as a by product during the complete OH-initiated and NO<sub>x</sub>-catalysed oxidation of a molecule of the hydrocarbon through to CO<sub>2</sub> and H<sub>2</sub>O is equivalent to the number of reactive bonds in the parent molecule (i.e., the number of C-H and C-C bonds which are eventually broken during the complete oxidation to CO<sub>2</sub> and H<sub>2</sub>O). Accordingly, in the simplest case of methane, the overall chemistry can be represented by the following equation,</p>
+  <p align="center">	CH<sub>4</sub> + 8O<sub>2</sub> &rarr; CO<sub>2</sub> + 2H<sub>2</sub>O + 4O<sub>3</sub>	</p>
+  
+   <p ALIGN="JUSTIFY">yielding four molecules of O<sub>3</sub>, which is based on the sequential oxidation via HCHO and CO as intermediate oxidised products, with conversion of NO to NO<sub>2</sub> resulting from reactions of the peroxy radicals (CH<sub>3</sub>O<sub>2</sub> and HO<sub>2</sub>) with NO, as shown in the figure below.</p>
+   
+   <img src="/static/CRI/images/cri_pic.png" class="figure"><br>
+   
+    <p align="JUSTIFY">In a similar way, ethane can be represented by the following overall chemistry, yielding seven molecules of O<sub>3</sub>:</p>
+    
+    <p align="center">C<sub>2</sub>H<sub>6</sub> + 14O<sub>2</sub> &rarr; 2CO<sub>2</sub> + 3H<sub>2</sub>O + 7O<sub>3</sub>	</p>
+  
+   <p align="JUSTIFY">On this basis, the number of reactive (C-H and C-C) bonds in a closed-shell intermediate can be used as an index to represent the number of NO-to-NO<sub>2</sub> conversions which can potentially result from its subsequent OH-initiated and NO<sub>x</sub>-catalysed degradation. In the CRI mechanism, this simple rule is used to define a series of generic intermediates, which can mediate the breakdown of larger VOCs. A single intermediate can therefore be used as a 'common representative' for a large set of species possessing the same index, as formed in detailed mechanisms such as the MCM. The primary size saving in the CRI mechanism therefore results from simplification of the highly detailed chemistry for larger and more complex VOCs.</p>
+  <hr>
+
+
+
+  <h2><a name="methodology">Construction of the CRI mechanism</a></h2>
+    
+  <p align="JUSTIFY">Version 2 of the Common Representative Intermediates mechanism (CRI v2) was built up on a compound-by-compound basis, with the performance of the chemistry optimised for each compound in turn by comparison with that of MCM v3.1, using a series of five-day box model simulations based on average UK conditions. As described in detail by <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.028" target="_blank">Jenkin et al. (2008)</a>, this procedure was carried out for methane and 115 primary non-methane hydrocarbons and oxygenated VOCs treated in MCM v3.1, with subsequent evaluation of the complete chemistry for a range of conditions. Halogenated VOCs were not considered.</p>
+  
+  <p ALIGN="JUSTIFY">The CRI v2 schemes were constructed for each compound in turn, starting with the smallest compound in each class, with the performance for each VOC optimised to that of MCM v3.1 using non-linear least squares fitting. In each case, the OH reactivity and photolysis rate of key intermediates were varied to optimise the agreement between the performance of the CRI v2 and MCM v3.1 schemes, with formation of ozone used as the primary criterion. The optimised parameters for the given intermediates were then fixed, prior to moving onto the next (larger) compound. The degradation scheme for the larger compound generates new intermediates, for which parameters can be optimised, but invariably feeds into the chemistry predefined for smaller compounds. The objective of this procedure, therefore, was to build up a representation of the degradation of the suite of emitted VOCs, whilst aiming to minimise the number of intermediates that needed to be defined to allow an acceptable quantification of ozone formation in comparison with MCM v3.1. The resultant CRI v2 mechanism contains 434 species and 1183 reactions (compared with 4,361 species and 12,775 reactions to degrade the same set of VOCs in MCM v3.1).</p>
+
+
+  
+      
+  <p align="JUSTIFY">As an illustration, some of the degradation chemistry for C<sub>1</sub>-C<sub>6</sub> <i>n</i>-alkanes is presented schematically in the figure below, which shows the major NO<sub>x</sub>-catalysed oxidation pathways following the attack of OH. The index assigned (in brackets) to each alkane is the total number of C-H and C-C bonds it contains. The indices within the generic radicals and carbonyls (e.g. '<i>19</i>' in <i>RN19O2</i> and '<i>16</i>' in <i>CARB16</i>), thus represent the number of NO-to-NO<sub>2</sub> conversions which can result from the subsequent complete degradation via OH-initiated, NO<sub>x</sub>-catalysed chemistry. As a result, the summed indices of the products of the reaction of a given RO<sub>2</sub> with NO is one less than the index of the RO<sub>2</sub> radical itself, because one NO-to-NO<sub>2</sub> conversion has occurred. HO<sub>2</sub> is assigned an index of 1 in the figure, since a single NO-to-NO<sub>2</sub> conversion regenerates OH, which initiated the reaction sequence. As indicated in the previous section, the CRI approach allows substantial simplification of the highly detailed chemistry for larger and more complex VOCs. However, the chemistry of smaller compounds (e.g., methane, ethane and propane) is essentially identical to that in MCM v3.1.</p>
+  
+<img src="/static/CRI/images/cri_pic2.png" class="figure"><br>
+  
+  <p align="JUSTIFY">This figure shows only the major radical-propagated oxidation pathways, initiated by reaction with OH at each stage, and propagated by the reactions of RO<sub>2</sub> radicals with NO. Of course, other associated reactions can also propagate the chemistry, or lead to net radical removal or production, and these also need to be included if the impact of VOC oxidation is to be adequately represented. These are described in the CRI v2 development paper (<a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.028" target="_blank">Jenkin et al., 2008)</a>).</p>
+   
+
+  
+  
+  <hr>
+  <h2><a name="isoprene_updates">CRI v2.2 Mechanism - Updated Isoprene Chemistry</a></h2>
+  <p ALIGN="JUSTIFY">
+  CRI v2.2 includes substantially revised chemistry for isoprene degradation, but otherwise possesses the same reaction set as CRI v2.1. It also includes some common rate coefficient revisions consistent with those in the MCM v3.2 to 3.3.1 transition (<a href="https://www.atmos-chem-phys.net/15/11433/2015">Jenkin et al., 2015</a>). The complete isoprene degradation mechanism in CRI v2.2 consists of 186 reactions of 56 closed shell and free radical species, which treat the chemistry initiated by the reaction with OH radicals, NO<sub>3</sub> radicals and ozone (O<sub>3</sub>). The revisions have impacts in a number of key areas, including recycling of HO<sub>x</sub> and NO<sub>x</sub>. Further information is available in Jenkin et al. (in preparation, 2019).
+  </p>
+
+  <!--      <img src="/static/CRI/images/cri_pic3.png" class="figure"><br> -->
+
+
+  <hr>
+
+  <h2><a name="Reduction">Reduction of the CRI mechanism through emissions lumping</a> </h2>
+  
+        <p ALIGN="JUSTIFY">A series of five reduced variants of CRI v2 (denoted R1 - R5) have been developed, through systematic lumping of the emitted anthropogenic VOC species set. This simplification was achieved by systematically redistributing mass emissions of selected emitted anthropogenic VOCs into appropriate surrogates, and removing redundant species (i.e., those formed exclusively from the degradation of the redistributed VOCs) and their associated chemistry from the chemical mechanism. No changes were made to any parameter values (e.g., rate coefficients) in the residual chemistry, which remained equivalent to those defined in the full CRI v2 mechanism. All the reduced mechanisms retain the CRI v2 chemistry of the primarily biogenic species, isoprene &alpha;-pinene and &beta;-pinene. The method is fully described by <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.034" target="_blank"> Watson et al. (2008)</a>.</p>
+ 
+<p ALIGN="JUSTIFY">VOC lumping was achieved by two general methods. In the first method, the redistribution of minor emitted VOCs into appropriate surrogates was carried out to maintain their chemical class within a number of VOC sub-categories (alkane, alkene, alkene, aromatic, alcohol/ether, aldehyde, ketone, ester/acid), and aimed to preserve the ozone-forming ability of the redistributed VOCs in each category. The assessment of ozone-forming ability of the individual VOCs was based on the photochemical ozone creation potential (POCP) concept, developed by Derwent and co-workers (e.g., <a href="http://dx.doi.org/10.1016/S1352-2310(98)00053-3" target="_blank"> Derwent et al., 1998</a>). This method was applied generate a sequence of three reduced mechanisms (denoted R1, R2 and R3), with progressively increasing degrees of emissions lumping. As shown in the table below, this allowed respective reductions of up to 25 % and 32 % in the numbers of reactions and species, with no significant degradation in the overall performance of the mechanisms or in the relative contributions of the VOC sub-categories to ozone formation (see <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.034" target="_blank"> Watson et al., 2008</a>).</p>
+  
+  <p ALIGN="JUSTIFY">The second method made use of the non-methane VOC groups defined by the <a href="http://edgar.jrc.ec.europa.eu/overview.php?v=432_VOC_spec" target="_blank"> Global Emissions Inventory Activity</a> (GEIA) to impose a more severe level of reduction through emissions lumping. In this case, more limited selections of VOCs were considered to represent each VOC group, with the choice of species taking account of their POCP value, abundance in the detailed speciation, and the simplicity of the associated CRI v2 degradation mechanism. This method was applied to generate two further reduced mechanisms (R4 and R5). This allowed reductions of up to 53 % and 55 % in the numbers of reactions and species relative to CRI v2. These mechanisms display a degree of compromise in the ozone-forming ability of the VOC sub-categories, but retain a good level of overall performance (see <a href="http://dx.doi.org/10.1016/j.atmosenv.2008.07.034" target="_blank"> Watson et al., 2008</a>). The most reduced variant (R5) uses 19 non-methane VOCs to represent the anthropogenic speciation, and has been used as a traceable reference mechanism in a global chemistry-transport model (Utembe et al., <a href="http://dx.doi.org/10.1016/j.atmosenv.2010.01.044" target="_blank">2010</a>, <a href="http://dx.doi.org/10.1016/j.atmosenv.2010.11.046" target="_blank">2011</a>;  <a href="http://dx.doi.org/10.1002/asl.251" target="_blank">Cooke et al., 2010</a>).</p>
+  
+  <table border=1>
+  
+  <tr><th>CRI version<sup>a</sup></th><th>v2</th><th>v2-R1</th><th>v2-R2</th><th>v2-R3</th><th>v2-R4</th><th>v2-R5</th>  </tr>
+  <tr><th>VOCs</th><td>115</td><td>67</td><td>55</td><td>42</td><td>33</td><td>22</td></tr>
+<tr><th>Percentage redistribution<sup>b</sup></th><td>0 %</td><td>5 %</td><td>10 %</td><td>20 %</td><td>33 %</td><td>44 %</td></tr>
+<tr><th>Species</th><td>434 (4361)<sup>c</sup></td><td>373 (3466)</td><td>352 (3099)</td><td>296 (2649)</td><td>219 (1983)</td><td>196 (1244)</td></tr>
+<tr><th>Reactions</th><td>1183 (12775)<sup>c</sup></td><td>1012 (10150)</td><td>988 (9099)</td><td>882 (7833)</td><td>643 (5884)</td><td>555 (3670)</td></tr>
+<tr><th>POCP<sub>VOC mix</sub><sup>d</sup></th><td>46.45</td><td>46.51</td><td>46.51</td><td>46.47</td><td>47.02</td><td>46.53</td></tr>
+<tr><th>POCP<sub>alkane</sub><sup>e</sup></th><td>34.55</td><td>34.54</td><td>34.54</td><td>34.45</td><td>36.42</td><td>33.19</td></tr>
+<tr><th>POCP<sub>alkene</sub><sup>e</sup></th><td>85.35</td><td>85.21</td><td>84.36</td><td>84.36</td><td>89.80</td><td>93.04</td></tr>
+<tr><th>POCP<sub>aromatic</sub><sup>e</sup></th><td>66.69</td><td>66.96</td><td>67.11</td><td>67.93</td><td>63.49</td><td>68.39</td></tr>
+<tr><th>POCP<sub>oxygenate</sub><sup>e</sup></th><td>35.11</td><td>35.20</td><td>35.44</td><td>34.63</td><td>34.65</td><td>33.30</td></tr>
+<tr><th>Run time<sup>f</sup></th><td>1</td><td>0.75</td><td>0.64</td><td>0.60</td><td>0.33</td><td>0.29</td></tr>
+<tr><td colspan=7>Notes<br>
+<sup>a</sup> All mechanisms retain CRI v2 chemistry for isoprene, &alpha;-pinene and &beta;-pinene and this contributes to the number of VOCs, species and reactions given; <sup>b</sup> Percentage of anthropogenic mass emissions redistributed into surrogate VOC relative to starting speciation; <sup>c</sup> Figures in brackets indicate the number of species and reactions required to degrade the same set of VOCs in MCM v3.1; <sup>d</sup> Weighted mean POCP values based on the applied speciation of the emitted anthropogenic VOC mixture and the POCP values for the individual components; <sup>e</sup> Weighted mean POCP values for the anthropogenic VOC sub-classes based on the applied speciation within the given class and the total emissions of that class. The "alkene" category also incorporates acetylene; <sup>f</sup> Run time presented relative to that of CRI v2. For comparison, the full MCM v3.1 has a relative run time of  320.</td></tr>
+  </table>
+</div>
