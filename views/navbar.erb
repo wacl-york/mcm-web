@@ -60,10 +60,10 @@
   var settings = {
     maxItems: 1,
     maxOptions: 50,
-    loadThrottle: 0,
+    loadThrottle: 500,
     closeAfterSelect: true,
     valueField: 'Name',
-    searchField: ['Name', 'Synonyms', 'Smiles', 'Inchi'],
+    searchField: [],
     sortField: [{field: 'score', direction: 'desc'}, {field: '$score'}],
     options: [],
     create: false,
