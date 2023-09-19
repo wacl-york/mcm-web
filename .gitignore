@@ -7,4 +7,5 @@ packaged.yaml
 *.db
 .env
 
-param*.json
+# Intermediate CF output
+cf.json

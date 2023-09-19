@@ -1,0 +1,5 @@
+{
+    "S3Key": "app",
+    "S3Bucket": "mcm-eb-dev",
+    "Version": "0.0.12"
+}
