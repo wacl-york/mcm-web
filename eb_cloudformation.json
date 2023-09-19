@@ -13,10 +13,6 @@
     "S3Bucket": {
       "Type": "String",
       "Description": "S3 Bucket name"
-    },
-    "S3Key": {
-      "Type": "String",
-      "Description": "S3 Key name"
     }
   },
   "Resources" : {
@@ -30,13 +26,11 @@
     "MCMApplicationVersion": {
       "Type" : "AWS::ElasticBeanstalk::ApplicationVersion",
       "Properties" : {
-        "ApplicationName": {
-          "Ref": "MCMApplication"
-        },
+        "ApplicationName" : { "Ref" : "MCMApplication" },
         "Description" : "MCM Application Version",
         "SourceBundle" : {
           "S3Bucket" : {"Ref": "S3Bucket"},
-          "S3Key": {"Ref": "S3Key"}
+          "S3Key": "app_0.0.1.zip"
         }
       }
     },
