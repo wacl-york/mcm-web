@@ -119,7 +119,6 @@ def get_reactions_from_species(species, mechanism)
 end
 
 # rubocop:disable Metrics/AbcSize
-# rubocop:disable Metrics/CyclomaticComplexity
 # rubocop:disable Metrics/ParameterLists
 # rubocop:disable Metrics/MethodLength
 def export_facsimile(species, rxns, rates, root_species, missing_peroxies, peroxies, generic: false)
@@ -185,19 +184,17 @@ def export_facsimile(species, rxns, rates, root_species, missing_peroxies, perox
   end
 
   # Peroxies
-  if peroxies.count.positive?
-    out += spacer
-    out += "* Peroxy radicals. ;\n*;\n"
-    if missing_peroxies.count.positive?
-      out += "* WARNING: The following species do not have SMILES strings in the database. ;\n"
-      out += "*          If any of these are peroxy radicals the RO2 sum will be wrong!!! ;\n"
-      out += missing_peroxies_out # TODO: Shoud this exclude inorganics?
-    end
-    out += spacer
-    out += empty_comment
-    out += peroxy_out
-    out += empty_comment
+  out += spacer
+  out += "* Peroxy radicals. ;\n*;\n"
+  if missing_peroxies.count.positive?
+    out += "* WARNING: The following species do not have SMILES strings in the database. ;\n"
+    out += "*          If any of these are peroxy radicals the RO2 sum will be wrong!!! ;\n"
+    out += missing_peroxies_out # TODO: Shoud this exclude inorganics?
   end
+  out += spacer
+  out += empty_comment
+  out += peroxy_out
+  out += empty_comment
 
   # Reactions
   out += "* Reaction definitions. ;\n"
@@ -210,7 +207,6 @@ def export_facsimile(species, rxns, rates, root_species, missing_peroxies, perox
   #---------------------- End write facsimile file
 end
 # rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/CyclomaticComplexity
 # rubocop:enable Metrics/ParameterLists
 # rubocop:enable Metrics/MethodLength
 

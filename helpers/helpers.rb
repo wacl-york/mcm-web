@@ -2,7 +2,7 @@
 
 # rubocop:disable Metrics/BlockLength
 helpers do
-  # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
+  # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize
   def wrap_lines(words, max_line_length: 68, starting_char: ' ', ending_char: ';', sep: ' ', every_line_start: '',
                  every_line_end: '')
     out = starting_char
@@ -17,9 +17,12 @@ helpers do
       out += to_add
       current_line_length += to_add.length
     end
-    out = "#{out[..-sep.length]}#{ending_char}\n" # remove last unused separating space
+    if words.count.positive?
+      out = (out[..-sep.length]).to_s # remove last unused separating space if added one
+    end
+    out = "#{out}#{ending_char}\n"
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
+  # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize
 
   # TODO: refactor all of these. Remove unused, add docs, rename to include 'Token' etc...
   def get_parent_from_children(children, _db)
