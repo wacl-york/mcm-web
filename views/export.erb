@@ -2,7 +2,7 @@
 
 Click below to export chosen mechanism subset for the selected species.
 
-<form class="export-form" method="post" action=<%= "/#{@mechanism}/export"%>>
+<form class="export-form" method="get" action=<%= "/#{@mechanism}/export/download"%>>
   <div class="form-group">
     <div id="exportMarklist" hidden>
       <!-- Will get populated with hidden list so can easily include in form submission -->
@@ -18,6 +18,14 @@ Click below to export chosen mechanism subset for the selected species.
    
   </div>
 </form>
+
+<% if @error%>
+  <br>
+  <div class="alert alert-danger" role="alert">
+    Unable to export mechanism - ensure that at least one species has been added to the shopping basket.
+  </div>
+<% end %>
+
 
 <script>
 populateExportMarklist()

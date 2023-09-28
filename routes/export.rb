@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 get '/:mechanism/export' do
+  @error = params[:error].nil? ? false : params[:error]
   erb :export
 end
 
 # rubocop:disable Metrics/BlockLength
-post '/:mechanism/export' do
+get '/:mechanism/export/download' do
+  params[:selected] = [] if params[:selected].nil?
   # Traverse submechanism to obtain species involved and the reactions
   submech_species = traverse_submechanism(params[:selected], @mechanism)
   submech_rxns = get_reactions_from_species(submech_species, @mechanism)
@@ -16,6 +18,11 @@ post '/:mechanism/export' do
     # Can safely do a union all as we explicitly didn't include inorganic rxns in the initial submechanism extract
     submech_rxns = inorg_submech[:rxns].union(submech_rxns, all: true)
     submech_species = inorg_submech[:species].union(submech_species)
+  end
+
+  unless submech_rxns.count.positive?
+    status 404
+    redirect "/#{params[:mechanism]}/export?error=true"
   end
 
   #------------------- Complex Rates
@@ -37,7 +44,6 @@ post '/:mechanism/export' do
   all_reactants = DB[:Reactants]
                   .join(submech_rxns, [:ReactionID])
                   .select(Sequel[:Reactants][:Species])
-  puts "ROOT: #{all_reactants.all}"
 
   # Get Peroxy information
   submech_species = submech_species

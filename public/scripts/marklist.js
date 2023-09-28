@@ -129,6 +129,10 @@ function refreshMarklist() {
   if (getMarklistLengthFromCookie() > 0) {
     enableExportButton();
   }
+
+  if (/\/export$/.test(window.location.pathname)) {
+      populateExportMarklist();
+  }
 }
 
 function setCookie(cname, cvalue) {
