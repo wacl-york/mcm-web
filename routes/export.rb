@@ -6,6 +6,7 @@ end
 
 # rubocop:disable Metrics/BlockLength
 post '/:mechanism/export' do
+  params[:selected] = [] if params[:selected].nil?
   # Traverse submechanism to obtain species involved and the reactions
   submech_species = traverse_submechanism(params[:selected], @mechanism)
   submech_rxns = get_reactions_from_species(submech_species, @mechanism)
@@ -17,6 +18,8 @@ post '/:mechanism/export' do
     submech_rxns = inorg_submech[:rxns].union(submech_rxns, all: true)
     submech_species = inorg_submech[:species].union(submech_species)
   end
+
+  # TODO If get to here and have no rxns then should return empty download
 
   #------------------- Complex Rates
   # Only find tokenized rates that were used in this sub-mechanism
@@ -37,7 +40,6 @@ post '/:mechanism/export' do
   all_reactants = DB[:Reactants]
                   .join(submech_rxns, [:ReactionID])
                   .select(Sequel[:Reactants][:Species])
-  puts "ROOT: #{all_reactants.all}"
 
   # Get Peroxy information
   submech_species = submech_species
