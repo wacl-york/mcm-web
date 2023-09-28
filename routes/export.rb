@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 get '/:mechanism/export' do
+  @error = params[:error].nil? ? false : params[:error]
   erb :export
 end
 
 # rubocop:disable Metrics/BlockLength
-post '/:mechanism/export' do
+get '/:mechanism/export/download' do
   params[:selected] = [] if params[:selected].nil?
   # Traverse submechanism to obtain species involved and the reactions
   submech_species = traverse_submechanism(params[:selected], @mechanism)
@@ -19,7 +20,10 @@ post '/:mechanism/export' do
     submech_species = inorg_submech[:species].union(submech_species)
   end
 
-  # TODO If get to here and have no rxns then should return empty download
+  unless submech_rxns.count.positive?
+    status 404
+    redirect "/#{params[:mechanism]}/export?error=true"
+  end
 
   #------------------- Complex Rates
   # Only find tokenized rates that were used in this sub-mechanism
