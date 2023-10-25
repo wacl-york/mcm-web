@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+Bundler.require
+
 Dir['./lib/mcm/**/*.rb'].sort.each do |file|
   require file
 end
