@@ -18,30 +18,30 @@ get '/:mechanism/search' do
              # sense to partially search Smiles and Inchi like this
 
              ## First level match
-             species_trailing = find_species(q, preceeding: false)
-                                .select_append(Sequel.lit('CASE WHEN ' \
-                                                          'UPPER(Name) LIKE UPPER(?) ' \
-                                                          'THEN ? ELSE ? END as score',
-                                                          q,
-                                                          3 * max_synonyms,
-                                                          2 * max_synonyms))
+             species_trailing = MCM::Search::Basic.find_species(q, preceeding: false)
+                                                  .select_append(Sequel.lit('CASE WHEN ' \
+                                                                            'UPPER(Name) LIKE UPPER(?) ' \
+                                                                            'THEN ? ELSE ? END as score',
+                                                                            q,
+                                                                            3 * max_synonyms,
+                                                                            2 * max_synonyms))
              # Will use the Synonym itself later to populate the search results in case
              # it isn't one of the top 5
-             syns_trailing = find_synonym(q, preceeding: false)
-             smiles = find_smiles(q)
-                      .select_append(Sequel.lit('CASE WHEN ' \
-                                                'UPPER(Smiles) LIKE UPPER(?) ' \
-                                                'THEN ? ELSE ? END as score',
-                                                q,
-                                                3 * max_synonyms,
-                                                2 * max_synonyms))
-             inchi = find_inchi(q)
-                     .select_append(Sequel.lit('CASE WHEN ' \
-                                               'UPPER(Inchi) LIKE UPPER(?) ' \
-                                               'THEN ? ELSE ? END as score',
-                                               q,
-                                               3 * max_synonyms,
-                                               2 * max_synonyms))
+             syns_trailing = MCM::Search::Basic.find_synonym(q, preceeding: false)
+             smiles = MCM::Search::Basic.find_smiles(q)
+                                        .select_append(Sequel.lit('CASE WHEN ' \
+                                                                  'UPPER(Smiles) LIKE UPPER(?) ' \
+                                                                  'THEN ? ELSE ? END as score',
+                                                                  q,
+                                                                  3 * max_synonyms,
+                                                                  2 * max_synonyms))
+             inchi = MCM::Search::Basic.find_inchi(q)
+                                       .select_append(Sequel.lit('CASE WHEN ' \
+                                                                 'UPPER(Inchi) LIKE UPPER(?) ' \
+                                                                 'THEN ? ELSE ? END as score',
+                                                                 q,
+                                                                 3 * max_synonyms,
+                                                                 2 * max_synonyms))
 
              first_order_matches = species_trailing
                                    .union(syns_trailing.select(:Species,
@@ -56,9 +56,9 @@ get '/:mechanism/search' do
                                    .union(inchi)
 
              ## Second level match - only for Species and Synonym
-             species_full = find_species(q, preceeding: true)
-                            .select_append(Sequel.lit("#{max_synonyms} as score"))
-             syns_full = find_synonym(q, preceeding: true)
+             species_full = MCM::Search::Basic.find_species(q, preceeding: true)
+                                              .select_append(Sequel.lit("#{max_synonyms} as score"))
+             syns_full = MCM::Search::Basic.find_synonym(q, preceeding: true)
              second_order_matches = species_full.union(syns_full.select(:Species,
                                                                         Sequel.lit('NumReferences as score')))
 
@@ -124,34 +124,3 @@ get '/:mechanism/search' do
   output.all.to_json
 end
 # rubocop:enable Metrics/BlockLength
-
-def find_species(term, preceeding: false)
-  search_pattern = "#{term}%"
-  search_pattern = "%#{search_pattern}" if preceeding
-  DB[:species]
-    .where(Sequel.ilike(:Name, search_pattern))
-    .select(:Name)
-end
-
-def find_synonym(term, preceeding: false)
-  search_pattern = "#{term}%"
-  search_pattern = "%#{search_pattern}" if preceeding
-  DB[:speciessynonyms]
-    .where(Sequel.ilike(:Synonym, search_pattern))
-end
-
-def find_smiles(term)
-  search_pattern = "%#{term}%"
-  DB[:species]
-    .where(Sequel.ilike(:Smiles, search_pattern))
-    .select(:Name)
-end
-
-def find_inchi(term)
-  # TODO: should append Inchi string if not available (i.e. should users be expected to
-  # search for InChI=1S/C3H2...., or should C3H2 return results?
-  search_pattern = "#{term}%"
-  DB[:species]
-    .where(Sequel.ilike(:Inchi, search_pattern))
-    .select(:Name)
-end
