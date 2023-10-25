@@ -60,6 +60,9 @@ module MCM
                               .union(inchi)
 
         ## Second level match - only for Species and Synonym
+        # TODO only want to call find_species and find_synonyms once with full wildcard match,
+        # then determine whether was full match, trailing match, or partial match
+        # to assign score. Would expect this to be quicker (benchmark it!)
         species_full = find_species(term, preceeding: true)
                        .select_append(Sequel.lit("#{max_synonyms} as score"))
         syns_full = find_synonym(term, preceeding: true)
@@ -87,6 +90,7 @@ module MCM
                 .from_self(alias: :m4)
 
         # Next find the top matched synonym
+        # TODO shouldn't need to do this case when again, see if can simplify
         matched_synonyms = syns_trailing
                            .select_append(Sequel.lit('CASE WHEN UPPER(Synonym) LIKE UPPER(?) ' \
                                                      'THEN NumReferences+? ELSE NumReferences+? END as score',
