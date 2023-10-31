@@ -5,34 +5,34 @@ module MCM
     # Exporter into Facsimile format
     class Facsimile
       CONTENT_TYPE = 'text/plain'
-      FILE_EXTENSION = '.fac'
+      FILE_EXTENSION = 'fac'
 
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/ParameterLists
       # rubocop:disable Metrics/MethodLength
       def export(species, rxns, rates, root_species, missing_peroxies, peroxies, citation, generic: false)
         # Format sections for export
-        species_out = self.class.wrap_lines(species)
+        species_out = MCM::Export.wrap_lines(species)
         rxns_out = rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
         complex_rates_out = rates.map { |row| "#{row[:Child]} = #{row[:Definition]} ;\n" }.join
-        params_out = self.class.wrap_lines(root_species,
-                                           starting_char: '* ',
-                                           every_line_start: '* ',
-                                           every_line_end: ' ;',
-                                           ending_char: ' ;',
-                                           sep: ' ')
-        missing_peroxies_out = self.class.wrap_lines(missing_peroxies,
-                                                     starting_char: '* ',
-                                                     every_line_start: '* ',
-                                                     every_line_end: ' ;',
-                                                     ending_char: ' ;',
-                                                     sep: ' ')
-        peroxy_out = self.class.wrap_lines(peroxies,
-                                           starting_char: 'RO2 = ',
-                                           ending_char: ';',
-                                           sep: ' + ',
-                                           max_line_length: 65,
-                                           every_line_start: ' ' * 6)
+        params_out = MCM::Export.wrap_lines(root_species,
+                                            starting_char: '* ',
+                                            every_line_start: '* ',
+                                            every_line_end: ' ;',
+                                            ending_char: ' ;',
+                                            sep: ' ')
+        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
+                                                      starting_char: '* ',
+                                                      every_line_start: '* ',
+                                                      every_line_end: ' ;',
+                                                      ending_char: ' ;',
+                                                      sep: ' ')
+        peroxy_out = MCM::Export.wrap_lines(peroxies,
+                                            starting_char: 'RO2 = ',
+                                            ending_char: ';',
+                                            sep: ' + ',
+                                            max_line_length: 65,
+                                            every_line_start: ' ' * 6)
 
         spacer = "#{'*' * 77} ;\n"
         empty_comment = "*;\n"
@@ -90,33 +90,6 @@ module MCM
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/ParameterLists
       # rubocop:enable Metrics/MethodLength
-
-      # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize
-      def self.wrap_lines(words,
-                          max_line_length: 68,
-                          starting_char: ' ',
-                          ending_char: ';',
-                          sep: ' ',
-                          every_line_start: '',
-                          every_line_end: '')
-        out = starting_char
-        current_line_length = 0
-        words.each do |word|
-          to_add = "#{word}#{sep}"
-          if (current_line_length + to_add.length) > max_line_length
-            out = "#{out[..-2]}#{every_line_end}\n" # remove last unused separating space
-            out += every_line_start
-            current_line_length = every_line_start.length
-          end
-          out += to_add
-          current_line_length += to_add.length
-        end
-        if words.count.positive?
-          out = (out[..-sep.length]).to_s # remove last unused separating space if added one
-        end
-        out = "#{out}#{ending_char}\n"
-      end
-      # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize
     end
   end
 end
