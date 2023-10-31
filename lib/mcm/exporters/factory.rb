@@ -17,6 +17,8 @@ module MCM
         case format
         when 'facsimile'
           MCM::Export::Facsimile.new
+        when 'kpp'
+          MCM::Export::KPP.new
         else
           puts "Unknown export format '#{format}'"
           MCM::Export::Fallback.new
