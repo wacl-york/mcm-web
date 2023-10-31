@@ -10,7 +10,7 @@ get '/:mechanism/inorganic' do
             if ids.nil?
               []
             else
-              read_reaction(ids)
+              MCM::Database.get_reaction(ids)
             end
           end
   erb :inorganic

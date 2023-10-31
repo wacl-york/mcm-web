@@ -22,7 +22,7 @@ get '/:mechanism/reaction_category' do
            ''
          else
            # read_reaction accepts and returns a list, so we can just drop it to the first value
-           read_reaction(Array(reactionid))[0]
+           MCM::Database.get_reaction(Array(reactionid))[0]
          end
   erb :reaction_category
 end
