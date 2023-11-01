@@ -15,10 +15,11 @@ module MCM
         #---------------------- Setup
         spacer = ('*' * 58).to_s
         rxns = combine_reactions_with_same_rates(rxns, combine: '+')
-        complex_rates_out = rates.map { |row| "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n" }.join
         rxns_out = rxns.map.with_index do |row, i|
           "{#{i + 1}.} #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
         end.join
+        complex_rates_out = rates.map { |row| "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n" }.join
+        species_out = species.map { |x| "#{x} = IGNORE ;\n" }.join
         missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
                                                       starting_char: '    ',
                                                       every_line_start: '    ',
@@ -49,7 +50,7 @@ module MCM
         # Species
         out += "#INCLUDE atoms \n"
         out += "#DEFVAR\n"
-        out += species.map { |x| "#{x} = IGNORE ;\n" }.join
+        out += species_out
 
         # Peroxy radicals
         out += "{ Peroxy radicals. }\n"
@@ -81,6 +82,7 @@ module MCM
       end
       # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity
 
+      # rubocop:disable Metrics/AbcSize
       def combine_reactions_with_same_rates(rxns, combine: '+')
         # If there exist multiple reactions (as in the same reactants and products), then they will be combined
         # into one single reaction.
@@ -100,15 +102,21 @@ module MCM
         #   This will be either the same length as the input (if there are no duplicate reactions)
         #   or shorter (if there are).
 
-        # TODO: get this to work if reactions are ordered in different way
-        grouped = Hash.new { |h, k| h[k] = [] }
+        # Firstly ensure all reactions are ordered identically
+        rxns.each do |x|
+          x[:Split] = x[:Reaction].gsub(/\s+/, '').split('=', 2)
+          x[:Reactants] = x[:Split][0].split('+').sort
+          x[:Products] = x[:Split][1].split('+').sort
+          x[:ReactionOrdered] = [x[:Reactants].join(' + '), x[:Products].join(' + ')].join(' = ')
+        end
+
         # Group into hash of Reaction: [Rate1, Rate2, ...]
-        rxns.each { |x| grouped[x[:Reaction]] << x[:Rate] }
+        grouped = Hash.new { |h, k| h[k] = [] }
+        rxns.each { |x| grouped[x[:ReactionOrdered]] << x[:Rate] }
         # Combine rates
-        combined = []
-        grouped.each { |h, k| combined << { Reaction: h, Rate: k.join(combine) } }
-        combined
+        grouped.map { |h, k| { Reaction: h, Rate: k.join(combine) } }
       end
+      # rubocop:enable Metrics/AbcSize
 
       def parse_rate_for_kpp(rate)
         # Performs necessary conversions on rates as they are stored in the DB (in FACSIMILE format)
