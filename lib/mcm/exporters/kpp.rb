@@ -14,6 +14,7 @@ module MCM
       def export(species, rxns, rates, _root_species, missing_peroxies, peroxies, citation, generic: false)
         #---------------------- Setup
         spacer = ('*' * 58).to_s
+        rxns = combine_reactions_with_same_rates(rxns, combine: '+')
         complex_rates_out = rates.map { |row| "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n" }.join
         rxns_out = rxns.map.with_index do |row, i|
           "{#{i + 1}.} #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
@@ -72,7 +73,6 @@ module MCM
         out += "{above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}\n"
 
         # Reactions
-        # TODO combine rates from duplicate reactions?
         out += "#EQUATIONS\n"
         out += rxns_out
 
@@ -80,6 +80,35 @@ module MCM
         out + "{ End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count} }"
       end
       # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity
+
+      def combine_reactions_with_same_rates(rxns, combine: '+')
+        # If there exist multiple reactions (as in the same reactants and products), then they will be combined
+        # into one single reaction.
+        #
+        # Args:
+        #
+        #   - rxns (list[Hash]): A list of reactions, represented as hashes with keys:
+        #     - ReactionID (int)
+        #     - Reaction (string)
+        #     - Rate (string)
+        #   - combine (string): Character to combine rates with.
+        #
+        # Returns:
+        #   - A list of hashes with entries:
+        #     - Reaction (string)
+        #     - Rate (string)
+        #   This will be either the same length as the input (if there are no duplicate reactions)
+        #   or shorter (if there are).
+
+        # TODO: get this to work if reactions are ordered in different way
+        grouped = Hash.new { |h, k| h[k] = [] }
+        # Group into hash of Reaction: [Rate1, Rate2, ...]
+        rxns.each { |x| grouped[x[:Reaction]] << x[:Rate] }
+        # Combine rates
+        combined = []
+        grouped.each { |h, k| combined << { Reaction: h, Rate: k.join(combine) } }
+        combined
+      end
 
       def parse_rate_for_kpp(rate)
         # Performs necessary conversions on rates as they are stored in the DB (in FACSIMILE format)
