@@ -9,31 +9,24 @@ module MCM
     def get_submechanism(root_species, include_inorganic, mechanism)
       # Extract a submechanism from a full mechanism starting from specific root species
       #
-      # NB: Rather than directly traversing the mechanism and returning a list of reactions,
-      # this is currently done indirectly by firstly traversing the mechanism and returning all the
-      # species involved, and then finding the reactions that these are involved in.
-      # Ideally the reactions would be directly extracted in 1 step, but I couldn't get it working in a recursive CTE
-      #
       # Args:
       #   - root_species (list[string]): List of root species names
       #   - include_inorganic (boolean): Whether to include inorganic reactions
       #   - mechanism (string): The mechanism to search in
       #
       # Returns:
-      #   - Sequel dataset with 3 columns: ReactionID, Reaction, Rate
-      species = traverse_submechanism_by_species(root_species, mechanism)
-      rxns = get_reactions_from_species(species, mechanism)
+      #   - Sequel dataset with 1 row per reaction and 3 columns: ReactionID, Reaction, Rate
+      rxns = traverse_submechanism(root_species, mechanism)
       if include_inorganic
-        inorg_submech = extract_inorganic_submechanism(mechanism)
-        # Can safely do a union all as we explicitly didn't include inorganic rxns in the initial submechanism extract
-        rxns = inorg_submech.union(rxns)
+        inorg_rxns = extract_inorganic_submechanism(mechanism)
+        rxns = inorg_rxns.union(rxns)
       end
-      rxns
+      rxns.join(:ReactionsWide, [:ReactionID]).select(:ReactionID, :Reaction, :Rate)
     end
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def traverse_submechanism_by_species(root_species, mechanism)
+    def traverse_submechanism(root_species, mechanism)
       # Traverses a sub-mechanism from a collection of starting species down to sink species
       #
       # This is a breadth-first search despite not explicitly ordering as such by using a depth counter (3.4 https://www.sqlite.org/lang_with.html)
@@ -44,48 +37,30 @@ module MCM
       #   - mechanism: String with the mechanism name to traverse.
       #
       # Returns:
-      #   - A Sequel dataset with 1 column
-      #     - Species: The name of any species that are involved in this submechanism, ordered breadth first.
+      #   - A Sequel dataset with 1 row per reaction and 1 column
+      #     - ReactionID: The ID of any reactions that are involved in this submechanism, ordered breadth first.
       DB[:submechanism]
         .with_recursive(
           :submechanism,
-          DB[:Species] # Assures that the user selected species exist in the DB
-            .where(Name: root_species)
-            .select(:Name),
-          DB[:submechanism]
-            .join(:Reactants, Species: Sequel[:submechanism][:Species])
-            .join(:Products, [:ReactionID])
-            .join(:Reactions, [:ReactionID])
+          DB[:Reactants]
             .join(:Species, Name: Sequel[:Reactants][:Species])
+            .join(:Reactions, [:ReactionID])
+            .where(Name: root_species, Mechanism: mechanism, SpeciesCategory: 'VOC') # Guard inputs are valid VOC
+            .select(Sequel[:Reactions][:ReactionID]),
+          DB[:submechanism]
+            .join(Sequel[:Products].as(:prds), ReactionID: Sequel[:submechanism][:ReactionID])
+            .join(Sequel[:Reactants].as(:rcnts), Species: Sequel[:prds][:Species])
+            .join(Sequel[:Species].as(:spec), Name: Sequel[:rcnts][:Species])
+            .join(Sequel[:Reactions].as(:rxns2), ReactionID: Sequel[:rcnts][:ReactionID])
             .where(Mechanism: mechanism, SpeciesCategory: 'VOC')
-            .select(Sequel[:Products][:Species]),
-          args: [:Species],
+            .select(Sequel[:rxns2][:ReactionID]),
+          args: [:ReactionID],
           union_all: false
         )
         .from_self(alias: :sub)
     end
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
-
-    def get_reactions_from_species(species, mechanism)
-      # Retrieves reaction information from species that are reactants, preserving the order that the species were in.
-      #
-      # Args:
-      #   - Species: Sequel dataset with 1 column, Species
-      #
-      # Returns:
-      #   - Sequel dataset with 3 columns: ReactionID, Reaction, Rate
-      species
-        .select_append(Sequel.lit('row_number() over() AS i'))
-        .from_self(alias: :ord) # Needed to ensure row_number applied at correct time
-        .join(:Reactants, [:Species])
-        .join(:Species, Name: Sequel[:Reactants][:Species])
-        .join(:ReactionsWide, [:ReactionID])
-        .where(SpeciesCategory: 'VOC', Mechanism: mechanism)
-        .order_by(:i)
-        .select(Sequel[:ReactionsWide][:ReactionID], :Reaction, :Rate)
-        .from_self(alias: :rea)
-    end
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
@@ -137,10 +112,10 @@ module MCM
       #   - An object with attributes:
       #     - rxns: Sequel Dataset with ReactionID, Reaction, Rate columns
       #     - species: Sequel Dataset with Species column
-      DB[:ReactionsWide]
+      DB[:Reactions]
         .where(Mechanism: mechanism)
-        .exclude(InorganicCategory: nil)
-        .select(:ReactionID, :Reaction, :Rate)
+        .exclude(InorganicReactionCategory: nil)
+        .select(:ReactionID)
         .from_self(alias: :inorg)
     end
 
