@@ -26,7 +26,8 @@ helpers do
     return if rate.nil?
 
     # Replace @ with exponent when it's just a number to the power
-    parsed = rate.gsub(/@([0-9.+-]+)/, '^{\\1}')
+    parsed = replace_capture_group_multiple(rate, /@\(([0-9.+-]+)\)/, '^{\\1}')
+    parsed = replace_capture_group_multiple(parsed, /\*\*\(([0-9.+-]+)\)/, '^{\\1}')
     # Use Latex exp markup
     parsed = parsed.gsub('EXP', '\\exp')
     # Replace a / b with marked up fractions
@@ -35,8 +36,6 @@ helpers do
     parsed = replace_capture_group_multiple(parsed, /LOG10\((.+)\)/, '\\log_{10}(\\1)')
     # Convert D to scientific notation
     parsed = replace_capture_group_multiple(parsed, /([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
-    # The only use of ** to indicate exponent is for squared
-    parsed = replace_capture_group_multiple(parsed, /\*\*2/, '^{2}')
     # Replace @ with exponent when there's an expression in parentheses
     parsed = replace_capture_group_multiple(parsed, /@\((.+)\)/, '^{\\1}')
     # Replace TEMP with T for brevity
