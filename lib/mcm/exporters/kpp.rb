@@ -61,15 +61,10 @@ module MCM
           out += "}\n"
         end
         out += "#INLINE F90_RCONST \n"
-        out += "  USE constants\n"
-        out += "  !end of USE statements \n"
-        out += "  !\n"
-        out += "  ! start of executable statements\n"
         out += peroxy_out
 
         # Complex rate coefficients
         out += complex_rates_out if generic
-        out += "CALL mcm_constants(time, temp, M, N2, O2, RO2, H2O)\n"
         out += "#ENDINLINE \n"
         out += "{above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}\n"
 
