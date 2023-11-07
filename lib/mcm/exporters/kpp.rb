@@ -130,13 +130,10 @@ module MCM
         #
         # Returns:
         #   A list of hashes where the :Reaction field has been updated if needed.
-
-        # rubocop:disable Style/RedundantRegexpArgument
         rxns.each do |x|
           x[:Reaction] = x[:Reaction].gsub(/^O \+ O3 = /, 'O + O3 = 2O2')
           x[:Reaction] = x[:Reaction].gsub(/^HO2 \+ OH = /, 'HO2 + OH = H2O + O2')
         end
-        # rubocop:enable Style/RedundantRegexpArgument
         rxns
       end
 
