@@ -165,6 +165,7 @@ module MCM
         # Returns:
         #   - A string containing the rate in KPP format.
         rate = rate.gsub(/H2O/, 'C(ind_H2O)')
+        rate = rate.gsub(/([0-9.+-]+)D([0-9+-]+)/, '\1E\2')
         rate.gsub(/[<>@]/, '<' => '(', '>' => ')', '@' => '**')
       end
     end
