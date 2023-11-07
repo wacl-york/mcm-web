@@ -18,7 +18,7 @@ module MCM
         # Reactions need several conversions to be usable in KPP
         #   1. Combine identical reactions
         #   2. Some reactions have no products which is not permissible in KPP
-        rxns = combine_reactions_with_same_rates(rxns, combine: '+')
+        rxns = combine_reactions(rxns, combine: '+')
         rxns = add_missing_products(rxns)
         rxns_out = rxns.map.with_index do |row, i|
           "{#{i + 1}.} #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
@@ -84,7 +84,7 @@ module MCM
       # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity
 
       # rubocop:disable Metrics/AbcSize
-      def combine_reactions_with_same_rates(rxns, combine: '+')
+      def combine_reactions(rxns, combine: '+')
         # If there exist multiple reactions (as in the same reactants and products), then they will be combined
         # into one single reaction.
         #
