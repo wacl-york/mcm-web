@@ -131,8 +131,8 @@ module MCM
         # Returns:
         #   A list of hashes where the :Reaction field has been updated if needed.
         rxns.each do |x|
-          x[:Reaction] = x[:Reaction].gsub(/O \+ O3 = /, 'O + O3 = 2O2')
-          x[:Reaction] = x[:Reaction].gsub(/HO2 \+ OH = /, 'HO2 + OH = H2O + O2')
+          x[:Reaction] = x[:Reaction].gsub('O \+ O3 = ', 'O + O3 = 2O2')
+          x[:Reaction] = x[:Reaction].gsub('HO2 \+ OH = ', 'HO2 + OH = H2O + O2')
         end
         rxns
       end
@@ -150,7 +150,7 @@ module MCM
 
         # There's probably a more functional way of doing this...
         rxns.each do |x|
-          x[:Reaction] = x[:Reaction].gsub(/=/, '+ hv =') if /J<[0-9]+>/.match?(x[:Rate])
+          x[:Reaction] = x[:Reaction].gsub('=', '+ hv =') if /J<[0-9]+>/.match?(x[:Rate])
         end
         rxns
       end
@@ -164,7 +164,7 @@ module MCM
         #
         # Returns:
         #   - A string containing the rate in KPP format.
-        rate = rate.gsub(/H2O/, 'C(ind_H2O)')
+        rate = rate.gsub('H2O', 'C(ind_H2O)')
         rate = rate.gsub(/([0-9.+-]+)D([0-9+-]+)/, '\1E\2')
         rate.gsub(/[<>@]/, '<' => '(', '>' => ')', '@' => '**')
       end
