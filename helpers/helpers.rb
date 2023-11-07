@@ -26,25 +26,25 @@ helpers do
     return if rate.nil?
 
     # Replace @ with exponent when it's just a number to the power
-    parsed = replace_capture_group_multiple(rate, /@\(([0-9.+-]+)\)/, '^{\\1}')
-    parsed = replace_capture_group_multiple(parsed, /\*\*\(([0-9.+-]+)\)/, '^{\\1}')
+    parsed = rate.gsub(/@\(([0-9.+-]+)\)/, '^{\\1}')
+    parsed = parsed.gsub(/\*\*\(([0-9.+-]+)\)/, '^{\\1}')
     # Use Latex exp markup
     parsed = parsed.gsub('EXP', '\\exp')
     # Replace a / b with marked up fractions
-    parsed = replace_capture_group_multiple(parsed, %r{([a-zA-Z0-9.+-{}]+)/([a-zA-Z0-9.+-{}]+)}, '{\\frac{\1}{\2}}')
+    parsed = parsed.gsub(%r{([a-zA-Z0-9.+-{}]+)/([a-zA-Z0-9.+-{}]+)}, '{\\frac{\1}{\2}}')
     # Replace LOG10 with log_10
-    parsed = replace_capture_group_multiple(parsed, /LOG10\((.+)\)/, '\\log_{10}(\\1)')
+    # Ideally would use lookahead/behind
+    parsed = parsed.gsub(/LOG10\(([a-zA-Z0-9.]+)\)/, '\\log_{10}(\\1)')
     # Convert D to scientific notation
-    parsed = replace_capture_group_multiple(parsed, /([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
+    parsed = parsed.gsub(/([0-9.+-]+)[D|E]([0-9+-]+)/, '\1\\times10^{\2}')
     # Replace @ with exponent when there's an expression in parentheses
     parsed = replace_capture_group_multiple(parsed, /@\((.+)\)/, '^{\\1}')
     # Replace TEMP with T for brevity
     parsed = parsed.gsub('TEMP', '{T}')
 
     # Escape compound or rate names so numbers aren't subscripted
-    # Compound or rate names are defined as having at least 1 capital letter and
-    # at least 1 number in either order (is this realistic? would ever have 3H...?)
-    parsed = parsed.gsub(/([A-Z]+[0-9]+[A-Z0-9]*|[0-9]+[A-Z]+[A-Z0-9]*)/, '{\1}')
+    # Compound or rate names are defined as starting with a capital letter and trailing letters or numbers
+    parsed = parsed.gsub(/([A-Z]+[0-9A-Z]+)/, '{\1}')
 
     # Use mhchem's ce environment for getting reaction arrow that stretches with rate
     inner = display_arrow ? "->[#{parsed}]" : parsed
