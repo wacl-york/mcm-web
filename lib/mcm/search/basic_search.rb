@@ -57,7 +57,7 @@ module MCM
                       .union(results_inchi)
 
         # Calculate search scores and reduce to one match per species (its highest match)
-        results_all = add_multipliers(results_all, term)
+        results_all = add_match_multipliers(results_all, term)
         results_all = calculate_highest_score_per_species(results_all, score_baseline)
 
         # For each matched species, want to display the top 5 synonyms as well as any synonyms that matched
@@ -111,7 +111,7 @@ module MCM
           .select(:Name, :Synonym, Sequel[:Inchi].as(:SearchField), :score_offset)
       end
 
-      def add_multipliers(data, query)
+      def add_match_multipliers(data, query)
         # Adds score multipliers depending on whether the match was full, starting, or partial
         #
         # Args:
