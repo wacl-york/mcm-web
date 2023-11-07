@@ -2,15 +2,15 @@
 
 describe MCM::Search::Basic do
   describe '.find_species' do
-    context 'with C5H8 no preceeding' do
-      let(:res) { described_class.find_species('C5H8', preceeding: false).all }
+    context 'with C5H8' do
+      let(:res) { described_class.find_species('C5H8', 17).all }
 
       it 'only returns 1 value' do
         expect(res.length).to be(1)
       end
 
-      it 'only has a Name attribute' do
-        expect(res[0].keys).to eq([:Name])
+      it 'has the expected attributes' do
+        expect(res[0].keys).to eq(%i[Name Synonym SearchField Slope Intercept])
       end
 
       it 'returns C5H8' do
@@ -18,42 +18,22 @@ describe MCM::Search::Basic do
       end
     end
 
-    context 'with C2H4 no preceeding' do
-      let(:res) { described_class.find_species('C2H4', preceeding: false).all }
+    context 'with C2H4' do
+      let(:res) { described_class.find_species('C2H4', 17).all }
 
-      it 'only returns 1 value' do
-        expect(res.length).to be(1)
-      end
-
-      it 'only has a Name attribute' do
-        expect(res[0].keys).to eq([:Name])
-      end
-
-      it 'returns C2H4' do
-        expect(res[0][:Name]).to eq('C2H4')
-      end
-    end
-
-    context 'with C2H4 and preceeding' do
-      let(:res) { described_class.find_species('C2H4', preceeding: true).all }
-
-      it 'only finds 16 values' do
+      it 'returns 16 values' do
         expect(res.length).to be(16)
+      end
+
+      it 'has the expected attributes' do
+        expect(res[0].keys).to eq(%i[Name Synonym SearchField Slope Intercept])
       end
     end
   end
 
-  describe '.find_synonym' do
-    context 'with ethane and no preceeding' do
-      let(:res) { described_class.find_synonym('ethane', preceeding: false).all }
-
-      it 'finds 51 values' do
-        expect(res.length).to be(51)
-      end
-    end
-
-    context 'with ethane and preceeding' do
-      let(:res) { described_class.find_synonym('ethane', preceeding: true).all }
+  describe '.find_synonyms' do
+    context 'with ethane' do
+      let(:res) { described_class.find_synonym('ethane', 17).all }
 
       it 'finds 659 values' do
         expect(res.length).to be(659)
@@ -63,7 +43,7 @@ describe MCM::Search::Basic do
 
   describe '.find_smiles' do
     context 'with CC' do
-      let(:res) { described_class.find_smiles('CC').all }
+      let(:res) { described_class.find_smiles('CC', 17).all }
 
       it 'returns 4951 matches for a CC bond' do
         expect(res.length).to be(4951)
@@ -71,7 +51,7 @@ describe MCM::Search::Basic do
     end
 
     context 'with a Smiles pattern with 1 match' do
-      let(:res) { described_class.find_smiles('CC(=C)C(CO[O])O').all }
+      let(:res) { described_class.find_smiles('CC(=C)C(CO[O])O', 17).all }
 
       it 'returns 1 match' do
         expect(res.length).to be(1)
@@ -85,7 +65,7 @@ describe MCM::Search::Basic do
 
   describe 'find_inchi' do
     context 'without the InChI prefix' do
-      let(:res) { described_class.find_inchi('foo').all }
+      let(:res) { described_class.find_inchi('foo', 17).all }
 
       it 'returns 0 matches' do
         expect(res.length).to be(0)
@@ -93,7 +73,7 @@ describe MCM::Search::Basic do
     end
 
     context 'with just the InChI prefix' do
-      let(:res) { described_class.find_inchi('InCHi=1S/').all }
+      let(:res) { described_class.find_inchi('InCHi=1S/', 17).all }
 
       it 'returns 5809 matches' do
         expect(res.length).to be(5809)
@@ -101,7 +81,7 @@ describe MCM::Search::Basic do
     end
 
     context 'with C2H4/ (trailing slash)' do
-      let(:res) { described_class.find_inchi('InChI=1S/C2H4/').all }
+      let(:res) { described_class.find_inchi('InChI=1S/C2H4/', 17).all }
 
       it 'returns just 1 match' do
         expect(res.length).to be(1)
@@ -113,7 +93,7 @@ describe MCM::Search::Basic do
     end
 
     context 'with C2H4 (no trailing slash)' do
-      let(:res) { described_class.find_inchi('InChI=1S/C2H4').all }
+      let(:res) { described_class.find_inchi('InChI=1S/C2H4', 17).all }
 
       it 'returns 54 matches' do
         expect(res.length).to be(54)
@@ -125,8 +105,8 @@ describe MCM::Search::Basic do
     context 'with C2H4' do
       let(:res) { described_class.search('C2H4', 'MCM').all }
 
-      it 'returns 16 matches' do
-        expect(res.length).to be(12)
+      it 'returns 14 matches' do
+        expect(res.length).to be(14)
       end
 
       it 'returns C2H4 first' do
@@ -177,8 +157,8 @@ describe MCM::Search::Basic do
         expect(res[0][:Name]).to eq('C2H6')
       end
 
-      it 'returns 1474 results' do
-        expect(res.length).to be(1474)
+      it 'returns 5027 results' do
+        expect(res.length).to be(5027)
       end
     end
   end
