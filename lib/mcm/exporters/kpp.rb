@@ -23,7 +23,7 @@ module MCM
         rxns = add_missing_products(rxns)
         rxns = add_photolysis_reagent(rxns)
         rxns_out = rxns.map.with_index do |row, i|
-          "{#{i + 1}.} #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
+          "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
         end.join
 
         complex_rates_out = rates.map { |row| "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n" }.join
