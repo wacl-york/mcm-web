@@ -4,5 +4,4 @@ vendor/
 .rubocop-*
 packaged.yaml
 
-*.db
 .env
