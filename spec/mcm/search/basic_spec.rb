@@ -10,7 +10,7 @@ describe MCM::Search::Basic do
       end
 
       it 'has the expected attributes' do
-        expect(res[0].keys).to eq(%i[Name Synonym SearchField Slope Intercept])
+        expect(res[0].keys).to eq(%i[Name Synonym SearchField score_offset])
       end
 
       it 'returns C5H8' do
@@ -26,14 +26,14 @@ describe MCM::Search::Basic do
       end
 
       it 'has the expected attributes' do
-        expect(res[0].keys).to eq(%i[Name Synonym SearchField Slope Intercept])
+        expect(res[0].keys).to eq(%i[Name Synonym SearchField score_offset])
       end
     end
   end
 
-  describe '.find_synonyms' do
+  describe '.find_synonym' do
     context 'with ethane' do
-      let(:res) { described_class.find_synonym('ethane', 17).all }
+      let(:res) { described_class.find_synonym('ethane').all }
 
       it 'finds 659 values' do
         expect(res.length).to be(659)

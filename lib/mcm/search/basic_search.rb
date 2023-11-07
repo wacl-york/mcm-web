@@ -11,8 +11,8 @@ module MCM
       def search(term, mechanism)
         # Searches the database for species matching a given query term.
         #
-        # Hits are returned with a score from 0 - N (where N is 3 * max references a synonym has) according to
-        # using the following criteria:
+        # Hits are returned with a score from 0 - 3N (where N is a baseline, in this case the max number of references
+        # a synonym has in the DB), using the following criteria:
         #   - 'exact match': Querying 'CH4' returns 'CH4' but not 'XCH4' or 'CH42'
         #   - 'starting match': Querying 'CH4' returns 'CH42', but not 'XCH4', in addition to exact match results
         #   - 'partial match': Querying 'CH4' returns 'XCH4', in addition to starting match results
@@ -44,13 +44,13 @@ module MCM
         #     - Smiles: The species' smiles string
         #     - Inchi: The species' InChI string
         #
-        max_synonyms = DB[:SpeciesSynonyms].max(:NumReferences)
+        score_baseline = DB[:SpeciesSynonyms].max(:NumReferences)
 
         # Run all searches
-        results_species = find_species(term, max_synonyms)
-        results_synonyms = find_synonym(term, max_synonyms)
-        results_smiles = find_smiles(term, max_synonyms)
-        results_inchi = find_inchi(term, max_synonyms)
+        results_species = find_species(term, score_baseline)
+        results_synonyms = find_synonym(term)
+        results_smiles = find_smiles(term, score_baseline)
+        results_inchi = find_inchi(term, score_baseline)
         results_all = results_species
                       .union(results_synonyms)
                       .union(results_smiles)
@@ -58,7 +58,7 @@ module MCM
 
         # Calculate search scores and reduce to one match per species (its highest match)
         results_all = add_multipliers(results_all, term)
-        results_all = calculate_highest_score_per_species(results_all)
+        results_all = calculate_highest_score_per_species(results_all, score_baseline)
 
         # For each matched species, want to display the top 5 synonyms as well as any synonyms that matched
         syns_five = get_top_5_synonyms(results_all)
@@ -80,39 +80,35 @@ module MCM
         DB[:species]
           .where(Sequel.ilike(:Name, "%#{term}%"))
           .select_append(Sequel.lit('NULL as Synonym'))
-          .select_append(Sequel.lit('? as Slope', base_score))
-          .select_append(Sequel.lit('? as Intercept', base_score))
+          .select_append(Sequel.lit('? as score_offset', base_score))
           .from_self(alias: :species)
-          .select(:Name, :Synonym, Sequel[:Name].as(:SearchField), :Slope, :Intercept)
+          .select(:Name, :Synonym, Sequel[:Name].as(:SearchField), :score_offset)
       end
 
-      def find_synonym(term, base_score)
+      def find_synonym(term)
         DB[:speciessynonyms]
           .where(Sequel.ilike(:Synonym, "%#{term}%"))
-          .select_append(Sequel.lit('? as Slope', base_score))
           .from_self(alias: :syn)
-          .select(Sequel[:Species].as(:Name), :Synonym, Sequel[:Synonym].as(:SearchField), :Slope,
-                  Sequel[:NumReferences].as(:Intercept))
+          .select(Sequel[:Species].as(:Name), :Synonym, Sequel[:Synonym].as(:SearchField),
+                  Sequel[:NumReferences].as(:score_offset))
       end
 
       def find_smiles(term, base_score)
         DB[:species]
           .where(Sequel.ilike(:Smiles, "%#{term}%"))
           .select_append(Sequel.lit('NULL as Synonym'))
-          .select_append(Sequel.lit('? as Slope', base_score))
-          .select_append(Sequel.lit('? as Intercept', base_score))
+          .select_append(Sequel.lit('? as score_offset', base_score))
           .from_self(alias: :smiles)
-          .select(:Name, :Synonym, Sequel[:Smiles].as(:SearchField), :Slope, :Intercept)
+          .select(:Name, :Synonym, Sequel[:Smiles].as(:SearchField), :score_offset)
       end
 
       def find_inchi(term, base_score)
         DB[:species]
           .where(Sequel.ilike(:Inchi, "#{term}%"))
           .select_append(Sequel.lit('NULL as Synonym'))
-          .select_append(Sequel.lit('? as Slope', base_score))
-          .select_append(Sequel.lit('? as Intercept', base_score))
+          .select_append(Sequel.lit('? as score_offset', base_score))
           .from_self(alias: :inchi)
-          .select(:Name, :Synonym, Sequel[:Inchi].as(:SearchField), :Slope, :Intercept)
+          .select(:Name, :Synonym, Sequel[:Inchi].as(:SearchField), :score_offset)
       end
 
       def add_multipliers(data, query)
@@ -123,39 +119,38 @@ module MCM
         #     - Name: Species name
         #     - Synonym: Synonym that was matched on if applicable, else NULL
         #     - SearchField: The field that matched with the search query
-        #     - Slope: The multiplicative constant
-        #     - Intercept: The offset
+        #     - score_offset: The offset
         #   - query (String): The search query
         #
         # Returns:
         #   The same input but with a new column called 'Multiplier', which will get
-        #   multiplied by the Slope and added to the Intercept to provide the match's
+        #   multiplied by the score baseline and added to score_offset to provide the match's
         #   overall score.
         data.select_append(Sequel.lit('CASE ' \
                                       'WHEN UPPER(SearchField) LIKE UPPER(?) THEN ? ' \
                                       'WHEN UPPER(SearchField) LIKE UPPER(?) THEN ? ' \
                                       'ELSE ? ' \
-                                      'END as multiplier',
+                                      'END as match_multiplier',
                                       query, 2, "#{query}%", 1, 0))
             .from_self(alias: :mult)
       end
 
-      def calculate_highest_score_per_species(data)
-        # Calculates the score for a set of matches, returning only the
-        # highest score for each Species.
+      def calculate_highest_score_per_species(data, baseline)
+        # Calculates the score for a set of matches, returning only the highest score for each Species.
         #
-        # The score calculated by multiplying a constant
-        # by a slope and added to an offset.
-        # In SQLite you can get the top row for a group simply
-        # by grouping by and selecting an aggregate function.
+        # The score is calculated by multiplying a value reflecting whether the match was a full, starting, or partial
+        # match by a constant, and adding to an offset.
+        # The offset allows for ranking species within the same match type.
+        # NB: In SQLite you can get the top row for a group simply by grouping by and selecting an aggregate function.
         #
         # Args:
         #   - data (Sequel Dataset): Dataset with columns:
         #     - Name: Species name
         #     - Synonym: Synonym that was matched on if applicable, else NULL
         #     - SearchField: The field that matched with the search query
-        #     - Slope: The multiplicative constant
-        #     - Intercept: The offset
+        #     - score_offset: The score offset.
+        #     - match_multiplier: The multiplier reflecting whether it was a full, starting or partial match.
+        #   - baseline (float/int): The baseline score that gets multiplied by match_multiplier.
         #
         # Returns:
         #   A Sequel Dataset with 3 columns:
@@ -166,7 +161,8 @@ module MCM
           .group(:Name)
           .select(:Name,
                   :Synonym,
-                  Sequel.lit('max(Intercept + Slope * multiplier) as score')) # Can't do multiplication in Sequel
+                  Sequel.lit('max(score_offset + ? * match_multiplier) as score', # Can't do multiplication in Sequel
+                             baseline))
           .from_self(alias: :matches)
       end
 
