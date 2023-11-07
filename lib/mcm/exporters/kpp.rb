@@ -14,10 +14,16 @@ module MCM
       def export(species, rxns, rates, _root_species, missing_peroxies, peroxies, citation, generic: false)
         #---------------------- Setup
         spacer = ('*' * 58).to_s
+
+        # Reactions need several conversions to be usable in KPP
+        #   1. Combine identical reactions
+        #   2. Some reactions have no products which is not permissible in KPP
         rxns = combine_reactions_with_same_rates(rxns, combine: '+')
+        rxns = add_missing_products(rxns)
         rxns_out = rxns.map.with_index do |row, i|
           "{#{i + 1}.} #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
         end.join
+
         complex_rates_out = rates.map { |row| "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n" }.join
         species_out = species.map { |x| "#{x} = IGNORE ;\n" }.join
         missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
@@ -112,6 +118,22 @@ module MCM
         grouped.map { |h, k| { Reaction: h, Rate: k.join(combine) } }
       end
       # rubocop:enable Metrics/AbcSize
+
+      def add_missing_products(rxns)
+        # KPP can't handle reactions with no products
+        # This function hardcodes products for known reactions that lack products
+        #
+        # Args:
+        #   - rxns (list[Hash]): List of hashes that have :Reaction and :Rate
+        #
+        # Returns:
+        #   A list of hashes where the :Reaction field has been updated if needed.
+        rxns.each do |x|
+          x[:Reaction] = x[:Reaction].gsub(/O \+ O3 = /, 'O + O3 = 2O2')
+          x[:Reaction] = x[:Reaction].gsub(/HO2 \+ OH = /, 'HO2 + OH = H2O + O2')
+        end
+        rxns
+      end
 
       def parse_rate_for_kpp(rate)
         # Performs necessary conversions on rates as they are stored in the DB (in FACSIMILE format)
