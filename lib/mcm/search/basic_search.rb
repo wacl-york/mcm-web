@@ -162,12 +162,8 @@ module MCM
         #     - Name: Species name
         #     - Synonym: Synonym that was matched on if applicable, else NULL
         #     - Score: The score
-        # TODO is this working as expected, or would this return two rows per Species in case a species
-        # matched on both synonym AND something else?
-        # Rather than grouping on Synonym, might need to use an aggregate function
-        # such as coalescing
         data
-          .group(:Name, :Synonym)
+          .group(:Name)
           .select(:Name,
                   :Synonym,
                   Sequel.lit('max(Intercept + Slope * multiplier) as score')) # Can't do multiplication in Sequel
