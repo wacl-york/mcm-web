@@ -18,8 +18,10 @@ module MCM
         # Reactions need several conversions to be usable in KPP
         #   1. Combine identical reactions
         #   2. Some reactions have no products which is not permissible in KPP
+        #   3. Photolysis reactions need 'hv' as a reagent
         rxns = combine_reactions(rxns, combine: '+')
         rxns = add_missing_products(rxns)
+        rxns = add_photolysis_reagent(rxns)
         rxns_out = rxns.map.with_index do |row, i|
           "{#{i + 1}.} #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
         end.join
@@ -131,6 +133,24 @@ module MCM
         rxns.each do |x|
           x[:Reaction] = x[:Reaction].gsub(/O \+ O3 = /, 'O + O3 = 2O2')
           x[:Reaction] = x[:Reaction].gsub(/HO2 \+ OH = /, 'HO2 + OH = H2O + O2')
+        end
+        rxns
+      end
+
+      def add_photolysis_reagent(rxns)
+        # Add the 'hv' reagent to photolysis reactions
+        # We don't have explicit reaction types, so photolysis are identified
+        # by having '<J>' in their rate expression
+        #
+        # Args:
+        #   - rxns (list[Hash]): List of hashes that have :Reaction and :Rate
+        #
+        # Returns:
+        #   A list of hashes where the :Reaction field has been updated if needed.
+
+        # There's probably a more functional way of doing this...
+        rxns.each do |x|
+          x[:Reaction] = x[:Reaction].gsub(/=/, '+ hv =') if /J<[0-9]+>/.match?(x[:Rate])
         end
         rxns
       end
