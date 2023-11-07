@@ -1,24 +1,17 @@
 # frozen_string_literal: true
 
-require 'rubygems'
 require 'bundler'
-# Bundler.require
-# require 'sinatra'
-
-# require File.expand_path '../app.rb', __dir__
-
-# run Sinatra::Application
-# Bundler.require
-
-require 'sequel'
-DB = Sequel.connect('sqlite://mcm.db')
-Dir['./lib/mcm/**/*.rb'].sort.each do |file|
-  require file
-end
-
+require 'rack/test'
+ENV['RACK_ENV'] = 'test'
+require File.expand_path '../app.rb', __dir__
 require 'benchmark'
 
-Benchmark.realtime do
-  MCM::Search::Basic.search('C2H4', 'MCM')
+res = Benchmark.realtime do
+  MCM::Search::Basic.search('C2H4', 'MCM').all
 end
+puts "Time taken for C2H4: #{res}s"
+res = Benchmark.realtime do
+  MCM::Search::Basic.search('CH', 'MCM').all
+end
+puts "Time taken for CH: #{res}s"
 DB.disconnect
