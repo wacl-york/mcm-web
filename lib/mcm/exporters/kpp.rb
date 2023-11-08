@@ -11,6 +11,7 @@ module MCM
       # rubocop:disable Metrics/ParameterLists
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/PerceivedComplexity
       def export(species, rxns, rates, _root_species, missing_peroxies, peroxies, citation, generic: false)
         #---------------------- Setup
         spacer = ('*' * 58).to_s
@@ -58,6 +59,10 @@ module MCM
         # Species
         out += "#INCLUDE atoms \n"
         out += "#DEFVAR\n"
+        # Need to define water if it's used in a rate
+        if rate_uses_water(rxns, :Rate) || rate_uses_water(rates, :Definition)
+          out += "H2O = IGNORE ;\n"
+        end
         out += species_out
 
         # Peroxy radicals
@@ -69,7 +74,7 @@ module MCM
           out += "}\n"
         end
         out += "#INLINE F90_RCONST \n"
-        out += peroxy_out
+        out += peroxy_out if peroxies.length.positive?
 
         # Complex rate coefficients
         out += complex_rates_out if generic
@@ -83,7 +88,7 @@ module MCM
         # Summary
         out + "{ End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count} }"
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       # rubocop:disable Metrics/AbcSize
       def combine_reactions(rxns, combine: '+')
@@ -179,6 +184,19 @@ module MCM
 
         # Replace disallowed symbols KPP
         rate.gsub(/[<>@]/, '<' => '(', '>' => ')', '@' => '**')
+      end
+
+      def rate_uses_water(array, key)
+        # Identifies whether a list of objects that contain rates have at least
+        # one occurrence of H2O in a rate.
+        #
+        # Args:
+        #   - array (list[Hash]): A list of objects which have entries representing hashes.
+        #   - key (symbol): The key containing the object entry with the rate.
+        #
+        # Returns:
+        #   A boolean whether H2O is included in at least 1 rate.
+        !array.find { |x| x[key].include? 'H2O' }.nil?
       end
     end
   end
