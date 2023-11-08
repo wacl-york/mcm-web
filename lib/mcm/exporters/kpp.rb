@@ -60,9 +60,7 @@ module MCM
         out += "#INCLUDE atoms \n"
         out += "#DEFVAR\n"
         # Need to define water if it's used in a rate
-        if rate_uses_water(rxns, :Rate) || rate_uses_water(rates, :Definition)
-          out += "H2O = IGNORE ;\n"
-        end
+        out += "H2O = IGNORE ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(rates, :Definition)
         out += species_out
 
         # Peroxy radicals
