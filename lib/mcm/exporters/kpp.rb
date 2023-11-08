@@ -165,7 +165,20 @@ module MCM
         # Returns:
         #   - A string containing the rate in KPP format.
         rate = rate.gsub('H2O', 'C(ind_H2O)')
+
+        # Replace the D exponent symbol with E
         rate = rate.gsub(/([0-9.+-]+)D([0-9+-]+)/, '\1E\2')
+
+        # Add decimal point to ints
+        # This works for everything except 2 edge cases:
+        #   - It incorectly decimal points for E-12 -> E-12., which isn't allowed in Fortran
+        #   - It adds decimals to photolysis rates (e.g. J<1.>)
+        # Rather than get 1 regex that does everything with no errors, these 2 edge cases are separately fixed
+        rate = rate.gsub(/(?<![A-Z.\d])(\d+)(?![.])/, '\1.')
+        rate = rate.gsub(/(E[-+]?\d+)\./, '\1') # Remove point from exponent
+        rate = rate.gsub(/J<(\d+)\.>/, 'J<\1>') # Remove point from photolysis rate
+
+        # Replace disallowed symbols KPP
         rate.gsub(/[<>@]/, '<' => '(', '>' => ')', '@' => '**')
       end
     end
