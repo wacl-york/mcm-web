@@ -74,7 +74,7 @@ module MCM
         end
         out += spacer
         out += empty_comment
-        out += peroxy_out
+        out += peroxy_out if peroxies.length.positive?
         out += empty_comment
 
         # Reactions
