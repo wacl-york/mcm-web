@@ -27,6 +27,13 @@ module MCM
           "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
         end.join
 
+        complex_defs_out = MCM::Export.wrap_lines(rates.map { |x| x[:Child] },
+                                                  starting_char: 'REAL(dp) :: ',
+                                                  ending_char: '',
+                                                  every_line_end: ' &',
+                                                  sep: ', ',
+                                                  max_line_length: 78,
+                                                  every_line_start: ' ' * 4)
         complex_rates_out = rates.map { |row| "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n" }.join
         species_out = species.map { |x| "#{x} = IGNORE ;\n" }.join
         missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
@@ -53,6 +60,7 @@ module MCM
 
         # Globals
         out += "#INLINE F90_GLOBAL\n"
+        out += complex_defs_out
         out += "  REAL(dp)::M, N2, O2, RO2, H2O\n"
         out += "#ENDINLINE {above lines go into MODULE KPP_ROOT_Global}\n"
 
