@@ -31,6 +31,10 @@ get '/:mechanism/export/download' do
   # so they are fully specified
   complex_rates = MCM::Database.traverse_complex_rates(used_tokens)
 
+  #------------------- Photolysis Rates
+  # Find all photolysis rates used in the submechanism
+  photo_rates = MCM::Database.get_photolysis_rates_used_in_submechanism(submech_rxns)
+
   #------------------- Export
   citation_file = File.open("#{settings.public_folder}/citation.txt")
   citation = citation_file.readlines.map(&:chomp)
@@ -43,6 +47,7 @@ get '/:mechanism/export/download' do
     submech_species.select_map(:Name),
     submech_rxns.all,
     complex_rates.all,
+    photo_rates.all,
     params[:selected],
     missing_peroxies.select_map(:Name),
     peroxies.select_map(:Name),

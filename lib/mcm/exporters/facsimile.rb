@@ -10,23 +10,31 @@ module MCM
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/ParameterLists
       # rubocop:disable Metrics/MethodLength
-      def export(species, rxns, rates, root_species, missing_peroxies, peroxies, citation, generic: false)
-        # Format sections for export
-        species_out = MCM::Export.wrap_lines(species)
+      # rubocop:disable Metrics/CyclomaticComplexity
+      def export(species, rxns, complex_rates, _photo_rates, root_species, missing_peroxies, peroxies, citation,
+                 generic: false)
+        #---------------------- Setup
+        spacer = "#{'*' * 77} ;\n"
+        empty_comment = "*;\n"
+
+        # Reactions
         rxns_out = rxns.map { |row| "% #{row[:Rate]} : #{row[:Reaction]} ;\n" }.join
-        complex_rates_out = rates.map { |row| "#{row[:Child]} = #{row[:Definition]} ;\n" }.join
+
+        # Complex rates
+        complex_rates_out = complex_rates.map { |row| "#{row[:Child]} = #{row[:Definition]} ;\n" }.join
+
+        # Define the species used in this submechanism
+        species_out = MCM::Export.wrap_lines(species)
+
+        # The name of the root-level VOCs are provided
         params_out = MCM::Export.wrap_lines(root_species,
                                             starting_char: '* ',
                                             every_line_start: '* ',
                                             every_line_end: ' ;',
                                             ending_char: ' ;',
                                             sep: ' ')
-        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
-                                                      starting_char: '* ',
-                                                      every_line_start: '* ',
-                                                      every_line_end: ' ;',
-                                                      ending_char: ' ;',
-                                                      sep: ' ')
+
+        # Peroxy radicals are provided by a proxy RO2 sum
         peroxy_out = MCM::Export.wrap_lines(peroxies,
                                             starting_char: 'RO2 = ',
                                             ending_char: ';',
@@ -34,8 +42,13 @@ module MCM
                                             max_line_length: 65,
                                             every_line_start: ' ' * 6)
 
-        spacer = "#{'*' * 77} ;\n"
-        empty_comment = "*;\n"
+        # There's a warning about species in the RO2 sum that don't have a mass
+        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
+                                                      starting_char: '* ',
+                                                      every_line_start: '* ',
+                                                      every_line_end: ' ;',
+                                                      ending_char: ' ;',
+                                                      sep: ' ')
 
         #---------------------- Write Facsimile file
         # Citation comes first
@@ -55,7 +68,7 @@ module MCM
         out += spacer
 
         # Complex rate coefficients
-        if generic
+        if generic && complex_rates.count.positive?
           out += empty_comment
           out += "* Generic Rate Coefficients ;\n"
           out += empty_comment
@@ -90,6 +103,7 @@ module MCM
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/ParameterLists
       # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/CyclomaticComplexity
     end
   end
 end

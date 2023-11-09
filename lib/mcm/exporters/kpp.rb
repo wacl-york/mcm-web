@@ -12,9 +12,10 @@ module MCM
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/PerceivedComplexity
-      def export(species, rxns, rates, _root_species, missing_peroxies, peroxies, citation, generic: false)
+      def export(species, rxns, complex_rates, photo_rates, _root_species, missing_peroxies, peroxies, citation,
+                 generic: false)
         #---------------------- Setup
-        spacer = ('*' * 58).to_s
+        spacer = '*' * 58
 
         # Reactions need several conversions to be usable in KPP
         #   1. Combine identical reactions
@@ -27,22 +28,28 @@ module MCM
           "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
         end.join
 
-        complex_defs_out = MCM::Export.wrap_lines(rates.map { |x| x[:Child] },
+        # Complex rates need to be both defined and have their rate expression expressed
+        complex_defs_out = MCM::Export.wrap_lines(complex_rates.map { |x| x[:Child] },
                                                   starting_char: 'REAL(dp) :: ',
                                                   ending_char: '',
                                                   every_line_end: ' &',
                                                   sep: ', ',
                                                   max_line_length: 78,
                                                   every_line_start: ' ' * 4)
-        complex_rates_out = rates.map { |row| "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n" }.join
+        complex_rates_out = complex_rates.map do |row| # Not using .join("\n") as final line needs line break too
+          "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n"
+        end.join
+
+        # Photolysis rates need to be both defined and have their rate expression expressed
+        photo_defs_out = "  REAL(dp), DIMENSION(#{photo_rates.count}) :: J\n"
+        photo_rates_out = photo_rates.map do |row| # Ditto .join("\n") comment as complex_rates_out
+          "#{parse_rate_for_kpp(form_photolysis_equation(row))}\n"
+        end.join
+
+        # Define the species used in this submechanism
         species_out = species.map { |x| "#{x} = IGNORE ;\n" }.join
-        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
-                                                      starting_char: '    ',
-                                                      every_line_start: '    ',
-                                                      every_line_end: '',
-                                                      ending_char: '',
-                                                      max_line_length: 78,
-                                                      sep: ' ')
+
+        # Peroxy radicals are provided by a proxy RO2 sum
         peroxy_out = MCM::Export.wrap_lines(peroxies.map { |x| "C(ind_#{x})" },
                                             starting_char: '  RO2 = ',
                                             ending_char: '',
@@ -51,24 +58,34 @@ module MCM
                                             max_line_length: 78,
                                             every_line_start: ' ' * 6)
 
+        # There's a warning about species in the RO2 sum that don't have a mass
+        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
+                                                      starting_char: '    ',
+                                                      every_line_start: '    ',
+                                                      every_line_end: '',
+                                                      ending_char: '',
+                                                      max_line_length: 78,
+                                                      sep: ' ')
+
         #---------------------- Write to KPP
         # Citation comes first
-        out = ''
-        out += "{#{spacer} ;\n"
+        out = "{#{spacer} ;\n"
         out += citation.map { |row| "* #{row}\n" }.join
         out += "#{spacer} ;}\n"
 
         # Globals
         out += "#INLINE F90_GLOBAL\n"
-        out += complex_defs_out
-        out += "  REAL(dp)::M, N2, O2, RO2, H2O\n"
+        out += complex_defs_out if complex_rates.count.positive?
+        out += photo_defs_out if photo_rates.count.positive?
+        out += "  REAL(dp) :: zenith\n" if photo_rates.count.positive?
+        out += "  REAL(dp) :: M, N2, O2, RO2, H2O\n"
         out += "#ENDINLINE {above lines go into MODULE KPP_ROOT_Global}\n"
 
         # Species
         out += "#INCLUDE atoms \n"
         out += "#DEFVAR\n"
         # Need to define water if it's used in a rate
-        out += "H2O = IGNORE ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(rates, :Definition)
+        out += "H2O = IGNORE ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates, :Definition)
         out += species_out
 
         # Peroxy radicals
@@ -83,7 +100,8 @@ module MCM
         out += peroxy_out if peroxies.length.positive?
 
         # Complex rate coefficients
-        out += complex_rates_out if generic
+        out += complex_rates_out if generic && complex_rates.count.positive?
+        out += photo_rates_out if photo_rates.count.positive?
         out += "#ENDINLINE \n"
         out += "{above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}\n"
 
@@ -203,6 +221,21 @@ module MCM
         # Returns:
         #   A boolean whether H2O is included in at least 1 rate.
         !array.find { |x| x[key].include? 'H2O' }.nil?
+      end
+
+      def form_photolysis_equation(params)
+        # Forms a photolysis equation in KPP format using the given photolysis parameters
+        #
+        # Args:
+        #   - params(Hash): A hash with 4 items, representing photolysis parameters:
+        #     - J
+        #     - l
+        #     - m
+        #     - n
+        #
+        # Return:
+        #   A string with the photolysis equation in a Fortran-parseable format.
+        "J<#{params[:J]}> = #{params[:l]}*(cos(zenith)**#{params[:m]})*exp(-#{params[:n]}*(1/cos(zenith)))"
       end
     end
   end

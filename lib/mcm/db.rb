@@ -202,6 +202,25 @@ module MCM
         .select(Sequel.lit('RootToken, ChildToken as Child'))
     end
 
+    def get_photolysis_rates_used_in_submechanism(submechanism)
+      # Returns the photolysis rates used in a submechanism
+      #
+      #  Args:
+      #    - submechanism (Sequel.Dataset): Dataset where every row corresponds to a reaction.
+      #      Must have at least a 'rate' column
+      #
+      #  Returns:
+      #    A Sequel.Dataset with 4 columns: J, l, m, n
+      submechanism
+        .inner_join(:Rates, [:Rate])
+        .inner_join(:PhotolysisRates, [:Rate])
+        .inner_join(:PhotolysisParameters, [:J])
+        .select(Sequel[:PhotolysisParameters][:J], :l, :m, :n)
+        .from_self(alias: :photo2)
+        .distinct
+        .order(Sequel[:photo2][:J])
+    end
+
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def get_reaction(reaction_ids)
