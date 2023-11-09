@@ -15,15 +15,17 @@ module MCM
       def export(species, rxns, complex_rates, photo_rates, _root_species, missing_peroxies, peroxies, citation,
                  generic: false)
         #---------------------- Setup
-        spacer = '*' * 58
+        # Citation
+        citation_fmt = citation.map { |row| "* #{row}" }.join("\n")
+        citation_out = "{#{'*' * 58} ;\n#{citation_fmt}\n#{'*' * 58} ;}\n"
 
         # Reactions need several conversions to be usable in KPP
         #   1. Combine identical reactions
         #   2. Some reactions have no products which is not permissible in KPP
         #   3. Photolysis reactions need 'hv' as a reagent
         rxns = combine_reactions(rxns, combine: '+')
-        rxns = add_missing_products(rxns)
-        rxns = add_photolysis_reagent(rxns)
+        rxns = rxns.each { |x| add_missing_products(x) }
+        rxns = rxns.each { |x| add_photolysis_reagent(x) }
         rxns_out = rxns.map.with_index do |row, i|
           "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
         end.join
@@ -69,9 +71,7 @@ module MCM
 
         #---------------------- Write to KPP
         # Citation comes first
-        out = "{#{spacer} ;\n"
-        out += citation.map { |row| "* #{row}\n" }.join
-        out += "#{spacer} ;}\n"
+        out = citation_out
 
         # Globals
         out += "#INLINE F90_GLOBAL\n"
@@ -150,37 +150,31 @@ module MCM
       end
       # rubocop:enable Metrics/AbcSize
 
-      def add_missing_products(rxns)
+      def add_missing_products(rxn)
         # KPP can't handle reactions with no products
         # This function adds the dummy PROD placeholder for reactions that lack products.
         #
         # Args:
-        #   - rxns (list[Hash]): List of hashes that have :Reaction and :Rate
+        #   - rxn (Hash): Hash that has :Reaction and :Rate attributes
         #
         # Returns:
         #   A list of hashes where the :Reaction field has been updated if needed.
-        rxns.each do |x|
-          x[:Reaction] = x[:Reaction].gsub(/=\s*$/, '= PROD')
-        end
-        rxns
+        rxn[:Reaction] = rxn[:Reaction].gsub(/=\s*$/, '= PROD')
       end
 
-      def add_photolysis_reagent(rxns)
+      def add_photolysis_reagent(rxn)
         # Add the 'hv' reagent to photolysis reactions
         # We don't have explicit reaction types, so photolysis are identified
         # by having '<J>' in their rate expression
         #
         # Args:
-        #   - rxns (list[Hash]): List of hashes that have :Reaction and :Rate
+        #   - rxn (Hash): Hash that has :Reaction and :Rate
         #
         # Returns:
         #   A list of hashes where the :Reaction field has been updated if needed.
 
         # There's probably a more functional way of doing this...
-        rxns.each do |x|
-          x[:Reaction] = x[:Reaction].gsub('=', '+ hv =') if /J<[0-9]+>/.match?(x[:Rate])
-        end
-        rxns
+        rxn[:Reaction] = rxn[:Reaction].gsub('=', '+ hv =') if /J<[0-9]+>/.match?(rxn[:Rate])
       end
 
       def parse_rate_for_kpp(rate)
