@@ -1,0 +1,114 @@
+<h1>5. Simulation of a PSI 1,3,5-trimethylbenzene Experiment</h1>
+<h2> Task 5.1 Simulation of 1,3,5-trimethylbenzene experiment</h2>
+<p>The previous tasks have focused on using AtChem to carry out detailed gas-phase photochemical chamber box modelling of experiments conducted at the outdoor EUropean PHOto-REactor (EUPHORE) in Valencia.  Here we look at constructing a chamber optimised AtChem box model, incorporating the MCMv3.1 degradation scheme for the model anthropogenic aromatic compound 1,3,5-trimethylbenzene (TMB), in order to simulate data measured during an experiment carried out in the Paul Scherrer Institut (PSI) aerosol chamber facility in Switzerland (Paulsen et al. (2005)).<p>
+<p>During the experiment discussed below, comprehensive high (mass and time) resolution measurements of TMB and its photo-oxidation products were recorded by a novel Chemical Ionisation Reaction Time-of-Flight Mass Spectrometer (CIR-TOF-MS).  The detailed box model can be used to interpret this dataset in detail.  Model-measurement comparisons, using such highly detailed simultaneous measurements of the complex array of multi-functional products formed, enables us to evaluate the MCM mechanism in detail and can also provide key insight for guiding the directions of future laboratory experiments.  For more information see Rickard et al. (2009) and Wyche et al. (2009).</p>
+
+<h2>5.1  Model Mechanism</h2>
+<p>Locate the TMB mechanism on the MCM website (MCM name 'TM135B').  Extract this mechanism along with the set of inorganic reactions and save as an appropriate AtChem mechanism file (extension <b>'.fac'</b>).</p>
+
+<h2>5.2  Dilution</h2>
+<p>As for any chamber, dilution of stable reactants and products (via replenishment of gases sampled or lost from the chamber) needs to be taken into account.  You can use the VARIABLES output from the extracted MCM TMB mechanism to define the dilution reactions of the stable reactants and products.  However, to save time, a set of dilution reactions of stable species in the TMB mechanism is listed in the file <a href="/static/atchemonline_tutorial/tmb_dilution.fac" target="_blank">tmb_dilution.fac</a>.  Copy these reactions and append to the end of the mechanism in your mechanism file.<p>
+
+<h2>5.3  PSI Chamber Auxiliary Mechanism</h2>
+<p>As with the EUPHORE chamber, the 'background' chamber chemistry needs to be taken into account.  The chamber specific auxiliary mechanism employed here for the PSI chamber was optimised in separate characterisation experiments designed specifically to investigate how the chamber surface reactions vary temporally over a range of conditions.  From sensitive measurements of HONO in the photooxidation of TMB, Metzger <i>et al. </i>(2008) found that the addition of a parameterised (light-induced) heterogeneous NO<sub>2</sub>/HONO conversion reaction in the chamber specific auxiliary mechanism significantly improved model performance under a variety of VOC/NO<sub>x</sub> conditions.  </p>
+<p>The optimised PSI auxiliary chamber mechanism as derived in the experiments of Metzger <i>et al. </i>. (2008) is given in <b><a href="/static/atchemonline_tutorial/psi_chamber.fac" target="_blank">psi_chamber.fac</a></b>.  The off-gassing of organics from the wall that convert OH to RO<sub>2</sub>/HO<sub>2</sub> leads to rapid ozone formation during pure air irradiations.  A dummy reaction of X + OH -> X + HO<sub>2</sub> is included in the auxiliary mechanism to account for this with a nominal [X] = 300 ppbv assumed for all TMB experiments (see <a href="#Table7">Table 7</a>).  For more information see Metzger <i>et al. </i> (2008).  Open <a href="/static/atchemonline_tutorial/psi_chamber.fac" target="_blank">psi_chamber.fac</a>, copy the mechanism and append to the end of your mechanism in your mechanism file (after the dilution reactions).</p>
+
+<h2>5.4  Photolysis Rate Parameterisations and Fixed Concentration Species </h2>
+<p>Now that the mechanism file has been defined for use in modelling TMB experiments in the PSI chamber we now have to set up the photolysis rates and other Environmental Constraints.  </p>
+<p>The photolysis rates in AtChem are currently set up for use with the outdoor EUPHORE chamber.  The PSI aerosol chamber is a temperature controlled indoor chamber comprising a 27 m<sup>3</sup> Teflon bag illuminated by four 4 kW xenon arc lamps (Paulsen et al., 2005).  Measurements of all important photolysis rates have been made in the PSI chamber and the photolysis rate parameterisations have been tuned accordingly (Paulsen et al., (2005); Metzger et al., (2008)).  To make life simple, these PSI photolysis rate parameterisations, for all photolysis reactions, have been calculated and are given in the file <a href="/static/atchemonline_tutorial/photolysis_rates.const">photolysis_rates.const</a>, save this file to your computer.  Note the extension of '.const' of this photolysis file, this lets AtChem know that the photolysis parameterisation is of a different format which gives a constant photolysis rate for the duration of the experiment. This file should be uploaded to the photolysis rates input box.</p>
+<p>The dummy species 'X', as defined in the auxiliary mechanism and <a href="#Table7">Table 7</a> also needs to be set to a constant 300 ppbv throughout the experiment.  This is be done by entering the species name (X) and the concentration  (in molecules cm<sup>-3</sup>) into the fixed-concentration species box near the bottom of the AtChem input page.  The species name and concentration need to be separated by a space, more than 1 species can be fixed in this way and each species should be entered on a seperate line. </p>
+
+<h2>5.5 Set up the Initial Concentrations File</h2>
+<p>The initial conditions of the PSI TMB experiment to be modelled are given below in <a href="#Table7">Table 7</a>.Set up an initial concentration file (using the extension <b>'.config'</b>) in order to model the PSI TMB experiment</p>
+
+<table align="center" class="table table-striped table-hover caption-top table-bordered table-fit-size">
+<caption><b><a name="Table7">Table 7.</a></b>Initial concentrations and other parameters for the PSI TMB photo smog experiment carried out on the 27/11/2006.</caption>
+<thead>
+<tr><th align='center'>	27/11/2006</th></tr>
+</thead>
+<tbody class="table-group-divider">
+<tr><th>Start time (hh:mm)</th><td> 08:00</td></tr>
+<tr><th>End time (hh:mm)</th><td> 18:00</td></tr>
+<tr><th>TMB (ppbv)</th><td> 597.0</td></tr>
+<tr><th>NO (ppbv)</th><td> 135.0</td></tr>
+<tr><th>NO<sub>2</sub> (ppbv)</th><td> 130.0</td></tr>
+<tr><th>H<sub>2</sub>O (molecules cm<sup>-3</sup>)</th><td> 2.89 x 10<sup>+17 </sup>(or 50 % RH)</td></tr>
+<tr><th>Dilution Rate (s<sup>-1</sup>)</th><td> 8.64 x 10<sup>-6</sup></td></tr>
+<tr><th>T<sub>average</sub> (&#176;C)</th><td>20 </td></tr>
+<tr><th>X (ppbv)</th><td> 300</td></tr>
+</tbody>
+</table>
+
+<h2>5.6 Set up the Concentrations Output File</h2>
+<p>The object of this exercise is to model the TMB photo-smog experiment carried out on the 271106 and to compare simulations of the gas-phase evolution of various aspects of the TMB system with detailed CIR-TOF-MS measurements in order to gain insights into the complex chemistry occurring.  <a href="#Figure2">Figure 2</a> highlights the major primary and secondary product formation routes in the OH initiated photooxidation of TMB mechanism in MCMv3.1.  As shown in Figure 2 there are numerous ring opening and ring retaining products formed.  </p>
+<br>
+<a name="Figure2"></a>
+<table border=0" width="95%">
+<tr><td align=center><img src="/static/atchemonline_tutorial/tmb.gif"  width="509" height="761"align="centre"></td></tr>
+<tr><td align=center> <b><a name="Figure2">Figure 2.</a></b>  Summary of OH radical-induced photooxidation of 1,3,5-trimethylbenzene.  Key primary and secondary product formation shown with branching ratios from the MCMv3.1 (after Wyche <i>et al.</i>, (2009))</td></tr>
+</table>
+<br>
+<p>Construct a concentration output file (with the '.config' extension) with the following species included (letters in brackets refer to structures in <a href="#Figure2">Figure 2</a>):</p>
+<p><b>TM135B, O3, NO, NO2, OH, HO2</b></p>
+<p><i>Peroxide bicyclic ring opening products: </i></p>
+<p><b>methyl glyoxal (Q)</b></p>
+<p><b>3,5-methyl-5(2H)-2-furanone ((S), MXYFUONE)</b></p>
+<p><b>2-methyl-4-oxo-2-pentanal ((R), C5MDICARB)</b></p>
+<p><b>3-methyl maleic anhydride ((AB), MMALANHY)</b></p>
+<p><i>Peroxide bicyclic ring-retaining products:</i></p>
+<p><b>Hydroxyl peroxide bicyclic nitrate ((L)),TM135BPNO3)</b></p>
+<p><b>hydroxy peroxide bicyclic ketone ((P), TM135OBPOH)</b></p>
+<p><b>hydroxy peroxide bicyclic diol ((O) TM135BP2OH) </b></p>
+<p><b>hydroxy peroxide bicyclic peroxide ((M), TM135BPOOH).</b></p>
+
+<h2>5.7 Set up/running the TMB model on AtChem</h2>
+<p>Now we have set up the appropriate input and output files we can set up the AtChem model run:</p>
+<ul>
+    <li>(a)  Open the <a href="https://atchem.york.ac.uk/" target="_blank">AtChem homepage</a> and click the link to Run AtChem Online </li>
+    <li>(b)  Give the model run an appropriate name and you may add some specific information on the model run in the 'description' text box if you wish.</li>
+    <li>(c)  Upload the mechanism file, initial concentration file, concentration output file and the photolysis_rates.const file in the appropriate boxeli.
+        <li>(d)  Set up the 'Environmental Variables':</li>
+<p>Firstly you will need to define or calculate the third body concentration M (in molecules cm<sup>-3</sup>).  You can either specify M at typical ambient atmospheric temperatures and pressures or you can calculate M by entering 'CALC' into the 'M' box and specifying the temperature and pressure (NB:  if you enter a value for M then you do not need to specify a pressure).  The experimental value of M in this case is ~ 2.51 x 10<sup>+19</sup> molecules cm<sup>-3</sup></p>
+<p><p>Either the average Relative Humidity (RH) or water concentration needs to be set in the model.  Here either set RH to 50 % and H2O to 'CALC' or use the H2O concentration value specified in <a href="#Table7">Table 7</a> (setting RH to 'NOTUSED').</p>
+
+<p>Use the default DEC value (we are not using it anyway here).  The 'DILUTE' value should be set to that specified in <a href="#Table7">Table 7</a>, 'JFAC' and 'ROOFOPEN' variables are not used here as we are constraining the photolysis rates.</p>
+
+<li>(e)  Set up the 'Model Parameters':</li>
+<p>Here we need to set up the start time of the model, the number of step sizes (i.e. how frequently we want to output the model species concentrations) and the date and location (in order to calculate the appropriate photolysis rates).</p>
+<p>We want to run the TMB model for 10 hours starting at 08:00.  Set the 'model start time', 'number of steps' and the 'step size' so that the model to outputs the model species concentrations (as defined in the 'Concentration Output' file) every 5 minutes for 10 hours.</p>
+<p>All other model parameters can be left as defaulted for the purpose of this exercise.</p>
+<li>(f) Enter the fixed concentration species X as described above</li>
+
+<li>(g) Running the model on AtChem</li>
+<p>Now you have set up the model run, click on the 'Run' button at the bottom of the page</p>
+</ul>
+
+<h2>5.7 AtChem Model Output</h2>
+<p>Hopefully the model should have run without any problems and the 'Model Execution Output' page should have opened.  Listed on this page are the model statistics and where you can download the model input and output files.</p>
+<p>Download the model output <b>'.zip'</b> folder (and output <b>'.zip'</b> folder if you wish) and save it to an appropriate place.</p>
+<p>Open this folder and look in the 'ModelOutput' folder.  This folder contain many files detailing the output parameters of the model run.  Unzip and open the 'concentration' output file.  This should give the time and model concentrations of all species defined in the 'Concentration Output' file, output every 5 minutes for 10 hours.</p> 
+
+<h2>5.8 Model-measurement Comparisons</h2>
+<h3>(i)  Ring Opening Products </h3>
+<p>Open the 'concentration' output file in an appropriate graphical spreadsheet application and plot the concentration-time profiles of the ring opening products <b>methyl glyoxal (Q), 3,5-methyl-5(2H)-2-furanone ((S), MXYFUONE), 2-methyl-4-oxo-2-pentanal ((R), C5MDICARB) and 3-methyl maleic anhydride ((AB), MMALANHY)</b>.</p>
+<p>Compare the model results for methyl glyoxal with the experimental data contained in <a href="/static/atchemonline_tutorial/psi_tmb.xls" target="_blank">psi_tmb.xls</a>  by pasting your results into the 'mgly' worksheet.</p>
+<p><b><i>How do your modelled results and calibrated CIR-TOF-MS methyl glyoxal profiles compare? </i></b></p>
+<p><b><i>What does this tell us about how good a job (or not) the MCMv3.1 TMB mechanism is doing in describing the chemistry that is going on under the conditions of the experiment being modelled?</i></b></p>
+<p>MXYFUONE, C5MDICARB and MMALANHY all have the same mass (m/z = 112) and therefore the CIR-TOF-MS is only able to attributed a signal to the sum of these compounds (@ m/z = 112+1).</p>
+<p>Compare your model results and the sum of modelled m/z = 112 ring opening products with the experimental data contained in <a href="/static/atchemonline_tutorial/psi_tmb.xls" target="_blank">psi_tmb.xls</a> by pasting your results into the 'ringopen' worksheet.  </p>
+<p><b><i>How do your modelled 112 profiles and calibrated CIR-TOF-MS m/z = 113 profile compare?</i></b></p>
+<h3>(ii)  Ring Retaining Products </h3>
+<p>Open the 'concentration' output file in an appropriate graphical spreadsheet application and plot the concentration-time profiles of the peroxide ring ring retaining products: <b>hydroxyl peroxide bicyclic nitrate ((L)),TM135BPNO3), hydroxy peroxide bicyclic ketone ((P), TM135OBPOH), hydroxy peroxide bicyclic diol ((O) TM135BP2OH) and hydroxy peroxide bicyclic peroxide ((M), TM135BPOOH).</b></p>
+<p>Compare the model results for TM135BPNO3 and TM135OBPOH with the CIR-TOF-MS time profiles contained in <a href="/static/atchemonline_tutorial/psi_tmb.xls" target="_blank">psi_tmb.xls</a>  by pasting your results into the 'ringret' worksheet.  </p>
+<p><i>NB:  Such high mass, relatively stable species as these multi-functional peroxide bicyclics have not been previously observed in the gas-phase, therefore we can only really compare the temporal profiles of the measured and modelled data (measured concentrations are calculated using a proxy calibrant and are effectively arbitrary).</i></p>
+<p><b><i>How do your modelled peroxide bicyclic and CIR-TOF-MS profiles compare.  Do you think these ring retained species are actually formed in the photooxidation of TMB under the conditions of the PSI experiment?</i></b></p>
+<h3>(iii) Peroxide Formation</h3>
+<p>Evidence exists to show that organic hydroperoxides may play a significant role in secondary organic aerosol (SOA) formation and subsequent growth (for more information see Wyche et al. (2009) and Rickard et al. (2009)).  In the modelled PSI TMB experiment the most dominant organic hydroperoxide available early on in the chamber matrix is the O2-bridged peroxide TM135BPOOH ((M) in <a href="#Figure2">Figure 2</a>)).  However, such peroxides are not easily measured using the PTR ionisation technique used by the CIR-TOF-MS, primarily owing to substantial post ionisation fragmentation.  </p>
+<p>Plot the simulated temporal evolution of the multi-functional peroxide species TM135BPOOH with the time profile of the measured SOA particle number density (cm<sup>-3</sup>) contained in <a href="/static/atchemonline_tutorial/psi_tmb.xls" target="_blank">psi_tmb.xls</a> by pasting your results into the 'peroxide' worksheet.  </p>
+<p><i><b>Comment on whether or not this peroxide species could be involved in the formation of SOA in the TMB experiment being modelled.</b></i></p>
+
+
+<br>
+<a href="sec6">Next</a><br>
+<a href="sec4">Previous</a><br>
+<a href="intro">Return to Tutorial homepage</a><br>

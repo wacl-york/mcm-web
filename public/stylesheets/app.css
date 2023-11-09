@@ -231,6 +231,10 @@ img.figure {
     width: 100%;
 }
 
+table.table-fit-size {
+    width: auto;
+}
+
 td.photo-table-group {
     vertical-align: middle;
     text-align: center;

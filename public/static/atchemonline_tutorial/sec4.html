@@ -1,0 +1,140 @@
+<h1>4.  Chamber modelling of aromatic system using MCMv3.1.</h1>
+
+<h2>Task 4.1.  Simulation of toluene chamber experiments</h2>
+
+<ul>
+    <li>Explore the toluene mechanism on the <a href="https://mcm.york.ac.uk">MCM website</a> using the search tool</a></li>
+        <li>Extract the mechanism using the subset mechanism extractor. Select FACSIMILE format and check the box to include inorganic reactions.</li>
+        <li>Copy and paste additional reactions for dilution and the chamber mechanism from this <a href="/static/atchemonline_tutorial/dilution&auxmech_tol" target="_blank">file</a> to the end of the mechanism file</li>
+        <li> Create an initial concentrations file containing the concentrations listed in Table 5. Remember concentrations must be converted to <b>molecules cm<sup>-3</sup> </b></li>
+        <li> Set the appropriate variables using the values from Table 5</li>
+
+        <li>Using data from <a href="/static/atchemonline_tutorial/tol_in.xls" target="_blank">tol_in.xls</a> constrain the model to measured <i>j</i>(NO<sub>2</sub>), relative humidity and temperature.</li>
+</ul>
+Notice that the photlysis data is more frequent than the relative humidity and temperature data. The AtChem model can accept data on different timescales and uses a linear interpolation method between data points. Remember to include the number of data points and the time in seconds in the constraint files. The files should be named J4, RH and TEMP and place in a single 'environmental constraints' zip  file as they are all environmental constraints. In the environmental variables section <b>RH and TEMP </b> should be set to <b>CONSTRAINED</b>, <b>H2O</b> should be set to <b>CALC</b> in order to convert relative humidity to a water concentration and <b>JFAC</b> should be set to <b>CALC</b> this will calculate the factor by which measured <i>j</i>(NO<sub>2</sub>) differs from <i>j</i>(NO<sub>2</sub>) calculated by the model and applies it to all other calculated photolysis rates. You should also use the photolysis_rates.rates file you created in <a href="sec3#chambereffects" target="_blank">section 3.1.3.</a> to correct for transmission through the chamber walls.</p>
+
+<table align="center" class="table table-striped table-hover caption-top table-bordered table-fit-size">
+<caption><b><a name="table5">Table 5</a>.</b>  Initial concentrations and other parameters for the EXACT toluene photo smog experiment carried out on the 27/09/2001.</caption>
+<thead>
+<tr><th></th><th>27/09/2001</th></tr>
+</thead>
+<tbody class="table-group-divider">
+<tr><td><b>Start time (hh:mm)</b></td><td> 10:08</td></tr>
+<tr><td><b> End time (hh:mm)</b></td><td> 15:00</td></tr>
+<tr><td><b>Toluene (ppbv)</b></td><td>496.0</td></tr>
+<tr><td><b>NO (ppbv)</b></td><td>122.0</td></tr>
+<tr><td><b>NO<sub>2</sub>(ppbv)</b></td><td>21.0</td></tr>
+<tr><td><b>O<sub>3</sub> (ppbv)</b></td><td>0.6</td></tr>
+<tr><td><b>HONO (ppbv)</b></td><td>1.5</td></tr>
+<tr><td><b>HCHO (ppbv)</b></td><td>1.5</td></tr>
+<tr><td><b>CO (ppbv)</b></td><td>352.0</td></tr>
+<tr><td><b>Dilution Rate (s<sup>-1</sup>)</b></td><td>1.58 &#215; 10 <sup>-5</sup></td></tr>
+</tbody>
+</table>
+
+<br>
+<ul>
+    <li>Create a concentration output file to output the following species: TOLUENE, O3, NO, NO2 and OH.</li>
+    <li>Run the model and  download the output files</li>
+    <li>Compare the results with the experimental data contained in <a href="/static/atchemonline_tutorial/tol270901.xls" target="_blank">tol270901.xls</a> by pasting your results into the 'MCMv31' worksheet.</li>
+</ul>
+
+<p>Q1.&nbsp;&nbsp;&nbsp;&nbsp;<i>	How do the concentration profiles compare to the measurements?</i>
+
+<p>In general, MCMv3.1 shows improved ability to simulate some of the EXACT observations and represents our current understanding of aromatic degradation.  However, significant discrepancies remain concerning ozone formation potential and oxidative capacity of aromatic hydrocarbon systems:</p>
+
+<ul>
+    <li>Peak O<sub>3</sub> is simulated well for benzene but over estimated for the substituted aromatics
+    <li>OH radical production is too low to account for the OH inferred from the rate of loss of the parent aromatic.
+    <li>For the majority of the systems the NO oxidation rate is under-predicted.  This parameter is linked to the production of O<sub>3</sub> and the oxidative capacity of the system.</li>
+</ul>
+
+<p>Ideas and strategies for resolving these issues have been suggested and additional laboratory and smog chamber experiments are required in order to investigate them further (see Bloss <i>et al.</i> 2005 for more details).</p>
+
+<p>A number of possible mechanistic fixes that have been investigated include:</p>
+
+<ul>
+    <li>A fast reaction of O<sub>3</sub> with an intermediate to produce OH would result in improved model-measurement agreement.  However, a very large rate coefficient and substantial intermediate concentrations would be required to give good agreement.
+    <li>Conversion of NO<sub>3</sub> to HO<sub>2</sub> by a dummy reaction in the model decreases O<sub>3</sub> yields but does not significantly affect the aromatic decay rate.
+    <li>A modelled conversion of NO<sub>2</sub> to HONO on the secondary organic aerosol has been shown to improve model-measurement agreement for O<sub>3</sub>, NO<sub>x</sub> and toluene decay.  However, the relatively high HONO concentrations generated have not been observed experimentally, and the reactive uptake coefficient required is much higher than the upper limits for such processes suggested in the literature.
+    <li>An increase in OH yield without additional NO to NO<sub>2</sub> conversion would improve the simulated concentration time profiles.</li>
+</ul>
+
+<p>As mentioned above, one means of decreasing ozone production while increasing OH concentrations is to implement a regeneration of OH without conversion of NO to NO<sub>2</sub> (and hence O<sub>3</sub>).  One such OH regeneration route postulated is a H shift in the peroxy radical formed in the peroxy bicyclic route, which is shown in Figure 1 below:</p>
+
+<table border=0" width="95%">
+<tr><td align=center><img src="/static/atchemonline_tutorial/image006.gif"  width="319" height="323"align="centre"></td></tr>
+<tr><td align=center> <b>Figure 1.</b>  Schematic of MCMv3.1 peroxy bicyclic route for toluene oxidation and postulated OH regeneration pathway (Bloss <i>et al.</i> 2005b).</td></tr>
+</table>
+
+<p>Introduce this OH regeneration route into the MCMv3.1 toluene model. 
+Open  your toluene mechanism file and add the following OH regeneration route to the end of the existing reactions</p>
+
+<ul>
+    <li>%  KDEC*0.167    :   TLBIPERO2 =  GLYOX + C5DICARB +OH  ;</li>
+    <li>%  KDEC*0.167    :   TLBIPERO2 = GLYOX + TLFUONE + OH   ;</li>
+    <li>%  KDEC*0.25      :   TLBIPERO2 = MGLYOX + MALDIAL + OH  ;</li>
+    <li>%  KDEC*0.167    :   TLBIPERO2 = GLYOX + C4MDIAL + OH   ;</li>
+    <li>%  KDEC*0.25      :   TLBIPERO2 = MGLYOX + BZFUONE + OH  ;</li>
+</ul>
+
+<p>This scheme replaces the usual peroxy bicyclic ring opening route.  Therefore, comment out the following reactions (insert a "*") in front of each line:</P>
+
+<ul>
+    <li>%  KRO2NO*0.889        :   TLBIPERO2 + NO = NO2 + TLBIPERO   ;</li>
+    <li>%  KRO2NO*0.111        :   TLBIPERO2 + NO = TLBIPERNO3      ;</li>
+    <li>%  KRO2NO3               :   TLBIPERO2 + NO3 = NO2 + TLBIPERO  ;</li>
+    <li>%  KRO2HO2*0.820      :   TLBIPERO2 + HO2 = TLBIPEROOH      ;</li>
+    <li>%  8.80D-13*RO2*0.60  :   TLBIPERO2  = TLBIPERO            ;</li>
+    <li>%  8.80D-13*RO2*0.20  :   TLBIPERO2 = TLBIPER2OH        ;</li>
+    <li>%  8.80D-13*RO2*0.20  :   TLBIPERO2 = TLOBIPEROH       ;</li>
+</ul>
+
+<p> Save the mechanism as 'tol_ohregen.fac'.
+Run the model and compare the results with the experimental data contained in <b>tol270901.xls</b> by pasting your results into the 'OH regen' worksheet.</p>
+
+<p>Q2<i>	How do the new concentration profiles compare to the measurements and MCMv3.1 model runs?</i></p>
+
+<p>The OH regeneration step currently seems like the most favoured explanation of the under prediction of the radicals but over prediction of ozone from the updated aromatic degradation in MCMv3.1.  High level <i>ab-initio </i>calculations on aromatic systems are being used to investigate the likelihood of such an OH regeneration route occurring under tropospheric conditions and a similar step has been added to the SAPRC mechanism which is the most used tropospheric chemistry mechanism incorporated into air quality models in the US.</p>
+
+<h2>Task 4.2. Additional Exercise (for you to carry out at home): Simulation of a cresol chamber experiments</h2>
+
+<p>The chemistry of hydroxyarenes was updated following new product studies indicating higher ring retaining products in aromatic systems than 
+previously assumed (see Bloss <i>et al. </i> 2005a for more details). 
+As part of the EXACT campaign a photo-smog experiment on cresol (a subset of the toluene mechanism) was performed on the 04/10/2001.  </p>
+
+<ul>
+    <li> Open the initial concentrations file created for the toluene experiment and update it to the initial condition for the cresol experiment performed on the 04/10/2001 as listed in Table 6.  NOTE:  remove the initial concentration of TOLUENE or replace it with CRESOL.</li>
+    <li>Start the model at the appropriate time and output every 5 minutes until the end of the experiment.</li>
+    <li>Constrain the model to measured water, <i>j</i>(NO<sub>2</sub>) and temperature data(<a href="/static/atchemonline_tutorial/cresol_in.xls" target="_blank">cresol data</a>).</li>
+    <li>Modify the output to calculate the following species:  CRESOL, O3, NO, NO2 and OH.</li>
+</ul>
+
+<table align="center" class="table table-striped table-hover caption-top table-bordered table-fit-size">
+<caption><b>Table 6.</b>  Initial concentrations and other parameters for the EXACT cresol photo smog experiment carried out on 04/10/2001.</caption>
+<thead>
+<tr><th></th><th> 04/10/2001</th></tr>
+</thead>
+<tbody class="table-group-divider">
+<tr><th> Start time (hh:mm)</th><td> 11:06</td></tr>
+<tr><th> End time (hh:mm)</th><td> 15:06</td></tr>
+<tr><th> Cresol (ppbv)</th><td> 297.0</td></tr>
+<tr><th> NO (ppbv)</th><td> 23.5</td></tr>
+<tr><th> NO<sub>2</sub> (ppbv)</th><td> 22.6</td></tr>
+<tr><th> O<sub>3</sub> (ppbv)</th><td> 0.1</td></tr>
+<tr><th> HONO (ppbv)</th><td> 65.0</td></tr>
+<tr><th> HCHO (ppbv)</th><td> 0.7</td></tr>
+<tr><th> HNO<sub>3</sub> (ppbv)</th><td> 0.7</td></tr>
+<tr><th> CO (ppbv)</th><td> 384.0</td></tr>
+<tr><th> Dilution Rate (s<sup>-1</sup>) </th><td> 1.58 &#215; 10<sup>-5</sup></td></tr>
+</tbody>
+</table>
+
+<br>
+<p>Run the model and compare the results with the experimental data and a similar model run using the MCMv3 toluene mechanism contained in <a href="/static/atchemonline_tutorial/cresol041001.xls" target="_blank">cresol041001.xls</a> by pasting your results into the 'MCMv31' worksheet.</p>
+
+<p>Q3 &nbsp;&nbsp;&nbsp;&nbsp;<i>	How do the new concentration profiles compare to the measurements and the MCMv3 results?</i></p>
+<br>
+<a href="sec5">Next</a><br>
+<a href="sec3">Previous</a><br>
+<a href="intro">Return to Tutorial homepage</a><br> 
