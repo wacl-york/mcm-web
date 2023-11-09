@@ -1,0 +1,121 @@
+<h1>2. Using AtChem with the MCM</h1>
+
+<h2><i>Task 2.1.  Construction of a Simple CO/CH<sub>4</sub> Model</i></h2>
+<p><i>In this exercise we will set up and run a simple CH<sub>4</sub>/CO model in order to get to grips with extracting
+ MCM subset mechanisms and using the AtChem model.  </i></p>
+<p><i>For more information and examples on how to set up and run an AtChem model see the <a href="https://atchem.york.ac.uk/help/" target="_blank">AtChem help page</a>
+  at any point.</i><p>
+
+<h3>2.1.1  Extract the methane oxidation mechanism from the MCM website.</h3>
+<p>To do this, go to the <a href="https://mcm.york.ac.uk" target="_blank">MCM website</a>, and click "Browse" on the main task bar or "Browse the mechanism" on the main menu.  
+Under "Select a Primary VOC", choose "Alkanes" and click on methane.  
+Alternatively you can type "methane" into the main search bar visible to the top right of all pages, and click on the appropriate structure in the search results.
+This takes you to a page that gives the radical reactions which initiate the oxidation of methane in the troposphere (methane is removed by reaction with OH and Cl in the MCM).
+Click "Add to marklist" under any CH4 structure (i.e. "C").  When you click you do this, CH4 appears in the "Mark List" shopping cart icon in the top right.
+This list includes any species that you have marked ready for extraction.
+If you accidentally mark something that you don't want, you can remove it.  
+</p>
+
+<p>
+Now that you have marked CH4 as the species for which you want an MCM oxidation mechanism, click on "Export" in the top bar.  
+This page lets you extract a subset of the MCM using your mark list as the set of primary species.  
+A variety of formats are available here; however, the AtChem model uses the FACSIMILE format, so specify "FACSIMILE" by clicking next to it.
+You will also need to include a set of inorganic reactions in order to model the tropospheric chemistry of methane.
+To do this also specify "include inorganic reactions".  
+Click the "Download" button near the bottom of the page, and specify where you want the CH4 oxidation mechanism to be saved.  </p>
+
+<p><i>NB: As the "generic rate coefficients" are currently hardwired into the AtChem model you do not need to extract these along with the inorganic reactions.
+We are working on ways for the user to alter these reactions  in the next version of AtChem.</i></p>
+
+<p>Open the file containing the mechanism and inorganic reactions that you have just extracted with word pad or another text editor.
+It includes 4 main parts: </p>
+
+<ul>
+    <li>(a)	the VARIABLE declarations, which name the species that are part of the coupled differential equations </li>
+    <li>(b)	the peroxy radical (RO<sub>2</sub>) summation</li>
+    <li>(c)	a set of appropriate tropospheric inorganic reactions</li>
+    <li>(d)	all of the reactions that participate in the CH<sub>4</sub> oxidation mechanism (including reactions of CO).</li>
+</ul>
+
+<p><i>NB:  As already mentioned, the AtChem model uses the FACSIMILE format. 
+However, the AtChem model only uses the peroxy radical summation list and the mechanism from the extracted file. 
+The model will ignore all notation and the variable declarations used in FACSIMILE models.</i><p>
+
+<p>Now you have extracted the MCM mechanism for methane along with a suitable set of inorganic reactions needed to model its tropospheric chemistry, rename and save this mechanism in an appropriate place and give it the file extension <b>'.fac'</b>.</p>
+
+<h3>2.1.2  Set up the Initial Concentrations File</h3>
+<p>Next we have to set up the initial conditions in our model.
+Listed in Table 1 are a set of typical atmospheric "background" concentrations with which we can initialise our simple CO/CH<sub>4</sub> model.</p>
+<p>Place these values in an initial concentration file for use with the AtChem CO/CH4 model.  The <a href="https://atchem.york.ac.uk/help/" target="_blank">AtChem help page</a> has details of the correct file format.
+In the initial concentration file, all concentrations have to be in <b>molecules cm<sup>-3</sup></b>, therefore you will need to convert from parts per billion.
+This can be done using the following approximate conversion factor: </p>
+
+<p align=center><b>1 ppbv = 2.46 × 10<sup>+10</sup> molecules cm<sup>-3</sup> @ 298 K and 1 atm</b></p>
+ 
+<p>The MCM name of the species of interest and initial concentration value should be separated by a space and each species should be on a different line.  </p>
+<p><i>NB: The water concentration and average temperature listed in Table 1 should be specified in the "Environmental Variables" section of the model later</i></p>
+<p>Once you have set up your initial concentration file, give it an appropriate name and save it with the extention <b>".config"</b> in the same folder as your mechanism <b>".fac"</b> file.</p>
+
+<table align="center" class="table table-striped table-hover caption-top table-bordered table-fit-size">
+<caption><b><a name="Table1">Table 1.</a></b> Initial concentrations and other parameters for the simple CO/CH<sub>4</sub> model</caption>
+<thead>
+<tr><th>Species</th><th> </th></tr>
+</thead>
+<tbody class="table-group-divider">
+<tr><th>CH<sub>4</sub> (ppbv)</th><td>1750</td></tr>
+<tr><th>NO (ppbv)</th><td>0.018</td></tr>
+<tr><th>NO<sub>2</sub> (ppbv)</th><td>0.024</td></tr>
+<tr><th>O<sub>3</sub> (ppbv)</th><td>50</td></tr>
+<tr><th>CO (ppbv)</th><td>200</td></tr>
+<tr><th>H<sub>2</sub> (ppbv)</th><td>500</td></tr>
+<tr><th>H<sub>2</sub>O (molecules cm-3)</th><td>3.0 × 10+17</td></tr>
+<tr><th>T<sub>average</sub> (<sup>o</sup>C)</th><td>25</td></tr>
+</tbody>
+</table>
+
+<h2>2.3 Set up the Concentrations Output File</h2>
+<p>Now we want to set up a file to specify which species concentrations we would like to output.
+To do this set up a file with the MCM species names of each species concentration you wish to output listed on separate lines.
+From the model we want to output CH4, O3, NO, NO2, OH, HO2, CH3O2, HCHO and CH3OOH.
+Then save this file in the same directory as the input concentration and mechanism files with an appropriate name and the <b>".config"</b> extension.</p>
+
+<h2>2.4 Set up/running the CO/CH<sub>4</sub> model on AtChem</h2>
+<p>Now we have set up the appropriate input and output files we can set up the AtChem model run:</p>
+<ul>
+    <li>(a)  Open the <a href="https://atchem.york.ac.uk/" target="_blank">AtChem homepage</a> and click the link to Run AtChem Online </li>
+    <li>(b)  Give the model run an appropriate name and you may add some specific information on the model run in the “description” text box if you wish.</li>
+    <li>(c)  Upload the mechanism file, initial concentration file and concentration output file in the appropriate boxeli.
+    <li>(d)  Set up the "Environmental Variables":</li>
+<p>Firstly you will need to define or calculate the <i>third body</i> concentration M (in molecules cm<sup>-3</sup>).
+You can either specify M at typical ambient atmospheric temperatures and pressures as between 2.46-2.60 × 10<sup>+19</sup> molecules cm<sup>-3</sup> in the appropriate box or you can calculate M by entering "CALC" into the "M" box and specifying the temperature and pressure (<i>NB:  if you enter a value for M then you do not need to specify a pressure</i>).</p>
+<p>Either the average Relative Humidity (RH) or water concentration needs to be set in the model.
+Here either set RH to 50% and H2O to 'CALC' or use the H2O concentration value specified in Table 1 (setting RH to "NOTUSED").</p>
+
+<p>Use the default DEC value.
+The "BOUNDARYLAYERHEIGHT" environmental variable is used for field box models and is not used here.
+The "DILUTE", "JFAC" and "ROOFOPEN" variables are used for chamber modelling and are not used here (they should all be set to "NOTUSED") but will be used in subsequent tasks in this tutorial.</p>
+
+<li> (e) Set up the "Model Parameters":</li>
+<p>Here we need to set up the start time of the model, the number of step sizes (i.e. how frequently we want to output the model species concentrations) and the date and location (in order to calculate the appropriate photolysis rates).</p>
+<p>We want to run the CO/CH<sub>4</sub> model for 5 days starting at midnight.  Firstly set the "number of steps" to <b>480</b> and the "step size" to <b>900</b>s.
+This tells the model to output the model species concentrations (as defined in the "Concentration Output" file) every 15 minutes for 5 days.<p>
+<p>The "model start time" should be set to <b>0.00</b>s (defined as midnight).</p>
+<p>All other model parameters can be left as defaulted for the purpose of this exercise.</p>
+<li>(f)  Running the model on AtChem</li>
+<p>Now you have set up the model run, click on the "Run" button at the bottom of the page</p>
+</ul>
+
+<h2>2.5 AtChem Model Output</h2>
+<p>Hopefully the model should have run without any problems and the "Model Execution Output" page should have opened.
+Listed on this page are the model statistics and where you can download the model input and output files.</p>
+<p>Download the model output <b>".zip"</b> folder (and input <b>".zip"</b> folder if you wish) and save it to an appropriate place.</p>
+<p>Open this folder and look in the "ModelOutput" folder.
+This folder contain many files detailing the output parameters of the model run.
+Unzip and open the "concentration" output file.
+This should give the time and model concentrations of all species defined in the "Concentration Output" file, output every 15 minutes for 5 days.</p>
+<p>Open this file in an appropriate graphical spreadsheet application and plot the concentration-time profiles of the model species.</p>
+<p><i>Satisfy yourself that the model is appropriately simulating the temporal evolution of the radical and stable products such as HO<sub>x</sub> and HCHO under the conditions defined in the model.</i><p>
+
+<a href="sec3">Next</a><br>
+<a href="sec1">Previous</a><br>
+<a href="intro">Return to Tutorial homepage</a><br>

@@ -1,0 +1,34 @@
+﻿<h1>1.  Introduction to AtChem Online</h1>
+
+<p>AtChem Online is designed to efficiently solve the differential equations involved 
+in modelling the kinetics of chemical systems.  AtChem is simple to use - it can be run with just two files:</p>
+<ul>
+ <li>A mechanism file, which can be downloaded for the MCM website.
+ <li>An initial concentration file.
+ </ul>
+
+<p>There are several other optional data files that can be provided to customise the model. There are also various environmental and 
+model parameters which can be set by the user or left as their default values.</p>
+
+<p>
+AtChem Online provides two sets of example input files:
+<ul>
+    <li><a href="https://atchem.york.ac.uk/static/atchem_online/example_data/simplest.zip">simplest</a>: a very simple model with one reaction</li>
+ <li><a href="https://atchem.york.ac.uk/static/atchem_online/example_data/allfiles.zip">allfiles</a>: a larger model and contains all possible type of input file.</li>
+</ul>
+</p>
+
+<p>Try downloading the 'simplest' example and run a model using the 'simplest.FAC' and 'initialConcentrations.config' files.
+You may name the job as anything that is meaningful to you provided you only use A-Z0-9_– characters and do not use spaces e.g. "Simple_eg". The server
+will append an integer to the name to ensure that each job has a unique ID. </p>
+<p>Download the zip files for both the input and output and explore what is contained in them.</p>
+
+<p>You should see that the concentration.output file only contains concentration data for species A. This is because the default model output is to output only species which were given in the initial concentrations file. If you require output for other species then you need to list all species required in the concentration output file. Re-run the model but this time also upload the 'concentrationOutput.config' file from the simplest example.</p>
+
+<p>Try adding the reaction C -> E with rate 1E-5 to the model and examine the results. Remember that you will need to add species E to the 
+concentration output file</p>
+
+<p>There is a <a href="https://atchem.york.ac.uk/help/" target="_blank">help page</a> for AtChem Online which gives details of the required format for each of these files if you need them. It also gives brief details about the other model inputs. These will be explored in this tutorial.</p><br>
+
+<a href="sec2">Next</a><br>
+<a href="intro">Return to Tutorial homepage</a><br>

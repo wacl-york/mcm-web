@@ -1,0 +1,178 @@
+<h1>3.  Importance of Chamber Auxiliary Mechanisms</h1>
+
+<p>The following exercises look at the modelling of smog chamber measurements of ethene oxidation carried out at EUPHORE as part of the EXACT campaign in 2001.  </p>
+
+<p>A controversial issue regarding the evaluation of atmospheric mechanisms through the use of photo-smog chamber data is the influence of chamber dependent reactions on the system being studied.  Such chamber dependent processes include: the introduction of free radicals from heterogeneous wall reactions, adsorption/desorption of NO<sub>y</sub> species to/from the walls and off-gassing of VOC species from the walls which contribute to ozone formation.  Obviously, such &quot;background&quot; chamber dependent mechanisms are chamber specific. </p>
+ 
+<p>Other important chamber processes that need to be taken into account include dilution of reactants and products (via replenishment of gases sampled or lost from the chamber) and, for outdoor environmental chamber, the manner in which solar actinic flux is modified via transmission through the transparent chamber walls and subsequent albedo effects of the chamber floor.</p>
+
+<p>In order to gain insight into the chamber effects at EUPHORE, two ethene photo smog experiments were carried out as part of the EXACT 
+campaign in 2001.  The experiments carried out on the 11/09/2001 and 01/10/2001 were performed under initial &quot;low NO<sub>x</sub>&quot; (1:25) and &quot;High NO<sub>x</sub>&quot; (1:3) conditions respectively.  <a href="#Table2">Table 2</a> shows the initial conditions and other important parameters for the two experiments.  Ethene was chosen because it is a simple VOC whose photo-oxidation mechanism is well known.</p>
+
+<p>For more information see Bloss et al. (2005a and b) and Zador et al. (2005)</p>
+
+
+<table align="center" class="table table-striped table-hover caption-top table-bordered table-fit-size">
+<caption><b><a name="Table2">Table 2.</a></b>  Initial concentrations and other parameters for the two EXACT ethene experiments</caption>
+<thead>
+<tr>
+<th></th><th>11/09/2001 (low NO<sub>x</sub>)</th><th>01/10/2001 (high NO<sub>x</sub>)</th>
+</tr>
+</thead>
+<tbody class="table-group-divider">
+<tr>
+<td><b>Start time (hh:mm)</b></td><td>10:00</td><td>10:05</td>
+</tr>
+<tr>
+<td><b>End time (hh:mm)</b></td><td>15:00</td><td>16:00</td>
+</tr>
+<tr><td><b>C<sub>2</sub>H<sub>4</sub> (ppbv)</b></td><td>1259.0</td><td>613.0</td></TR>
+<tr><td><b>NO (ppbv)</b></td><td>38.7</td><td>175.0</td></TR>
+<tr><td><b>NO<sub>2</sub> (ppbv)</b></td><td>9.0</td><td>23.0</td></TR>
+<tr><td><b>O<sub>3</sub> (ppbv)</b></td><td>0.6</td><td>0.5</td></TR>
+<tr><td><b>HONO (ppbv)</b></td><td>0.5</td><td>0.5</td></TR>
+<tr><td><b>HCHO (ppbv)</b></td><td>11.0</td><td>0.5</td></TR>
+<tr><td><b>CO (ppbv)</b></td><td>218.6</td><td>423.8</td></TR>
+<tr><td><b>H<sub>2</sub>O (molecules cm<sup>-3</sup>)</b></td><td>1.57 &#215;10<SUP>+6</SUP></td><td>9.35 &#215; 10<SUP>+5</SUP></td></TR>
+<tr><td><b>T<sub>average</sub> (&#176;C)</b></td><td>29.3 </td><td>30.6 </td></TR>
+<tr><td><b>Dilution Rate (s<sup>-1</sup>) </b></td><td>1.34&#215;10<sup>-5</sup> </td><td>1.64 &#215;10<sup>-5</sup> </td></TR>
+</tbody>
+</table>
+
+<h2>Task 3.1.  Simulation of ethene chamber experiments</h2>
+<p>Locate the ethene mechanism on the MCM website.  Extract the ethene mechanism using the &quot;subset mechanism extractor&quot;. Select FACSIMILE format and check the box to include inorganic reactions.  </p>
+<p>Save the mechanism as "ethene.fac" (NOTE: Mechanism files must have the extension <b>".fac"</b>) </p>
+
+<p>Create an initial concentrations file to initialise the model to the initial values from the high NO<sub>x</sub> experiment carried out 
+on the 01/10/2001 (<a href="#Table2">Table 2</a>), the file must have the extension <b>".config"</b>. There is no need to define the output as in this case all the species we are interested in have been initialised and will therefore be included in the model default output.
+H2O and temperature are set in the environmental variables section and for this run DILUTE should be set to NOTUSED. M should be set to 2.46E+19
+For the photolysis rate calculations make sure you enter the date of the experiment and set DEC to CALC and set the latitude=39.5 and longitude=-0.5
+Start the model at the appropriate time and output every 5 minutes until the end of the experiment (72 times).</p>
+
+<p>Run the model and compare the results with the experimental data contained in <a href="/static/atchemonline_tutorial/eth011001.xls" target="_blank">eth011001.xls</a> by pasting your results into the 'model1' worksheet.</p>
+<p> Q1.&nbsp;&nbsp;&nbsp;&nbsp;<i>How well are the concentration profiles simulated?</i></p>
+<p>NB: At this stage the concentration profiles will not be well simulated.</p>
+
+<h3>3.1.1.  Dilution Effects</h3>
+
+<p>As already stated, these experiments feature a slow dilution of the reactants and products in the chamber through small leaks due 
+to the inner pressure of the chamber being marginally higher than ambient, which prevents contamination by inflow of ambient air.  
+This loss is made good by adding clean air to the chamber during the experiment.</p>
+
+<p>In order to measure the dilution rate an inert tracer, in this case SF<sub>6</sub>, is added at the beginning of the experiment and 
+its concentration is monitored over time by FTIR.  The calculated average first order loss rate of SF<sub>6</sub> is used as the dilution 
+rate and is applied to all stable species in the model (these loss reactions are listed after the VOC mechanism in the chamber models).</p>
+
+<p>Set DILUTE to the measured SF<sub>6</sub> dilution rate as listed in <a href="#Table2"> Table 2 </a> and add the dilution reactions 
+listed in <a href="/static/atchemonline_tutorial/ethene_dilute" target="_blank">ethene_dilute</a> to the end of the mechanism file.</p>
+
+<p>Re-run the model and compare the results to the experiments and the first run by pasting your results into the 'model2' worksheet in <b>eth011001.xls</b>.</p>
+
+<p>Q2.&nbsp;&nbsp;&nbsp;&nbsp;<i>	How do the new concentration profiles compare to the measurements and the model without a dilution rate?</i></p>
+
+<h3>3.1.2.	Effect of Chamber Dependent Processes</h3>
+
+<p>The effects of the chamber dependent reactions at EUPHORE were investigated using the results of the two ethene experiments.  A base case 
+auxiliary mechanism was constructed from EUPHORE characterisation experiments and literature data adapted to EUPHORE conditions 
+(Bloss <i>et al.</i> 2005a).  Discrepancies between the modelled and measured data and a detailed sensitivity analysis were used to derive a 
+tuned auxiliary mechanism which is listed in Table 2.</p>
+
+<table align="center" class="table table-striped table-hover caption-top table-bordered table-fit-size">
+<caption><b>Table 3.</b>  Parameters from the tuned auxiliary mechanism used to assess the impact of chamber related processes on the ethene experiments</caption>
+
+<thead>
+<tr>
+<th>Process</th><th>Tuned (using both experiments)</th></tr>
+</thead>
+<tbody class="table-group-divider">
+<tr><td>&nbsp;&nbsp;NO<sub>2</sub> = HONO &nbsp;&nbsp;&nbsp;&nbsp;   </td><td>&nbsp;&nbsp;  0.7 &#215;10<sup>-5</sup>s<sup>-1</sup></td></tr>
+<tr><td>&nbsp;&nbsp;NO<SUB>2</SUB>= wHNO<SUB>3</SUB></TD><TD>&nbsp;&nbsp;  1.6 &#215; 10<sup>-5</sup>s <sup>-1</sup></td></tr>
+<tr><td>&nbsp;&nbsp;O<sub>3</sub>= wO<sub>3</sub></td><td>&nbsp;&nbsp;   3.0 &#215; 10<sup>-6</sup>s<sup>-1</sup></td></tr>
+<tr><td>&nbsp;&nbsp;Initial HONO</td><td>  &nbsp;&nbsp; NO<sub>x</sub> dependent</td></tr>
+</tbody>
+</table>
+
+<p> Add the EUPHORE tuned auxiliary mechanism to the end of the mechanism file. </p>
+
+<p>Re-run the model and compare the results to the experiments and the other model runs by pasting your results into the 'model3' worksheet in <b>eth011001.xls</b>.</p>
+
+<p>Q3.&nbsp;&nbsp;&nbsp;&nbsp;<i>	How do the new concentration profiles compare to the measurements and the other model runs?</i></p>
+
+<h3><a name="chambereffects">3.1.3.	Radiation Chamber Effects</a></h3>
+
+<p>All the calculated photolysis processes apply scaling factors in order to take into account the transmission through the walls, backscatter 
+from the aluminium chamber floor and cloud cover.  </p>
+
+<p>The variable scaling factor <i>F1</i> is applied to all photolysis rates in order to take into account wall and cloud transmission effects and 
+will be dependent on the species absorption cross-section.  In a previous EUPHORE experiment the photolysis rates of NO<sub>2</sub> 
+(<i>j</i>(NO<sub>2</sub>)), O<sub>3</sub> (<i>j</i>(O<sup>1</sup>D)), HCHO (<i>j</i>(HCHO))and HONO (<i>j</i>(HONO)) were measured.  For these
+ species the <i>F1</i> scaling factors are based on the deviation between their measured and calculated photolysis rates, normalised to the
+ deviation seen for <i>j</i>(NO<sub>2</sub>).  For all other photolysis rates the average value of these factors is used.  The <i>F1</i> scaling 
+ factors can be applied to the photolysis rate parameterisations in the model by replacing the default photolysis rate parametrisation. Save and edit this <a href="/static/atchemonline_tutorial/photolysis_rates.rates" target="_blank">
+photolysis_rates.rates file</a> to set the transmissionFactor to the F1 scaling factors given in <a href="#Table4"> Table 4 </a>. The modified file should be uploaded to the model via photolysis rates in the <b>Data files</b> section.</p>
+ 
+<table align="center" class="table table-striped table-hover caption-top table-bordered table-fit-size">
+<caption><b><a name="Table4">Table 4.</a></b>  F1 scaling factors photolysis rates at EUPHORE</caption>
+<thead>
+<tr>
+<th>&nbsp;&nbsp;&nbsp;&nbsp;J&nbsp;&nbsp;&nbsp;&nbsp;</th><th>F1 scaling factor</th><th>&nbsp;&nbsp;&nbsp;&nbsp;J&nbsp;&nbsp;&nbsp;&nbsp;</th><th>F1 scaling factor</th></tr>
+</tr>
+<thead class="table-group-divider">
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.79</td><td>&nbsp;&nbsp;&nbsp;&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;23&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;31&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.93</td><td>&nbsp;&nbsp;&nbsp;&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;33&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.78</td><td>&nbsp;&nbsp;&nbsp;&nbsp;35&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;41&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.96</td><td>&nbsp;&nbsp;&nbsp;&nbsp;51&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.96</td><td>&nbsp;&nbsp;&nbsp;&nbsp;52&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;53&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;54&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;55&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;56&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;57&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;18&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;&nbsp;&nbsp;&nbsp;61&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 0.89</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr></tr>
+</tbody>
+</table>
+
+<p><i>j</i>(NO<sub>2</sub>) is routinely measured in chamber A at EUPHORE and these data are available for both experiments.  Variations in 
+actinic flux from day to day and during the experiment resulting from short temporal scale variations in cloud cover are account for by considering 
+the difference between the measured and clear sky calculated <i>j</i>(NO<sub>2</sub>) at any given time during the experiment.  This variable 
+scaling factor <i>JFAC</i> is applied to all calculated photolysis rates along with <i>F1</i>.</p>
+
+<p>In order to constrain the model with measured values of <i>j</i>(NO<sub>2</sub>) create a file named J4. The first line of the file specifies 
+the number of data points in the file, for this experiment this is 72. The following lines contain the time in seconds followed by the value for 
+<i>j</i>(NO<sub>2</sub>), these data are contained in  <a href="/static/atchemonline_tutorial/ethene_jno2.xls" target="_blank">ethene_jno2.xls</a>. The file J4 should be placed in a zip file which 
+is uploaded to environmental constraints in the data files section. (To constrain more than one photolysis rate or other environmental parameters
+a separate input file should be created for each parameter and these should all be placed in the same zip file.</p>
+
+<p>To calculate the scaling factor due to changing cloud cover, JFAC, set JFAC to CALC and set JFAC species to J4.</p>
+
+<p>Re-run the model and compare the results to the experiments and the other model runs by pasting your results into the 'model4' worksheet in <b>eth011001.xls</b>.</p>
+
+<p>Q4.&nbsp;&nbsp;&nbsp;&nbsp;<i>How do the new <i>j</i>(NO<sub>2</sub>) constrained model concentration profiles compare to the measurements 
+and the other model runs?</i></p>
+
+<h3>3.1.4.  Additional Exercise (for you to attempt at home)</h3>
+
+<p>Initialise your <i>j</i>(NO<sub>2</sub>) constrained model containing the EUPHORE tuned auxiliary mechanism to the initial values from 
+the low NO<sub>x</sub> experiment carried out on the 11/09/2001 (<a href="#Table2">Table 2</a>).  Remember to start the model at the 
+appropriate time and output every 5 minutes until the end of the experiment.  Also constrain with the appropriate experimental values 
+of <i>j</i>(NO<sub>2</sub>) from <a href="/static/atchemonline_tutorial/ethene_jno2.xls" target="_blank">ethene_jno2.xls</a></p>
+
+<p>Save the new model as <b>eth_110901.fac</b>.</p>
+
+<p>Run the model and compare the results with the experimental data contained in <a href="/static/atchemonline_tutorial/eth110901.xls" target="_blank">eth110901.xls</a>  by pasting your results into the 'model1' worksheet.</p>
+
+<ul>
+<li> &nbsp;<i>	How well are the concentration profiles simulated?</i></ul>
+
+
+<br>
+<a href="sec4">Next</a><br>
+<a href="sec2">Previous</a><br>
+<a href="intro">Return to Tutorial homepage</a><br>
