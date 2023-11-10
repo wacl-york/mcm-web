@@ -3,6 +3,7 @@
 module MCM
   module Export
     # Exporter into Facsimile format
+    # rubocop:disable Metrics/ClassLength
     class KPP
       CONTENT_TYPE = 'text/plain'
       FILE_EXTENSION = 'kpp'
@@ -19,6 +20,19 @@ module MCM
         citation_fmt = citation.map { |row| "* #{row}" }.join("\n")
         citation_out = "{#{'*' * 58} ;\n#{citation_fmt}\n#{'*' * 58} ;}\n"
 
+        # Photolysis rates need to be both defined and have their equation generated from the raw parameters and parsed
+        # Create a lookup table mapping the MCM J number into its 1-based index for use in a Fortran array
+        photo_lookup_table = {}
+        photo_rates.each.with_index { |x, i| photo_lookup_table["J<#{x[:J]}>"] = "J<#{i + 1}>" }
+
+        # Generate the definition and parsed rate equations
+        photo_defs_out = "  REAL(dp), DIMENSION(#{photo_rates.count}) :: J\n"
+        photo_rates_out = photo_rates.map do |row| # Ditto .join("\n") comment as complex_rates_out
+          rate = form_photolysis_equation(row)
+          rate_parsed = parse_rate_for_kpp(rate, photo_lookup_table)
+          "#{rate_parsed}\n"
+        end.join
+
         # Reactions need several conversions to be usable in KPP
         #   1. Combine identical reactions
         #   2. Some reactions have no products which is not permissible in KPP
@@ -27,7 +41,7 @@ module MCM
         rxns = rxns.each { |x| add_missing_products(x) }
         rxns = rxns.each { |x| add_photolysis_reagent(x) }
         rxns_out = rxns.map.with_index do |row, i|
-          "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate])} ;\n"
+          "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate], photo_lookup_table)} ;\n"
         end.join
 
         # Complex rates need to be both defined and have their rate expression expressed
@@ -39,13 +53,7 @@ module MCM
                                                   max_line_length: 78,
                                                   every_line_start: ' ' * 4)
         complex_rates_out = complex_rates.map do |row| # Not using .join("\n") as final line needs line break too
-          "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition])}\n"
-        end.join
-
-        # Photolysis rates need to be both defined and have their rate expression expressed
-        photo_defs_out = "  REAL(dp), DIMENSION(#{photo_rates.count}) :: J\n"
-        photo_rates_out = photo_rates.map do |row| # Ditto .join("\n") comment as complex_rates_out
-          "#{parse_rate_for_kpp(form_photolysis_equation(row))}\n"
+          "#{row[:Child]} = #{parse_rate_for_kpp(row[:Definition], photo_lookup_table)}\n"
         end.join
 
         # Define the species used in this submechanism
@@ -177,16 +185,21 @@ module MCM
         rxn[:Reaction] = rxn[:Reaction].gsub('=', '+ hv =') if /J<[0-9]+>/.match?(rxn[:Rate])
       end
 
-      def parse_rate_for_kpp(rate)
+      def parse_rate_for_kpp(rate, photolysis_lookup_table)
         # Performs necessary conversions on rates as they are stored in the DB (in FACSIMILE format)
         # to be compatible with KPP.
         #
         # Args:
         #   - rate (string): Input rate in FACSIMILE format.
+        #   - photolysis_lookup_table (Hash): Maps MCM J rates to 1-indexed notation for a Fortran array
+        #     e.g. {'J<23>'=>'J<1>', 'J<31>'=>'J<2>'}
         #
         # Returns:
         #   - A string containing the rate in KPP format.
         rate = rate.gsub('H2O', 'C(ind_H2O)')
+
+        # Replace photolysis rates with their 1-based index
+        rate = rate.gsub(/(J<\d+>)/, photolysis_lookup_table)
 
         # Replace the D exponent symbol with E
         rate = rate.gsub(/([0-9.+-]+)D([0-9+-]+)/, '\1E\2')
@@ -219,6 +232,9 @@ module MCM
 
       def form_photolysis_equation(params)
         # Forms a photolysis equation in KPP format using the given photolysis parameters
+        # The reason for the 'MCM J = <j>' comment is that the opening J index will get converted to a KPP index
+        # later on. The comment won't get changed and thereby provides a reference to where this rate is
+        # defined in the MCM.
         #
         # Args:
         #   - params(Hash): A hash with 4 items, representing photolysis parameters:
@@ -229,8 +245,10 @@ module MCM
         #
         # Return:
         #   A string with the photolysis equation in a Fortran-parseable format.
-        "J<#{params[:J]}> = #{params[:l]}*(cos(zenith)**#{params[:m]})*exp(-#{params[:n]}*(1/cos(zenith)))"
+        "J<#{params[:J]}> = #{params[:l]}*(cos(zenith)**#{params[:m]})*exp(-#{params[:n]}*(1/cos(zenith))) " \
+          "{MCM J=#{params[:J]}}"
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
