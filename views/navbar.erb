@@ -19,6 +19,10 @@
           <a class="nav-link <%= 'active' if current_url? "/#{@mechanism}/export" %>" aria-current="page"
            href="<%= rel "/#{@mechanism}/export" %>">Export</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link <%= 'active' if request.path_info.include? "/#{@mechanism}/atchemonline" %>" aria-current="page"
+           href="<%= rel "/#{@mechanism}/atchemonline/intro" %>">AtChemOnline Tutorial</a>
+        </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle <%= 'active' if request.path_info.include? "/#{@mechanism}/about" %>" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">About</a>
             <ul class="dropdown-menu">
