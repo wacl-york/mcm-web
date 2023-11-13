@@ -32,5 +32,5 @@ def get_reactions(species, mechanism, column: :Reactants)
         .distinct
         .map(:ReactionID)
   # Parse reaction into a standardised hierarchical structure
-  read_reaction(ids)
+  MCM::Database.get_reaction(ids)
 end
