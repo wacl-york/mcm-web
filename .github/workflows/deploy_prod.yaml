@@ -1,0 +1,75 @@
+name: "Updates production Elastic Beanstalk environment"
+on: 
+ pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+env:
+  STACK_NAME: MCM
+  PARAMETER_FILE: params.json
+  EB_APP_NAME: MCM
+  EB_ENV: MCMProdEnvironment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+    - name: Read parameters
+      id: read_params
+      run: |
+        echo "VERSION=${PARAMETER_FILE} | jq -r '.Version'" >> "$GITHUB_OUTPUT"
+        echo "BUCKET=${PARAMETER_FILE} | jq -r '.S3Bucket'" >> "$GITHUB_OUTPUT"
+        echo "S3KEYPREFIX=${PARAMETER_FILE} | jq -r '.S3KeyPrefix'" >> "$GITHUB_OUTPUT"
+    - name:  Create S3 Key
+      id: create_s3_key
+      run: |
+        echo "S3KEY=${{ steps.read_params.S3KEYPREFIX }}_${{ steps.read_params.VERSION }}.zip" >> "$GITHUB_OUTPUT"
+    # TODO remove when working
+    - uses:  unfor19/install-aws-cli-action@master
+    - name: Get VPC ID
+      id: get_vpc
+      run: |
+        echo "VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:AWS_Solutions,Values=LandingZoneStackSet --output=json | jq -r '.Vpcs[].VpcId')" >> "$GITHUB_OUTPUT"
+    - name: Get Subnets
+      id: get_subnets
+      run: |
+        echo "SUB1=$(aws ec2 describe-subnets --filters Name=vpc-id,Values=${{ steps.get_vpc.VPC_ID }} Name=tag:Name,Values='Public subnet 1' | jq -r '.Subnets[].SubnetId')" >> "$GITHUB_OUTPUT"
+        echo "SUB2=$(aws ec2 describe-subnets --filters Name=vpc-id,Values=${{ steps.get_vpc.VPC_ID }} Name=tag:Name,Values='Public subnet 2' | jq -r '.Subnets[].SubnetId')" >> "$GITHUB_OUTPUT"
+    - name: Create overrides
+      run: |
+        echo "{ \"VpcId\": \"${{ steps.get_vpc.VPC_ID }}\", \"S3Bucket\": \"${{ steps.read_params.BUCKET }}\", \"Subnets\": [\"${{ steps.get_subnets.SUB1 }}\", \"${{ steps.get_subnets.SUB2 }}\"] }" > overrides.json
+        cat overrides.json
+    - name: Deploy CloudFormation Stack
+      uses: university-of-york/aws-cfn-deploy-action@v1.1
+      env:
+        TEMPLATE: cloudformation.json
+        AWS_STACK_NAME: $STACK_NAME
+        AWS_REGION: eu-west-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        CAPABILITIES: CAPABILITY_IAM CAPABILITY_NAMED_IAM
+        PARAMETER_FILE: overrides.json
+        ROLE_ARN: arn:aws:iam::${{ secrets.AWS_USER_ID }}:role/GithubActionsDeploymentRole
+        TAGS: group=RESEARCHIT project=mcm status=prod pushed_by=githubaction defined_in=cloudformation repo_name=wacl-york/mcm-web user=sl561 team=rhpc
+    - name: Get Environment name
+      id: get_eb_env
+      run: |
+        echo "EB_ENV_NAME=$(aws cloudformation describe-stack-resources --stack-name ${STACK_NAME} | jq -r '.[][] | select(.LogicalResourceId=='${EB_ENV}') | .PhysicalResourceId')" >> "$GITHUB_OUTPUT"
+    - name: Upload latest code
+      run: |
+        zip -r - . -q -x ./.bundle/\* ./vendor/\* ./.git/\* | aws s3 cp - s3://${{ steps.read_params.BUCKET }}/${{ steps.create_s3_key.S3KEY }}
+    - name: Create new application version
+      run: |
+        aws elasticbeanstalk create-application-version --application-name $EB_APP_NAME --version-label ${{ steps.read_params.VERSION }} --description "v.${{ steps.read_params.VERSION }} release" --source-bundle S3Bucket=${{ steps.read_params.BUCKET }},S3Key=${{ steps.create_s3_key.S3KEY }} --tags Key=status,Value=prod
+    - name: Update environment
+      run: |
+        aws elasticbeanstalk update-environment --application-name $EB_APP_NAME --version-label ${{ steps.read_params.VERSION }} --environment-name ${{ steps.get_eb_env.EB_ENV_NAME }}

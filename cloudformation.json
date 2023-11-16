@@ -34,16 +34,37 @@
         }
       }
     },
-    "MCMEnvironment" : {
+    "MCMProdEnvironment" : {
       "Type" : "AWS::ElasticBeanstalk::Environment",
       "Properties" : {
         "ApplicationName" : { "Ref" : "MCMApplication" },
-        "Description" :  "AWS Elastic Beanstalk Environment running MCM",
+        "Description" :  "AWS Elastic Beanstalk Environment running MCM - Production",
         "VersionLabel" : { "Ref": "MCMApplicationVersion" },
-        "TemplateName" : { "Ref": "MCMConfigurationTemplate" }
+        "TemplateName" : { "Ref": "MCMProdConfigurationTemplate" },
+        "Tags": [
+            {
+                "Key": "status",
+                "Value": "prod"
+            }
+        ]
       }
     },
-    "MCMConfigurationTemplate": {
+    "MCMDevEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "MCMApplication" },
+        "Description" :  "AWS Elastic Beanstalk Environment running MCM - Development",
+        "VersionLabel" : { "Ref": "MCMApplicationVersion" },
+        "TemplateName" : { "Ref": "MCMDevConfigurationTemplate" },
+        "Tags": [
+            {
+                "Key": "status",
+                "Value": "dev"
+            }
+        ]
+      }
+    },
+    "MCMProdConfigurationTemplate": {
         "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
         "Properties": {
             "ApplicationName": { "Ref": "MCMApplication" },
@@ -96,7 +117,75 @@
                 }
               }
             ],
-            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker"
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker",
+            "Tags": [
+                {
+                    "Key": "status",
+                    "Value": "prod"
+                }
+            ]
+        }
+    },
+    "MCMDevConfigurationTemplate": {
+        "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
+        "Properties": {
+            "ApplicationName": { "Ref": "MCMApplication" },
+            "Description": "MCM Configuration Template",
+            "OptionSettings": [
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "InstanceType",
+                "Value": "t4g.micro"
+              },
+              {
+                "Namespace": "aws:autoscaling:asg",
+                "OptionName": "MinSize",
+                "Value": "1"
+              },
+              {
+                "Namespace": "aws:autoscaling:asg",
+                "OptionName": "MaxSize",
+                "Value": "1"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "EnvironmentType",
+                "Value": "SingleInstance"
+              },
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "IamInstanceProfile",
+                "Value": {
+                  "Ref": "MyInstanceProfile"
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "VPCId",
+                "Value": { "Ref" : "VpcId" }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "Subnets",
+                "Value" : {
+                  "Fn::Join": [",", { "Ref" : "Subnets" }]
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "ELBSubnets",
+                "Value" : {
+                  "Fn::Select": ["0", {"Ref" : "Subnets" }]
+                }
+              }
+            ],
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker",
+            "Tags": [
+                {
+                    "Key": "status",
+                    "Value": "dev"
+                }
+            ]
         }
     },
     "MyInstanceRole": {
@@ -141,7 +230,7 @@
   "Outputs" : {
     "URL" : {
       "Description" : "The URL of the Elastic Beanstalk environment",
-      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["MCMEnvironment", "EndpointURL"] }]]}
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["MCMProdEnvironment", "EndpointURL"] }]]}
     }
   }
 }
