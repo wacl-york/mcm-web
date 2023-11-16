@@ -1,10 +1,5 @@
 name: "Updates development Elastic Beanstalk environment"
-on: 
- pull_request:
-    types:
-      - closed
-    branches:
-      - main
+on: push
 
 env:
   STACK_NAME: MCM
