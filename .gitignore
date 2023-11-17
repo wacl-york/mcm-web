@@ -4,7 +4,6 @@ vendor/
 .rubocop-*
 packaged.yaml
 
-*.db
 .env
 
 # Intermediate CF output
