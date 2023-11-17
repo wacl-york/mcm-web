@@ -204,7 +204,7 @@
          ],
          "Policies": [
              {
-                 "PolicyName": "ReadApplicationVersionFromBucket",
+                 "PolicyName": "CopyApplicationVersionFromBucket",
                  "PolicyDocument": {
                      "Version": "2012-10-17",
                      "Statement": [
@@ -212,14 +212,12 @@
                              "Sid": "",
                              "Effect": "Allow",
                              "Action": [
-                                 "s3:ListBucketVersions",
-                                 "s3:ListBucket",
-                                 "s3:GetObjectVersion",
-                                 "s3:GetObject"
+                                 "s3:List*",
+                                 "s3:Get*"
                              ],
                              "Resource": [
-                                 "Fn::Sub": "arn:aws:s3:::.${S3Bucket}",
-                                 "Fn::Sub": "arn:aws:s3:::.${S3Bucket}/*"
+                                 "Fn::Sub": "arn:aws:s3:::${S3Bucket}",
+                                 "Fn::Sub": "arn:aws:s3:::${S3Bucket}/*"
                              ]
                          }
                      ]
