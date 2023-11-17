@@ -204,7 +204,7 @@
          ],
          "Policies": [
              {
-                 "PolicyName": "CopyApplicationVersionFromBucket",
+                 "PolicyName": "CopyApplicationVersionFromSourceBucket",
                  "PolicyDocument": {
                      "Version": "2012-10-17",
                      "Statement": [
@@ -218,6 +218,26 @@
                              "Resource": [
                                  "Fn::Sub": "arn:aws:s3:::${S3Bucket}",
                                  "Fn::Sub": "arn:aws:s3:::${S3Bucket}/*"
+                             ]
+                         }
+                     ]
+                 }
+             },
+             {
+                 "PolicyName": "CopyApplicationVersionToEBBucket",
+                 "PolicyDocument": {
+                     "Version": "2012-10-17",
+                     "Statement": [
+                         {
+                             "Sid": "",
+                             "Effect": "Allow",
+                             "Action": [
+                                 "s3:List*",
+                                 "s3:Put*"
+                             ],
+                             "Resource": [
+                                 "Fn::Sub": "arn:aws:s3:::elasticbeanstalk-${AWS::Region}-${AWS::AccountId}",
+                                 "Fn::Sub": "arn:aws:s3:::elasticbeanstalk-${AWS::Region}-${AWS::AccountId}/*"
                              ]
                          }
                      ]
