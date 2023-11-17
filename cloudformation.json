@@ -117,13 +117,7 @@
                 }
               }
             ],
-            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker",
-            "Tags": [
-                {
-                    "Key": "status",
-                    "Value": "prod"
-                }
-            ]
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker"
         }
     },
     "MCMDevConfigurationTemplate": {
@@ -179,13 +173,7 @@
                 }
               }
             ],
-            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker",
-            "Tags": [
-                {
-                    "Key": "status",
-                    "Value": "dev"
-                }
-            ]
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker"
         }
     },
     "MyInstanceRole": {
@@ -228,9 +216,13 @@
     }
   },
   "Outputs" : {
-    "URL" : {
-      "Description" : "The URL of the Elastic Beanstalk environment",
+    "ProdURL" : {
+      "Description" : "The URL of the production Elastic Beanstalk environment",
       "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["MCMProdEnvironment", "EndpointURL"] }]]}
+    },
+    "DevURL" : {
+      "Description" : "The URL of the development Elastic Beanstalk environment",
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["MCMDevEnvironment", "EndpointURL"] }]]}
     }
   }
 }
