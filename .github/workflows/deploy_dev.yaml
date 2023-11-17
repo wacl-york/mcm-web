@@ -52,7 +52,7 @@ jobs:
                  Subnets=${{ steps.get_subnets.outputs.SUB2 }}
         role-arn: arn:aws:iam::${{ secrets.AWS_USER_ID }}:role/GithubActionsDeploymentRole
         capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
-        tags: '[{ "Key": "group", "Value": "RESEARCHIT" }, { "Key": "project", "Value": "mcm" }, { "Key": "status", "Value": "prod" }, { "Key": "pushed_by", "Value": "githubaction" }, { "Key": "defined_in", "Value": "cloudformation" }, { "Key": "repo_name", "Value": "wacl-york/mcm-web" }, { "Key": "user", "Value": "sl561" }, { "Key": "team", "Value": "rhp" }]'
+        tags: '[{ "Key": "group", "Value": "RESEARCHIT" }, { "Key": "project", "Value": "mcm" }, { "Key": "status", "Value": "prod" }, { "Key": "pushed_by", "Value": "githubaction" }, { "Key": "defined_in", "Value": "cloudformation" }, { "Key": "repo_name", "Value": "wacl-york/mcm-web" }, { "Key": "user", "Value": "sl561" }, { "Key": "team", "Value": "rhpc" }]'
     - name: Get Environment name
       id: get_eb_env
       run: |
