@@ -204,26 +204,6 @@
          ],
          "Policies": [
              {
-                 "PolicyName": "CopyApplicationVersionFromSourceBucket",
-                 "PolicyDocument": {
-                     "Version": "2012-10-17",
-                     "Statement": [
-                         {
-                             "Sid": "",
-                             "Effect": "Allow",
-                             "Action": [
-                                 "s3:List*",
-                                 "s3:Get*"
-                             ],
-                             "Resource": [
-                                 "Fn::Sub": "arn:aws:s3:::${S3Bucket}",
-                                 "Fn::Sub": "arn:aws:s3:::${S3Bucket}/*"
-                             ]
-                         }
-                     ]
-                 }
-             },
-             {
                  "PolicyName": "CopyApplicationVersionToEBBucket",
                  "PolicyDocument": {
                      "Version": "2012-10-17",
