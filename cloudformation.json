@@ -201,6 +201,28 @@
              "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker",
              "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier",
              "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+         ],
+         "Policies": [
+             "PolicyName": "ReadApplicationVersionFromBucket",
+             "PolicyDocument": {
+                 "Version": "2012-10-17",
+                 "Statement": [
+                     {
+                         "Sid": "",
+                         "Effect": "Allow",
+                         "Action": [
+                             "s3:ListBucketVersions",
+                             "s3:ListBucket",
+                             "s3:GetObjectVersion",
+                             "s3:GetObject"
+                         ],
+                         "Resource": [
+                             "Fn::Sub": "arn:aws:s3:::.${S3Bucket}",
+                             "Fn::Sub": "arn:aws:s3:::.${S3Bucket}/*"
+                         ]
+                     }
+                 ]
+             }
          ]
      }
     },
