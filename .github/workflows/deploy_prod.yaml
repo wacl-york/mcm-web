@@ -44,11 +44,10 @@ jobs:
       run: |
         echo "SUB1=$(aws ec2 describe-subnets --filters Name=vpc-id,Values=${{ steps.get_vpc.outputs.VPC_ID }} Name=tag:Name,Values='Public subnet 1' | jq -r '.Subnets[].SubnetId')" >> "$GITHUB_OUTPUT"
         echo "SUB2=$(aws ec2 describe-subnets --filters Name=vpc-id,Values=${{ steps.get_vpc.outputs.VPC_ID }} Name=tag:Name,Values='Public subnet 2' | jq -r '.Subnets[].SubnetId')" >> "$GITHUB_OUTPUT"
-        echo "BUCKET = ${{ steps.read_params.outputs.BUCKET }}"
     - name: Deploy to AWS CloudFormation
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
-        name: MCM
+        name: MCM  # Annoyingly this stack won't allow using the env var
         template: cloudformation.json
         no-fail-on-empty-changeset: 1
         parameter-overrides: >-
@@ -58,20 +57,11 @@ jobs:
                  Subnets=${{ steps.get_subnets.outputs.SUB2 }}
         role-arn: arn:aws:iam::${{ secrets.AWS_USER_ID }}:role/GithubActionsDeploymentRole
         capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
-        # TODO TAGS ARENT BEING LOADED
-        tags: >-
-          group=RESEARCHIT,
-          project=mcm,
-          status=prod,
-          pushed_by=githubaction,
-          defined_in=cloudformation,
-          repo_name=wacl-york/mcm-web,
-          user=sl561,
-          team=rhpc
+        tags: '[{ "Key": "group", "Value": "RESEARCHIT" }, { "Key": "project", "Value": "mcm" }, { "Key": "status", "Value": "prod" }, { "Key": "pushed_by", "Value": "githubaction" }, { "Key": "defined_in", "Value": "cloudformation" }, { "Key": "repo_name", "Value": "wacl-york/mcm-web" }, { "Key": "user", "Value": "sl561" }, { "Key": "team", "Value": "rhp" }]'
     - name: Get Environment name
       id: get_eb_env
       run: |
-        echo "EB_ENV_NAME=$(aws cloudformation describe-stack-resources --stack-name ${STACK_NAME} | jq -r '.[][] | select(.LogicalResourceId=='${EB_ENV}') | .PhysicalResourceId')" >> "$GITHUB_OUTPUT"
+        echo "EB_ENV_NAME=$(aws cloudformation describe-stack-resources --stack-name $STACK_NAME --logical-resource-id $EB_ENV | jq -r '.[][] | .PhysicalResourceId')" >> "$GITHUB_OUTPUT"
     - name: Upload latest code
       run: |
         zip -r - . -q -x ./.bundle/\* ./vendor/\* ./.git/\* | aws s3 cp - s3://${{ steps.read_params.outputs.BUCKET }}/${{ steps.create_s3_key.outputs.S3KEY }}
@@ -80,4 +70,4 @@ jobs:
         aws elasticbeanstalk create-application-version --application-name $EB_APP_NAME --version-label ${{ steps.read_params.outputs.VERSION }} --description "v.${{ steps.read_params.outputs.VERSION }} release" --source-bundle S3Bucket=${{ steps.read_params.outputs.BUCKET }},S3Key=${{ steps.create_s3_key.outputs.S3KEY }} --tags Key=status,Value=prod
     - name: Update environment
       run: |
-        aws elasticbeanstalk update-environment --application-name $EB_APP_NAME --version-label ${{ steps.read_params.VERSION }} --environment-name ${{ steps.get_eb_env.EB_ENV_NAME }}
+        aws elasticbeanstalk update-environment --application-name $EB_APP_NAME --version-label ${{ steps.read_params.outputs.VERSION }} --environment-name ${{ steps.get_eb_env.outputs.EB_ENV_NAME }}
