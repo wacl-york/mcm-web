@@ -28,8 +28,6 @@ jobs:
       id: create_s3_key
       run: |
         echo "S3KEY=${{ steps.read_params.outputs.S3KEYPREFIX }}_${{ steps.read_params.outputs.VERSION }}.zip" >> "$GITHUB_OUTPUT"
-    # TODO remove when working
-    - uses:  unfor19/install-aws-cli-action@master
     - name: Get VPC ID
       id: get_vpc
       run: |
