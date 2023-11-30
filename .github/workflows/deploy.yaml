@@ -15,7 +15,7 @@ jobs:
   cloudformation:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Deploy CloudFormation Stack
       uses: university-of-york/aws-cfn-deploy-action@v1.1
       env:
@@ -41,7 +41,7 @@ jobs:
     #      AWS_SUBNET_2: subnet-01d5c8f2990e30510
     #      DOMAIN_NAME: mcm.wacl-dev1.app.york.ac.uk
     #    steps:
-    #      - uses: actions/checkout@v3
+    #      - uses: actions/checkout@v4
     #      - run: bundle install --deployment --without test development
     #      - uses: university-of-york/aws-sam-deploy-action@master
     #        env:
@@ -80,7 +80,7 @@ jobs:
 #      AWS_ENVIRONMENT: staging
 #      DOMAIN_NAME:
 #    steps:
-#      - uses: actions/checkout@v3
+#      - uses: actions/checkout@v4
 #      - run: bundle install --deployment --without test development
 #      - uses: university-of-york/aws-sam-deploy-action@master
 #        env:
@@ -117,7 +117,7 @@ jobs:
 #      AWS_ENVIRONMENT: prod
 #      DOMAIN_NAME:
 #    steps:
-#      - uses: actions/checkout@v3
+#      - uses: actions/checkout@v4
 #      - run: bundle install --deployment --without test development
 #      - uses: university-of-york/aws-sam-deploy-action@master
 #        env:
