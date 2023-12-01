@@ -176,6 +176,48 @@
             "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker"
         }
     },
+    "MCMDevCloudFront": {
+        "Type": "AWS::CloudFront::Distribution",
+        "DependsOn": "MCMProdEnvironment",
+        "Properties": {
+           "DistributionConfig": {
+              "Origins": [
+                 {
+                    "DomainName": {
+                       "Fn::GetAtt": [
+                          "MCMProdEnvironment",
+                          "EndpointURL"
+                       ]
+                    },
+                    "Id": "MCMDevOrigin",
+                    "CustomOriginConfig": {
+                       "HTTPPort":  "80",
+                       "HTTPSPort":  "443",
+                       "OriginProtocolPolicy":  "match-viewer"
+                    }
+                 }
+              ],
+              "Enabled": "true",
+              "DefaultCacheBehavior": {
+                 "AllowedMethods": [
+                    "DELETE",
+                    "GET",
+                    "HEAD",
+                    "OPTIONS",
+                    "PATCH",
+                    "POST",
+                    "PUT"
+                 ],
+                 "TargetOriginId": "MCMDevOrigin",
+                 "ViewerProtocolPolicy": "redirect-to-https"
+              },
+              "PriceClass":"PriceClass_All",
+              "ViewerCertificate": {
+                 "CloudFrontDefaultCertificate": "true"
+              }
+           }
+        }
+    },
     "MyInstanceRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
