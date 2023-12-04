@@ -178,14 +178,14 @@
     },
     "MCMDevCloudFront": {
         "Type": "AWS::CloudFront::Distribution",
-        "DependsOn": "MCMProdEnvironment",
+        "DependsOn": "MCMDevEnvironment",
         "Properties": {
            "DistributionConfig": {
               "Origins": [
                  {
                     "DomainName": {
                        "Fn::GetAtt": [
-                          "MCMProdEnvironment",
+                          "MCMDevEnvironment",
                           "EndpointURL"
                        ]
                     },
