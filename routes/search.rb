@@ -148,8 +148,6 @@ def find_smiles(term)
 end
 
 def find_inchi(term)
-  # TODO: should append Inchi string if not available (i.e. should users be expected to
-  # search for InChI=1S/C3H2...., or should C3H2 return results?
   search_pattern = "#{term}%"
   DB[:species]
     .where(Sequel.ilike(:Inchi, search_pattern))

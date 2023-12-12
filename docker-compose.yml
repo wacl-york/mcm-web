@@ -7,7 +7,6 @@ services:
       - .:/var/task
       - bundle:/bundle
   app:
-    image: 733046350245.dkr.ecr.eu-west-1.amazonaws.com/mcm-app
     build:
       context: .
       dockerfile: docker/app/Dockerfile
@@ -21,7 +20,6 @@ services:
       BANNER_DISMISSABLE: 'true'
       TZ: Europe/London
   web:
-    image: 733046350245.dkr.ecr.eu-west-1.amazonaws.com/mcm-web
     build:
       context: docker/web
       dockerfile: Dockerfile

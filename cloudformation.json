@@ -1,0 +1,228 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "MCM Stack Deploying through Elastic Beanstalk",
+  "Parameters" : {
+    "Subnets": {
+      "Type": "CommaDelimitedList",
+      "Description": "Subnets"
+    },
+    "VpcId": {
+      "Type": "String",
+      "Description": "VPC Id"
+    },
+    "S3Bucket": {
+      "Type": "String",
+      "Description": "S3 Bucket name"
+    }
+  },
+  "Resources" : {
+    "MCMApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "ApplicationName": "MCM",
+        "Description": "The MCM web-application running in Docker"
+      }
+    },
+    "MCMApplicationVersion": {
+      "Type" : "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "MCMApplication" },
+        "Description" : "MCM Application Version",
+        "SourceBundle" : {
+          "S3Bucket" : {"Ref": "S3Bucket"},
+          "S3Key": "app_0.0.1.zip"
+        }
+      }
+    },
+    "MCMProdEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "MCMApplication" },
+        "Description" :  "AWS Elastic Beanstalk Environment running MCM - Production",
+        "VersionLabel" : { "Ref": "MCMApplicationVersion" },
+        "TemplateName" : { "Ref": "MCMProdConfigurationTemplate" },
+        "Tags": [
+            {
+                "Key": "status",
+                "Value": "prod"
+            }
+        ]
+      }
+    },
+    "MCMDevEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "MCMApplication" },
+        "Description" :  "AWS Elastic Beanstalk Environment running MCM - Development",
+        "VersionLabel" : { "Ref": "MCMApplicationVersion" },
+        "TemplateName" : { "Ref": "MCMDevConfigurationTemplate" },
+        "Tags": [
+            {
+                "Key": "status",
+                "Value": "dev"
+            }
+        ]
+      }
+    },
+    "MCMProdConfigurationTemplate": {
+        "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
+        "Properties": {
+            "ApplicationName": { "Ref": "MCMApplication" },
+            "Description": "MCM Configuration Template",
+            "OptionSettings": [
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "InstanceType",
+                "Value": "t4g.micro"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "EnvironmentType",
+                "Value": "LoadBalanced"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "LoadBalancerType",
+                "Value": "application"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "LoadBalancerIsShared",
+                "Value": "false"
+              },
+              {
+                "Namespace": "aws:autoscaling:asg",
+                "OptionName": "MinSize",
+                "Value": "1"
+              },
+              {
+                "Namespace": "aws:autoscaling:asg",
+                "OptionName": "MaxSize",
+                "Value": "5"
+              },
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "IamInstanceProfile",
+                "Value": {
+                  "Ref": "MyInstanceProfile"
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "VPCId",
+                "Value": { "Ref" : "VpcId" }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "Subnets",
+                "Value" : {
+                  "Fn::Join": [",", { "Ref" : "Subnets" }]
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "ELBSubnets",
+                "Value" : {
+                  "Fn::Select": ["0", {"Ref" : "Subnets" }]
+                }
+              }
+            ],
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker"
+        }
+    },
+    "MCMDevConfigurationTemplate": {
+        "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
+        "Properties": {
+            "ApplicationName": { "Ref": "MCMApplication" },
+            "Description": "MCM Configuration Template",
+            "OptionSettings": [
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "InstanceType",
+                "Value": "t4g.micro"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "EnvironmentType",
+                "Value": "SingleInstance"
+              },
+              {
+                "Namespace": "aws:autoscaling:launchconfiguration",
+                "OptionName": "IamInstanceProfile",
+                "Value": {
+                  "Ref": "MyInstanceProfile"
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "VPCId",
+                "Value": { "Ref" : "VpcId" }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "Subnets",
+                "Value" : {
+                  "Fn::Join": [",", { "Ref" : "Subnets" }]
+                }
+              },
+              {
+                "Namespace": "aws:ec2:vpc",
+                "OptionName": "ELBSubnets",
+                "Value" : {
+                  "Fn::Select": ["0", {"Ref" : "Subnets" }]
+                }
+              }
+            ],
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.0.0 running Docker"
+        }
+    },
+    "MyInstanceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+                 {
+                     "Effect": "Allow",
+                     "Principal": {
+                         "Service": [
+                             "ec2.amazonaws.com"
+                         ]
+                     },
+                     "Action": [
+                         "sts:AssumeRole"
+                     ]
+                 }
+             ]
+         },
+         "Description": "Beanstalk EC2 role",
+         "ManagedPolicyArns": [
+             "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier",
+             "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker",
+             "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier",
+             "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+         ]
+     }
+    },
+    "MyInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "MyInstanceRole"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs" : {
+    "ProdURL" : {
+      "Description" : "The URL of the production Elastic Beanstalk environment",
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["MCMProdEnvironment", "EndpointURL"] }]]}
+    },
+    "DevURL" : {
+      "Description" : "The URL of the development Elastic Beanstalk environment",
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["MCMDevEnvironment", "EndpointURL"] }]]}
+    }
+  }
+}

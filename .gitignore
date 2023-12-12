@@ -5,3 +5,6 @@ vendor/
 packaged.yaml
 
 .env
+
+# Intermediate CF output
+cf.json
