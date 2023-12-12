@@ -76,6 +76,21 @@
                 "Value": "t4g.micro"
               },
               {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "EnvironmentType",
+                "Value": "LoadBalanced"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "LoadBalancerType",
+                "Value": "application"
+              },
+              {
+                "Namespace": "aws:elasticbeanstalk:environment",
+                "OptionName": "LoadBalancerIsShared",
+                "Value": "false"
+              },
+              {
                 "Namespace": "aws:autoscaling:asg",
                 "OptionName": "MinSize",
                 "Value": "1"
@@ -83,12 +98,7 @@
               {
                 "Namespace": "aws:autoscaling:asg",
                 "OptionName": "MaxSize",
-                "Value": "1"
-              },
-              {
-                "Namespace": "aws:elasticbeanstalk:environment",
-                "OptionName": "EnvironmentType",
-                "Value": "SingleInstance"
+                "Value": "5"
               },
               {
                 "Namespace": "aws:autoscaling:launchconfiguration",
@@ -130,16 +140,6 @@
                 "Namespace": "aws:autoscaling:launchconfiguration",
                 "OptionName": "InstanceType",
                 "Value": "t4g.micro"
-              },
-              {
-                "Namespace": "aws:autoscaling:asg",
-                "OptionName": "MinSize",
-                "Value": "1"
-              },
-              {
-                "Namespace": "aws:autoscaling:asg",
-                "OptionName": "MaxSize",
-                "Value": "1"
               },
               {
                 "Namespace": "aws:elasticbeanstalk:environment",
