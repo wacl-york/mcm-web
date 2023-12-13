@@ -6,7 +6,7 @@ module MCM
     # rubocop:disable Metrics/ClassLength
     class KPP
       CONTENT_TYPE = 'text/plain'
-      FILE_EXTENSION = 'kpp'
+      FILE_EXTENSION = 'eqn'
 
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/ParameterLists
@@ -17,8 +17,8 @@ module MCM
                  generic: false)
         #---------------------- Setup
         # Citation
-        citation_fmt = citation.map { |row| "* #{row}" }.join("\n")
-        citation_out = "{#{'*' * 58} ;\n#{citation_fmt}\n#{'*' * 58} ;}\n"
+        citation_fmt = citation.map { |row| "// #{row}" }.join("\n")
+        citation_out = "//#{'*' * 57} ;\n#{citation_fmt}\n//#{'*' * 57} ;\n"
 
         # Photolysis rates need to be both defined and have their equation generated from the raw parameters and parsed
         # Create a lookup table mapping the MCM J number into its 1-based index for use in a Fortran array
@@ -69,56 +69,49 @@ module MCM
                                             every_line_start: ' ' * 6)
 
         # There's a warning about species in the RO2 sum that don't have a mass
-        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
+        # TODO should this include inorganics?
+        missing_peroxies_species = MCM::Export.wrap_lines(missing_peroxies,
                                                       starting_char: '    ',
                                                       every_line_start: '    ',
                                                       every_line_end: '',
                                                       ending_char: '',
                                                       max_line_length: 78,
                                                       sep: ' ')
+        missing_peroxies_out = "  { WARNING: The following species do not have SMILES strings in the database. \n"
+        missing_peroxies_out += "#{' ' * 13}If any of these are peroxy radicals the RO2 sum will be wrong! \n"
+        missing_peroxies_out += missing_peroxies_species
+        missing_peroxies_out += "  }\n"
 
         #---------------------- Write to KPP
         # Citation comes first
         out = citation_out
-
-        # Globals
-        out += "#INLINE F90_GLOBAL\n"
-        out += complex_defs_out if complex_rates.count.positive?
-        out += photo_defs_out if photo_rates.count.positive?
-        out += "  REAL(dp) :: zenith\n" if photo_rates.count.positive?
-        out += "  REAL(dp) :: M, N2, O2, RO2, H2O\n"
-        out += "#ENDINLINE {above lines go into MODULE KPP_ROOT_Global}\n"
+        out += "\n"
 
         # Species
-        out += "#INCLUDE atoms \n"
+        out += "#INCLUDE atoms \n\n"
         out += "#DEFVAR\n"
         # Need to define water if it's used in a rate
         out += "H2O = IGNORE ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates, :Definition)
         out += species_out
+        out += "\n"
 
-        # Peroxy radicals
-        out += "{ Peroxy radicals. }\n"
-        if missing_peroxies.count.positive?
-          out += "{ WARNING: The following species do not have SMILES strings in the database. \n"
-          out += "           If any of these are peroxy radicals the RO2 sum will be wrong! \n"
-          out += missing_peroxies_out # TODO: Shoud this exclude inorganics?
-          out += "}\n"
-        end
+        # Load variables from constants file
         out += "#INLINE F90_RCONST \n"
+        out += "  USE constants_mcm\n"
+        out += "  // Peroxy radicals\n"
+        out += missing_peroxies_out if missing_peroxies.length.positive?
         out += peroxy_out if peroxies.length.positive?
-
-        # Complex rate coefficients
-        out += complex_rates_out if generic && complex_rates.count.positive?
-        out += photo_rates_out if photo_rates.count.positive?
-        out += "#ENDINLINE \n"
+        out += "  CALL define_constants_mcm\n"
+        out += "#ENDINLINE "
         out += "{above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}\n"
+        out += "\n"
 
         # Reactions
         out += "#EQUATIONS\n"
         out += rxns_out
 
         # Summary
-        out + "{ End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count} }"
+        out + "// End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count}"
       end
       # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
