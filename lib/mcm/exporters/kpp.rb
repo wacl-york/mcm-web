@@ -212,13 +212,9 @@ module MCM
           reactants: 'NOA',
           products: 'CH3C(O)CH2(O.) + NO2 or CH3CO + HCHO + NO2'
         }
-      }
+      }.freeze
 
-      # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/ParameterLists
-      # rubocop:disable Metrics/MethodLength
-      # rubocop:disable Metrics/CyclomaticComplexity
-      # rubocop:disable Metrics/PerceivedComplexity
+      # rubocop:disable Metrics/AbcSize, Metrics/ParameterLists, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
       def export(species, rxns, complex_rates, photo_rates, _root_species, missing_peroxies, peroxies, citation,
                  generic: false)
         #---------------------- Setup
@@ -231,7 +227,7 @@ module MCM
         #   2. Some reactions have no products which is not permissible in KPP
         #   3. Photolysis reactions need 'hv' as a reagent
         photo_lookup_table = {}
-        photo_rates.each { |x | photo_lookup_table["J<#{x[:J]}>"] = "J(J_#{PHOTOLYSIS_MAPPING[x[:J]][:name]})" }
+        photo_rates.each { |x| photo_lookup_table["J<#{x[:J]}>"] = "J(J_#{PHOTOLYSIS_MAPPING[x[:J]][:name]})" }
 
         rxns = combine_reactions(rxns, combine: '+')
         rxns = rxns.each { |x| add_missing_products(x) }
@@ -255,12 +251,12 @@ module MCM
         # There's a warning about species in the RO2 sum that don't have a mass
         # TODO should this include inorganics?
         missing_peroxies_species = MCM::Export.wrap_lines(missing_peroxies,
-                                                      starting_char: '    ',
-                                                      every_line_start: '    ',
-                                                      every_line_end: '',
-                                                      ending_char: '',
-                                                      max_line_length: 78,
-                                                      sep: ' ')
+                                                          starting_char: '    ',
+                                                          every_line_start: '    ',
+                                                          every_line_end: '',
+                                                          ending_char: '',
+                                                          max_line_length: 78,
+                                                          sep: ' ')
         missing_peroxies_out = "  { WARNING: The following species do not have SMILES strings in the database. \n"
         missing_peroxies_out += "#{' ' * 13}If any of these are peroxy radicals the RO2 sum will be wrong! \n"
         missing_peroxies_out += missing_peroxies_species
@@ -297,7 +293,7 @@ module MCM
         # Summary
         out + "// End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count}"
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
       # rubocop:disable Metrics/AbcSize
       def combine_reactions(rxns, combine: '+')
@@ -427,8 +423,7 @@ module MCM
         "#{lhs} = #{rhs} ! MCM J=#{params[:J]}"
       end
 
-      # rubocop:disable Metrics/MethodLength
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def constants_file
         # Retrieve all tokenized rates in mechanism
         # get tokenized rates in order
@@ -483,7 +478,7 @@ module MCM
         out += "\n"
 
         # Definitions
-        out += photo_indices_out.join("\n") + "\n"
+        out += "#{photo_indices_out.join("\n")}\n"
         out += complex_defs_out
         out += photo_defs_out
         out += "  REAL(dp) :: M, N2, O2, RO2, H2O, zenith\n"
@@ -506,8 +501,7 @@ module MCM
         out += "END MODULE constants_mcm\n"
         out
       end
-      # rubocop:enable Metrics/MethodLength
-      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
     end
     # rubocop:enable Metrics/ClassLength
   end
