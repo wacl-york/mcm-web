@@ -1,5 +1,6 @@
 function addSpeciesToCookie(x) {
   var curr_marklist = getCookie('marklist');
+  // Checking to see if species is in the cookie already
   if (curr_marklist.search('(^|,)'+x+'($|,)') == -1) {
     let sep = curr_marklist == '' ? '' : ',';
     setCookie('marklist', curr_marklist + sep + x);
@@ -77,12 +78,8 @@ function addCurrentVOCGroupToMarklist() {
 }
 
 function getMarklistLengthFromCookie() {
-  var curr_marklist = getCookie('marklist');
-  var n_items = 0;
-  if (curr_marklist != '') {
-      n_items = curr_marklist.split(",").length
-  }
-  return n_items;
+  var curr_marklist = parseSpeciesFromCookie();
+  return curr_marklist.length
 }
 
 function updateMarklistIconCount() {
@@ -94,7 +91,7 @@ function refreshMarklist() {
   // Remove all values from marklist and redraw
   var ml = document.getElementById('marklist');
   ml.replaceChildren();
-  var species = getCookie('marklist').split(',');
+  var species = parseSpeciesFromCookie();
   species.forEach(function(x) {
     // Each species is represented by:
     // 1. a containing div (needed to apply styles that can't apply to li)
@@ -159,7 +156,7 @@ function clearMarklist() {
   // This could be done through multiple calls to
   // removeFromMarklist but that would have unnecessary
   // refreshes at each iteration
-  var species = getCookie('marklist').split(',');
+  var species = parseSpeciesFromCookie();
   species.forEach(function(x) {
     updateMarklistButtonOnceRemoved(x);
   });
@@ -190,11 +187,35 @@ function disableExportButton() {
     btn.classList.add("disabled");
 }
 
+function parseSpeciesFromCookie() {
+  // Parses the marklist cookie to extract valid species
+  //
+  // Args:
+  //   None.
+  //
+  // Returns:
+  //   An array of valid species names (as strings).
+  var species = getCookie('marklist').split(',');
+  return species.filter(isValidSpecies);
+}
+
+function isValidSpecies(x) {
+  // Species must start with a letter and then only have alphanumeric
+  //
+  // Args:
+  //   - x (Str): Potential species name to test
+  //
+  // Returns:
+  //   A boolean indicating whether the input is a valid species.
+  var regex = new RegExp("[A-Z]+[A-Z0-9]*")
+  return regex.test(x)
+}
+
 function populateExportMarklist() {
   // Remove all values from marklist and redraw
   var ml = document.getElementById('exportMarklist');
   ml.replaceChildren();
-  var species = getCookie('marklist').split(',');
+  var species = parseSpeciesFromCookie();
   species.forEach(function(x) {
     if (x == '') return;
 
