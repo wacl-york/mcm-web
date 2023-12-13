@@ -228,7 +228,6 @@ module MCM
         #   3. Photolysis reactions need 'hv' as a reagent
         photo_lookup_table = {}
         photo_rates.each { |x| photo_lookup_table["J<#{x[:J]}>"] = "J(J_#{PHOTOLYSIS_MAPPING[x[:J]][:name]})" }
-
         rxns = combine_reactions(rxns, combine: '+')
         rxns = rxns.each { |x| add_missing_products(x) }
         rxns = rxns.each { |x| add_photolysis_reagent(x) }
