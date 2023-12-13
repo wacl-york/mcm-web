@@ -202,6 +202,22 @@ module MCM
         .select(Sequel.lit('RootToken, ChildToken as Child'))
     end
 
+    def all_photolysis_rates
+      # Retrieves all photolysis rates used in the mechanim
+      #
+      # Args:
+      #   - None
+      # Returns:
+      #   A Sequel Dataset of photolysis parameters with columns:
+      #     - J
+      #     - l
+      #     - m
+      #     - n
+      DB[:PhotolysisParameters]
+        .exclude(l: nil)
+        .order(:J)
+    end
+
     def get_photolysis_rates_used_in_submechanism(submechanism)
       # Returns the photolysis rates used in a submechanism
       #
