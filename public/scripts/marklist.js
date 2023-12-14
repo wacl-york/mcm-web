@@ -1,5 +1,6 @@
 function addSpeciesToCookie(x) {
   var curr_marklist = getCookie('marklist');
+  // Checking to see if species is in the cookie already
   if (curr_marklist.search('(^|,)'+x+'($|,)') == -1) {
     let sep = curr_marklist == '' ? '' : ',';
     setCookie('marklist', curr_marklist + sep + x);
@@ -76,59 +77,58 @@ function addCurrentVOCGroupToMarklist() {
   refreshMarklist();
 }
 
-function getMarklistLengthFromCookie() {
-  var curr_marklist = getCookie('marklist');
-  var n_items = 0;
-  if (curr_marklist != '') {
-      n_items = curr_marklist.split(",").length
-  }
-  return n_items;
+async function getMarklistLengthFromCookie() {
+  const species = await parseSpeciesFromCookie()
+  return species.length
 }
 
 function updateMarklistIconCount() {
-  var icon = document.getElementById('marklist-count');
-  icon.textContent = getMarklistLengthFromCookie();
+  const icon = document.getElementById('marklist-count');
+  getMarklistLengthFromCookie().then( (length) => {
+      icon.textContent = length;
+  });
 }
 
 function refreshMarklist() {
   // Remove all values from marklist and redraw
   var ml = document.getElementById('marklist');
   ml.replaceChildren();
-  var species = getCookie('marklist').split(',');
-  species.forEach(function(x) {
-    // Each species is represented by:
-    // 1. a containing div (needed to apply styles that can't apply to li)
-    // 2. an li
-    // 3. a button (to remove from marklist)
+  parseSpeciesFromCookie().then( (species) => {
+      species.forEach(function(x) {
+        // Each species is represented by:
+        // 1. a containing div (needed to apply styles that can't apply to li)
+        // 2. an li
+        // 3. a button (to remove from marklist)
 
-    if (x == '') return;
-    var div = document.createElement("div");
-    div.setAttribute("class", "marklist-item");
-    div.setAttribute("id", "ml-" + x);
+        if (x == '') return;
+        var div = document.createElement("div");
+        div.setAttribute("class", "marklist-item");
+        div.setAttribute("id", "ml-" + x);
 
-    var remove_button = document.createElement("button");
-    remove_button.setAttribute("type", "button");
-    remove_button.setAttribute("class", "btn btn-danger btn-small btn-marklist btn-marklist-sm");
-    remove_button.setAttribute("onclick", "removeFromMarklist('"+x+"')");
-    remove_button.textContent = '-';
+        var remove_button = document.createElement("button");
+        remove_button.setAttribute("type", "button");
+        remove_button.setAttribute("class", "btn btn-danger btn-small btn-marklist btn-marklist-sm");
+        remove_button.setAttribute("onclick", "removeFromMarklist('"+x+"')");
+        remove_button.textContent = '-';
 
-    var species_label = document.createElement("span");
-    species_label.textContent = x;
+        var species_label = document.createElement("span");
+        species_label.textContent = x;
 
-    div.appendChild(remove_button);
-    div.appendChild(species_label);
-    ml.appendChild(div);
+        div.appendChild(remove_button);
+        div.appendChild(species_label);
+        ml.appendChild(div);
+      });
   });
 
   updateMarklistIconCount();
 
-  if (getMarklistLengthFromCookie() == 0) {
-      disableExportButton();
-  }
-
-  if (getMarklistLengthFromCookie() > 0) {
-    enableExportButton();
-  }
+  getMarklistLengthFromCookie().then( (length) => {
+      if (length == 0) {
+          disableExportButton();
+      } else if (length > 0) {
+        enableExportButton();
+      }
+  });
 
   if (/\/export$/.test(window.location.pathname)) {
       populateExportMarklist();
@@ -159,13 +159,15 @@ function clearMarklist() {
   // This could be done through multiple calls to
   // removeFromMarklist but that would have unnecessary
   // refreshes at each iteration
-  var species = getCookie('marklist').split(',');
-  species.forEach(function(x) {
-    updateMarklistButtonOnceRemoved(x);
+  parseSpeciesFromCookie().then( (species) => {
+      species.forEach(function(x) {
+        updateMarklistButtonOnceRemoved(x);
+      });
+
+      // Remove all species from the marklist by explicitly clearing cookie
+      setCookie('marklist', '');
+      refreshMarklist();
   });
-  // Remove all species from the marklist by explicitly clearing cookie
-  setCookie('marklist', '');
-  refreshMarklist();
 }
 
 function removeFromMarklist(x) {
@@ -190,26 +192,38 @@ function disableExportButton() {
     btn.classList.add("disabled");
 }
 
+async function parseSpeciesFromCookie() {
+  // Parses the marklist cookie to extract valid species
+  //
+  // Args:
+  //   None.
+  //
+  // Returns:
+  //   An array of valid species names (as strings).
+  const response = await fetch('/marklist-validate')
+  const results = await response.json()
+  return results['valid']
+}
+
 function populateExportMarklist() {
   // Remove all values from marklist and redraw
   var ml = document.getElementById('exportMarklist');
   ml.replaceChildren();
-  var species = getCookie('marklist').split(',');
-  species.forEach(function(x) {
-    if (x == '') return;
+  parseSpeciesFromCookie().then( (species) => {
+      species.forEach(function(x) {
+        var input = document.createElement("input");
+        input.setAttribute("type", "checkbox");
+        input.setAttribute("name", "selected[]");
+        input.setAttribute("id", "export-"+x);
+        input.setAttribute("value", x);
+        input.setAttribute("checked", true);
 
-    var input = document.createElement("input");
-    input.setAttribute("type", "checkbox");
-    input.setAttribute("name", "selected[]");
-    input.setAttribute("id", "export-"+x);
-    input.setAttribute("value", x);
-    input.setAttribute("checked", true);
+        var label = document.createElement("label");
+        label.setAttribute("for", "export-"+x);
+        label.textContent = x;
 
-    var label = document.createElement("label");
-    label.setAttribute("for", "export-"+x);
-    label.textContent = x;
-
-    ml.appendChild(input);
-    ml.appendChild(label);
+        ml.appendChild(input);
+        ml.appendChild(label);
+      });
   });
 }
