@@ -15,7 +15,7 @@ ENV APP_ROOT /var/www/docker-sinatra
 RUN mkdir -p $APP_ROOT
 WORKDIR $APP_ROOT
 ADD Gemfile* $APP_ROOT/
-RUN gem install bundler
+RUN gem install bundler -v 2.4.22
 RUN bundle install
 ADD . $APP_ROOT
 
