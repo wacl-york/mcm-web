@@ -29,7 +29,7 @@ describe MCM::Export::KPP do
     end
 
     context 'with TEMP(300)*J<17>' do
-      let(:res) { kpp.parse_rate_for_kpp('TEMP(300)*J<17>', {'J<17>' => 'J<34>'}) }
+      let(:res) { kpp.parse_rate_for_kpp('TEMP(300)*J<17>', { 'J<17>' => 'J<34>' }) }
 
       it 'applies a photolysis mapping' do
         expect(res).to eq('TEMP(300.)*J(34)')
