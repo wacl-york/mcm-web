@@ -1,0 +1,58 @@
+<h1>7.  Answers and Discussion</h1>
+
+<!--<h2>Task 2.1.  Examining the reaction of Ozone and trans-2-butene</h2>
+
+<p>A1.	The rate constants for the reaction of OH with 1,3,5-TMB and <i>trans</i>-but-2-ene are 6.36 × 10<sup>-11</sup> and 5.67 × 10<sup>-11</sup> respectively.  Therefore OH reacts only marginally faster with 1,3,5-TMB.  However, at the beginning of the experiment the concentration of 1,3,5-TMB is approximately 50 times greater than for <i>trans</i>-but-2-ene, such that the rate of reaction of OH + 1,3,5-TMB is approximately 50 times faster then the rate of reaction for OH + <i>trans</i>-but-2-ene.  Therefore the majority of the OH produced from the reaction of O<sub>3</sub> with <i>trans</i>-but-2-ene will react with the scavenger.</p>
+
+<p>A2.	<i>trans</i>-but-2-ene decays to a greater extent in the absence of the scavenger as it is reacting with the OH produced from the O<sub>3</sub> + <i>trans</i>-but-2-ene reaction.  For the same reason more acetaldehyde is produced in the presence of the scavenger as it is not reacting with the OH produced.</p>
+
+<p>In certain regions (e.g. urban, forested), reactions of O<sub>3</sub> with alkenes in the troposphere are an important source of radicals, especially at night.  As a consequence, these reactions have been extensively studied over the past decade using techniques applied here to probe the mechanism.</p>
+-->
+
+
+<h2>Task 3.1.  Simulation of ethene chamber experiments</h2>
+
+<p>A1.	The decay of ethene is substantially under-predicted.  All the concentration profiles are over-predicted.  The ozone peak is over-predicted by about 30%.  In fact the ozone has probably not yet peaked in the simulation.</p>
+
+<p>A2.	The inclusion of the measured dilution rate unsurprisingly improves the profiles of all species.</p>
+
+<p>A3.	The model gives an excellent prediction of the ethene decay.  However, this is not surprising as both the high and low NO<sub>x</sub> ethene experiments were used to tune the auxiliary mechanism used.  Peak O<sub>3</sub> is over-predicted by 10%.  </p>
+
+<p>A4.	The model run with constrained <i>j</i>(NO<sub>2</sub>) (and hence constrained photolysis rates) gives similar results to that with calculated photolysis.  However, due to the measured <i>j</i>(NO<sub>2</sub>) being generally slightly higher than the calculated <i>j</i>(NO<sub>2</sub>) the profiles are all slightly increased (except obviously for ethene decay) due to the slight increase photo reactivity of the system.  Also the timing of most of the profiles is improved.</p>
+<!--
+<p>A5.	Note that the main formation pathway for HO<sub>2</sub> is <b>G38</b>, the thermal decomposition of PNA, HO<sub>2</sub>NO<sub>2</sub> = HO<sub>2</sub> + NO<sub>2</sub>.  The main loss pathway is the formation of PNA, <b>G37</b>, HO<sub>2</sub> + NO<sub>2</sub> = HO<sub>2</sub>NO<sub>2</sub>.  These two reactions are close to thermal equilibrium and so mostly cancel each other out (you can check this). </p>
+ 
+<p>Therefore the main HO<sub>2</sub> formation reaction at the beginning of the experiment is the degradation of HOCH2CH2O.  In the middle to latter stages of the experiment this switches to <b>G57</b>, HCHO + OH.</p>
+
+<p>The main HO<sub>2</sub> loss reaction throughout the duration of the experiment is <b>G36</b>, HO<sub>2</sub> + NO.</p>
+-->
+<h2>Task 4.1.  Simulation of toluene chamber experiments</h2>
+<!--
+<p>A1.	SMILES strings that will work for toluene include c1ccccc1(C), or c1cc(C)ccc1 etc…</p>
+
+<p>A2 and A3.</p>
+	
+
+<table border=0" width="95%">
+<tr><td align=center><img src="/MCM/tutorial/figures/image008.gif"  width="576" height="231"align="centre"></td></tr>
+</table>
+
+<p>A4.	Ratio of glyoxal to methyl glyoxal in the ring opening peroxy bicyclic route is <b>60:40</b>.</p>
+
+<p>A5.	The MCMv3 simulation over predicts O<sub>3</sub> concentration by about 35% at its peak.  This is typical of the performance of most of the MCMv3 aromatic mechanisms (typical over prediction is about 50% (Bloss <i>et al.</I> 2005b)).  The timing of O<sub>3</sub> formation is also quite different.  The NO oxidation rate significantly under-predicts the observed values (Bloss et al. 2005b) which can be seen in the plot where the timing of the simulations shows a clear delay relative to the measurements.  For most aromatic systems, radicals are under predicted using MCMv3.  This is clearly seen in the Toluene decay plot and the OH plot.  Calculations show that there is a 66 % “missing” OH source in the MCMv3 toluene scheme (expressed as a percentage of total OH source in the model) (Bloss <i>et al.</i> 2005b).</p>
+-->
+<p>A1.	MCMv3.1 model to measurement agreement for both the ozone concentration profile and NO oxidation rate is improved.  The MCMv3.1 toluene scheme has an increased branching ratio for ring opening and a slightly decreased cresol yield.  This (along with the increased photolysis rates of the unsaturated dicarbonyl products) leads to increased radicals, most notably at the beginning of the experiment (Bloss <i>et al.</i> 2005a).  However, changes to the cresol mechanism decrease the rate of radical formation in the middle of the experiment.  This leads to some O<sub>3</sub> reduction being achieved whilst increasing the radical budget during the early stages of the experiment.  However, comparisons of the OH and toluene decay profiles show that there is still significant missing OH.  In fact, calculations of the missing OH over the whole experiment show that the missing OH source is actually higher for MCMv3.1 than MCMv3 (Bloss <i>et al.</i> 2005a).</p>
+
+<p>A2.	Peak O<sub>3</sub> is decreased by 12 % compared to MCMv3.1 and now over predicts the measured peak by about 19 %.  The model decay of toluene is faster than MCMv3.1 as a result of the increased OH giving a better representation of the observations but still under estimates the reactivity of the system as evidenced by the OH plot.</p>
+
+<p>A3.	MCMv3 gives an excellent representation of the loss of cresol but vastly over-predicts the amount of ozone.  OH is well predicted during the early part of the experiment but is under predicted in the latter stages.</p>
+
+<p>MCMv3.1. under-predicts the decay of cresol and hence indicates an under prediction of the oxidising capacity of the system which is show in the OH plot.  However, the ozone profile is improved although we now under-predict ozone.  As expected, the simulated NO<sub>2</sub> concentration has been reduced and NO to NO<sub>2</sub> conversion is now slower than the measurements suggest.</p>
+
+<p>The differences seen here contribute to the differences seen in the toluene mechanism evaluation in the last section.</p>
+
+<h2>Task 5.1 Simulation of 1,3,5-trimethylbenzene experiment</h2>
+<p>The model results that should be obtained from this task are given in <a href="/static/atchemonline_tutorial/psi_tmb_results.xls" target="_blank">psi_tmb_results.xls</a>.</p>
+
+<a href="sec6">Previous</a><br>
+<a href="intro">Return to Tutorial homepage</a><br>

@@ -7,7 +7,7 @@ get '/:mechanism/rates/complex' do
             .join(DB[:Tokens].select(:Token, :NewDatasheet), Token: :Token)
             .from_self(alias: :crw) # Needed else row_number() is applied lazily later on
   # Get all the child tokens by traversing down the tree
-  children = traverse_complex_rates(parents.select_map(:Token))
+  children = MCM::Database.traverse_complex_rates(parents.select_map(:Token))
 
   # Combine, reorder, and restructure
   @complex_rates = parents
