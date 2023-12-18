@@ -5,6 +5,7 @@ RSpec.describe 'Error Pages' do
     local_error = error
     # This will leak into other specs, unfortunately.
     # Check that error_url is set to something that doesn't clash with any routes in your app.
+    # NB: Have had to prepend these routes with /MCM otherwise get the 302 redirect to add the missing mechanism
     app.get error_url do
       raise local_error, 'Custom Message'
     end
@@ -12,7 +13,7 @@ RSpec.describe 'Error Pages' do
 
   context 'with 404 errors' do
     let(:error) { Sinatra::HTTPStatus::NotFound }
-    let(:error_url) { '/http-error-404' }
+    let(:error_url) { '/MCM/http-error-404' }
 
     it 'returns the correct status' do
       get error_url
@@ -37,7 +38,7 @@ RSpec.describe 'Error Pages' do
 
   context 'with 403 errors' do
     let(:error) { Sinatra::HTTPStatus::Forbidden }
-    let(:error_url) { '/http-error-403' }
+    let(:error_url) { '/MCM/http-error-403' }
 
     it 'returns the correct status' do
       get error_url
@@ -62,7 +63,7 @@ RSpec.describe 'Error Pages' do
 
   context 'with 5xx errors' do
     let(:error) { Sinatra::HTTPStatus::InternalServerError }
-    let(:error_url) { '/http-error-500' }
+    let(:error_url) { '/MCM/http-error-500' }
 
     it 'returns the correct status' do
       get error_url

@@ -6,8 +6,8 @@ RSpec.describe 'Sample Spec Tests' do
       visit '/'
     end
 
-    it 'contains a greeting' do
-      expect(page).to have_text 'Welcome'
+    it 'contains MCM' do
+      expect(page).to have_text 'MCM'
     end
 
     it 'contains a link to itself' do

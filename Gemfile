@@ -5,6 +5,7 @@ ruby '~> 2.7.1'
 source 'https://rubygems.org'
 
 group :test do
+  gem 'benchmark'
   gem 'capybara'
   gem 'rack-test'
   gem 'rspec'
