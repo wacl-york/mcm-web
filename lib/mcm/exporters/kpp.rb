@@ -495,7 +495,7 @@ module MCM
         out += "\n"
         out += photo_rates_out
         out += "\n"
-        out += "  END SUBOUTINE define_constants_mcm\n"
+        out += "  END SUBROUTINE define_constants_mcm\n"
         out += "\n"
         out += "\n"
         out += "END MODULE constants_mcm\n"
