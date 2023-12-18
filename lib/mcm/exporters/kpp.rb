@@ -220,7 +220,7 @@ module MCM
         #---------------------- Setup
         # Citation
         citation_fmt = citation.map { |row| "// #{row}" }.join("\n")
-        citation_out = "//#{'*' * 57} ;\n#{citation_fmt}\n//#{'*' * 57} ;\n"
+        citation_out = "// #{'*' * 56} ;\n#{citation_fmt}\n// #{'*' * 56} ;\n"
 
         # Reactions need several conversions to be usable in KPP
         #   1. Combine identical reactions
@@ -251,16 +251,15 @@ module MCM
         # There's a warning about species in the RO2 sum that don't have a mass
         # TODO should this include inorganics?
         missing_peroxies_species = MCM::Export.wrap_lines(missing_peroxies,
-                                                          starting_char: '    ',
-                                                          every_line_start: '    ',
+                                                          starting_char: '  ! ',
+                                                          every_line_start: '  ! ',
                                                           every_line_end: '',
                                                           ending_char: '',
                                                           max_line_length: 78,
                                                           sep: ' ')
-        missing_peroxies_out = "  { WARNING: The following species do not have SMILES strings in the database. \n"
-        missing_peroxies_out += "#{' ' * 13}If any of these are peroxy radicals the RO2 sum will be wrong! \n"
+        missing_peroxies_out = "  ! WARNING: The following species do not have SMILES strings in the database. \n"
+        missing_peroxies_out += "  !#{' ' * 11}If any of these are peroxy radicals the RO2 sum will be wrong! \n"
         missing_peroxies_out += missing_peroxies_species
-        missing_peroxies_out += "  }\n"
 
         #---------------------- Write to KPP
         # Citation comes first
@@ -278,7 +277,7 @@ module MCM
         # Load variables from constants file
         out += "#INLINE F90_RCONST \n"
         out += "  USE constants_mcm\n"
-        out += "  // Peroxy radicals\n"
+        out += "  ! Peroxy radicals\n"
         out += missing_peroxies_out if missing_peroxies.length.positive?
         out += peroxy_out if peroxies.length.positive?
         out += "  CALL define_constants_mcm\n"
