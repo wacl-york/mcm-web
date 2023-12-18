@@ -210,7 +210,7 @@ module MCM
         #   - It incorectly decimal points for E-12 -> E-12., which isn't allowed in Fortran
         #   - It adds decimals to photolysis rates (e.g. J<1.>)
         # Rather than get 1 regex that does everything with no errors, these 2 edge cases are separately fixed
-        rate = rate.gsub(/(?<![A-Z.\d])(\d+)(?![.])/, '\1.')
+        rate = rate.gsub(/(?<![A-Z.\d])(\d+)(?![.\d])/, '\1.')
         rate = rate.gsub(/(E[-+]?\d+)\./, '\1') # Remove point from exponent
         rate = rate.gsub(/J<(\d+)\.>/, 'J<\1>') # Remove point from photolysis rate
 
