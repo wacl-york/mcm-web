@@ -423,10 +423,12 @@ module MCM
       end
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      def constants_file
+      def constants_file(mechanism)
         # Retrieve all tokenized rates in mechanism
         # get tokenized rates in order
-        parent_tokens = MCM::Database.get_rate_tokens_used_in_submechanism(DB[:reactions])
+        all_reactions = DB[:reactions]
+                        .where(Mechanism: mechanism)
+        parent_tokens = MCM::Database.get_rate_tokens_used_in_submechanism(all_reactions)
         complex_rates = MCM::Database.traverse_complex_rates(parent_tokens)
         puts "complex rates: #{complex_rates.all}"
 
