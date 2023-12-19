@@ -56,3 +56,10 @@ get '/:mechanism/export/download' do
   )
 end
 # rubocop:enable Metrics/BlockLength
+
+get '/:mechanism/export/kpp_constants' do
+  content_type 'text/plain'
+  filename = 'constants_mcm.f90'
+  attachment filename
+  MCM::Export::KPP.new.constants_file(params[:mechanism])
+end
