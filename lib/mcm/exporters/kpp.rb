@@ -332,15 +332,14 @@ module MCM
 
       def add_missing_products(rxn)
         # KPP can't handle reactions with no products
-        # This function hardcodes products for known reactions that lack products
+        # This function adds the dummy PROD placeholder for reactions that lack products
         #
         # Args:
         #   - rxn (Hash): Hash that has :Reaction and :Rate attributes
         #
         # Returns:
         #   A list of hashes where the :Reaction field has been updated if needed.
-        rxn[:Reaction] = rxn[:Reaction].gsub(/^O \+ O3 = /, 'O + O3 = 2O2')
-        rxn[:Reaction] = rxn[:Reaction].gsub(/^HO2 \+ OH = /, 'HO2 + OH = H2O + O2')
+        rxn[:Reaction] = rxn[:Reaction].gsub(/=\s*$/, '= PROD')
       end
 
       def add_photolysis_reagent(rxn)
