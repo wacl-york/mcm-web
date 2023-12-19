@@ -206,10 +206,11 @@ async function parseSpeciesFromCookie() {
 }
 
 function populateExportMarklist() {
-  // Remove all values from marklist and redraw
-  var ml = document.getElementById('exportMarklist');
-  ml.replaceChildren();
   parseSpeciesFromCookie().then( (species) => {
+      // Remove all values from marklist and redraw
+      var ml = document.getElementById('exportMarklist');
+      ml.replaceChildren();
+
       species.forEach(function(x) {
         var input = document.createElement("input");
         input.setAttribute("type", "checkbox");
