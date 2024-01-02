@@ -33,7 +33,7 @@ describe 'regression test of full mechanism export' do
     end
 
     context 'with the CRI' do
-      let(:url) { build_url('CRI', mcm_species, 'facsimile') }
+      let(:url) { build_url('CRI', cri_species, 'facsimile') }
       let(:reference) do
         read_file_from_tar('public/static/CRI/download/cri_2-2.tar.gz', 'cri_2-2_unix/cri_2-2_facsimile_complete.fac')
       end
@@ -60,7 +60,7 @@ describe 'regression test of full mechanism export' do
     end
 
     context 'with the CRI' do
-      let(:url) { build_url('CRI', mcm_species, 'kpp') }
+      let(:url) { build_url('CRI', cri_species, 'kpp') }
       let(:reference) do
         read_file_from_tar('public/static/CRI/download/cri_2-2.tar.gz', 'cri_2-2_unix/cri_2-2_kpp_complete.eqn')
       end
