@@ -5,7 +5,7 @@ require 'rubygems/package'
 def read_file_from_tar(archive, target)
   reader = Gem::Package::TarReader.new(Zlib::GzipReader.wrap(File.open(archive, 'rb')))
   reader.each do |x|
-    return x.read if x.full_name == target
+    return x.read.force_encoding('utf-8') if x.full_name == target
   end
 end
 
@@ -50,7 +50,7 @@ describe 'regression test of full mechanism export' do
       let(:url) { build_url('MCM', mcm_species, 'kpp') }
       let(:reference) do
         read_file_from_tar('public/static/MCM/download/mcm_3-3-1.tar.gz',
-                           'mcm_3-3-1_unix/mcm_3-3-1_kpp_complete.kpp')
+                           'mcm_3-3-1_unix/mcm_3-3-1_kpp_complete.eqn')
       end
 
       it 'is equal to the archived mechanism' do
@@ -62,7 +62,7 @@ describe 'regression test of full mechanism export' do
     context 'with the CRI' do
       let(:url) { build_url('CRI', mcm_species, 'kpp') }
       let(:reference) do
-        read_file_from_tar('public/static/CRI/download/cri_2-2.tar.gz', 'cri_2-2_unix/cri_2-2_kpp_complete.kpp')
+        read_file_from_tar('public/static/CRI/download/cri_2-2.tar.gz', 'cri_2-2_unix/cri_2-2_kpp_complete.eqn')
       end
 
       it 'is equal to the archived mechanism' do
