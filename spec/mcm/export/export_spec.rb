@@ -47,27 +47,43 @@ describe 'regression test of full mechanism export' do
 
   describe 'KPP format' do
     context 'with the MCM' do
-      let(:url) { build_url('MCM', mcm_species, 'kpp') }
       let(:reference) do
         read_file_from_tar('public/static/MCM/download/mcm_3-3-1.tar.gz',
                            'mcm_3-3-1_unix/mcm_3-3-1_kpp_complete.eqn')
       end
+      let(:reference_constants) do
+        read_file_from_tar('public/static/MCM/download/mcm_3-3-1.tar.gz',
+                           'mcm_3-3-1_unix/mcm_3-3-1_kpp_constants_mcm.f90')
+      end
 
       it 'is equal to the archived mechanism' do
-        get url
+        get build_url('MCM', mcm_species, 'kpp')
         expect(last_response.body).to eq(reference)
+      end
+
+      it 'has the same constants_mcm.f90' do
+        get '/MCM/export/kpp_constants'
+        expect(last_response.body).to eq(reference_constants)
       end
     end
 
     context 'with the CRI' do
-      let(:url) { build_url('CRI', cri_species, 'kpp') }
       let(:reference) do
         read_file_from_tar('public/static/CRI/download/cri_2-2.tar.gz', 'cri_2-2_unix/cri_2-2_kpp_complete.eqn')
       end
+      let(:reference_constants) do
+        read_file_from_tar('public/static/CRI/download/cri_2-2.tar.gz',
+                           'cri_2-2_unix/cri_2-2_kpp_constants_mcm.f90')
+      end
 
       it 'is equal to the archived mechanism' do
-        get url
+        get build_url('CRI', cri_species, 'kpp')
         expect(last_response.body).to eq(reference)
+      end
+
+      it 'has the same constants_mcm.f90' do
+        get '/CRI/export/kpp_constants'
+        expect(last_response.body).to eq(reference_constants)
       end
     end
   end
