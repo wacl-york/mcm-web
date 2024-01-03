@@ -294,6 +294,26 @@ module MCM
     end
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
+
+    def get_top_5_synonyms(data)
+      # Retrieves the top 5 synonyms for a species
+      #
+      # Args:
+      #   - data (Sequel Dataset): Dataset that at least has a 'Name' column with the species name
+      #
+      # Returns:
+      #   A Sequel Dataset with Name and Synonym
+      data.select(:Name).from_self(alias: :input)
+          .left_join(:SpeciesSynonyms, { Species: :Name }, table_alias: :syn)
+          .select_append(
+            Sequel.function(:row_number)
+            .over(partition: :Species, order: Sequel.desc(:NumReferences)).as(:n)
+          )
+          .from_self(alias: :m3) # 'where' gets applied at wrong stage without this
+          .where { n <= 5 }
+          .from_self(alias: :m4)
+          .select(:Name, Sequel[:m4][:Synonym])
+    end
   end
   # rubocop:enable Metrics/ModuleLength
 end

@@ -11,7 +11,8 @@ module MCM
       # rubocop:disable Metrics/ParameterLists
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/CyclomaticComplexity
-      def export(species, rxns, complex_rates, _photo_rates, root_species, missing_peroxies, peroxies, citation, generic)
+      def export(species, rxns, complex_rates, _photo_rates, root_species, missing_peroxies, peroxies, citation,
+                 generic)
         #---------------------- Setup
         spacer = "#{'*' * 77} ;\n"
         empty_comment = "*;\n"
