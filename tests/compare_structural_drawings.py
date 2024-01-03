@@ -79,3 +79,5 @@ def make_comparison_table(mechanism, output_fn):
 
 make_comparison_table("MCM", "structural_drawings_MCM.html")
 make_comparison_table("CRI", "structural_drawings_CRI.html")
+
+con.close()

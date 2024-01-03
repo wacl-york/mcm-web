@@ -14,6 +14,9 @@ def draw_molecule(mol, filename, width=150, height=150):
     d2d = Draw.MolDraw2DSVG(width, height)
     dopts = d2d.drawOptions()
     dopts.useBWAtomPalette()
+    dopts.bondLineWidth = 1
+    dopts.additionalAtomLabelPadding = 0.1
+    dopts.fixedFontSize = 12
     d2d.DrawMolecule(mol)
     d2d.FinishDrawing()
     img = d2d.GetDrawingText()
@@ -41,3 +44,5 @@ for i, row in enumerate(res):
         mol_inchi = Chem.inchi.MolFromInchi(inchi)
         fn_inchi = f"{fp}_inchi.svg"
         draw_molecule(mol_inchi, fn_inchi)
+
+con.close()
