@@ -5,7 +5,7 @@ module MCM
     # Exporter into Facsimile format
     class Facsimile
       CONTENT_TYPE = 'text/plain'
-      FILE_EXTENSION = 'fac'
+      FILE_NAME = 'mcm_export.fac'
 
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/ParameterLists

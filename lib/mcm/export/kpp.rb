@@ -6,7 +6,7 @@ module MCM
     # rubocop:disable Metrics/ClassLength
     class KPP
       CONTENT_TYPE = 'text/plain'
-      FILE_EXTENSION = 'eqn'
+      FILE_NAME = 'mcm_export.eqn'
       PHOTOLYSIS_MAPPING = {
         1 => {
           order: 1,
