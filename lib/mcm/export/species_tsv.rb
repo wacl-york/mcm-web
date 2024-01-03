@@ -11,8 +11,7 @@ module MCM
       # rubocop:disable Metrics/ParameterLists
       # rubocop:disable Metrics/MethodLength
       def export(species, _rxns, _complex_rates, _photo_rates, _root_species, _missing_peroxies, _peroxies, citation,
-                 generic: false)
-
+                 _generic)
         # Retrieve species information from DB
         species_fmt = DB[:Species]
                       .where(Name: species)

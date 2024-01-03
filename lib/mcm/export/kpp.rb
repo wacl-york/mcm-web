@@ -216,8 +216,7 @@ module MCM
 
       # rubocop:disable Metrics/AbcSize, Metrics/ParameterLists, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
-      def export(species, rxns, complex_rates, photo_rates, _root_species, missing_peroxies, peroxies, citation,
-                 generic: false)
+      def export(species, rxns, complex_rates, photo_rates, _root_species, missing_peroxies, peroxies, citation, generic)
         #---------------------- Setup
         # Citation
         citation_fmt = citation.map { |row| "// #{row}" }.join("\n")

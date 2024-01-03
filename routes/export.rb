@@ -52,7 +52,7 @@ get '/:mechanism/export/download' do
     missing_peroxies.select_map(:Name),
     peroxies.select_map(:Name),
     citation,
-    generic: params[:generic]
+    params[:generic]
   )
 end
 # rubocop:enable Metrics/BlockLength
