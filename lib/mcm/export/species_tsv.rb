@@ -16,7 +16,7 @@ module MCM
         species_query = DB[:Species]
                         .where(Name: species)
         synonyms = get_synonyms(species_query)
-        species_query = species_query.inner_join(synonyms, [:Name])
+        species_query = species_query.left_join(synonyms, [:Name])
 
         # Get the species fields ordered correctly
         col_order = %w[Name Smiles Inchi InchiKey Mass Excited PeroxyRadical Synonyms]
