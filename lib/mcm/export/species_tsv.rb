@@ -57,9 +57,9 @@ module MCM
                      .group(:Name)
                      .select(Sequel[:Name].as(:Name),
                              Sequel.lit('CASE WHEN
-                                        GROUP_CONCAT(Synonym, \', \') IS NULL
+                                        GROUP_CONCAT(Synonym, \'; \') IS NULL
                                         THEN \'\'
-                                        ELSE GROUP_CONCAT(Synonym, \', \')
+                                        ELSE GROUP_CONCAT(Synonym, \'; \')
                                         END').as(:Synonyms))
       end
     end

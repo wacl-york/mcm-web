@@ -7,17 +7,12 @@ get '/:mechanism/species/:species' do
   @precursor_rxns = get_reactions(params[:species], @mechanism, column: :Products)
   @precursor_page_size = 5
   @precursor_num_pages = (@precursor_rxns.size / @precursor_page_size.to_f).ceil
-  @species = DB[:Species]
-             .where(Name: params[:species])
-             .select(:Name, :Smiles, :Inchi, :Mass)
-             .first
-  @synonyms = DB[:SpeciesSynonyms]
-              .where(Species: params[:species])
-              .select_append(Sequel.function(:row_number).over(partition: :Species,
-                                                               order: Sequel.desc(:NumReferences)).as(:n))
-              .from_self(alias: :m3) # 'where' gets applied at wrong stage without this
-              .where { n <= 5 }
-              .map(:Synonym).join(', ')
+  species_query = DB[:Species]
+                  .where(Name: params[:species])
+                  .select(:Name, :Smiles, :Inchi, :Mass)
+  @species = species_query.first
+  @synonyms = MCM::Database.get_top_5_synonyms(species_query)
+                           .map(:Synonym).join('; ')
   @marklist = cookies[:marklist]
   @marklist = @marklist.nil? ? [] : @marklist.split(',')
   erb :species
