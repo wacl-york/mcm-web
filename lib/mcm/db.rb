@@ -314,6 +314,38 @@ module MCM
           .from_self(alias: :m4)
           .select(:Name, Sequel[:m4][:Synonym])
     end
+
+    def extract_formula_from_inchi
+      # Extracts the molecular formula from an Inchi key
+      #
+      # E.g. for CH3O2 with InChI=1S/CH3O2/c1-3-2/h1H3,
+      # it obtains CH3O2.
+      #
+      # This returns a Sequel dataset, i.e. a query. So if you only
+      # want to run this on a small number of species, join the
+      # result from this function onto your smaller table before
+      # evaluating the query.
+      # Otherwise if you evaluate it first and then want to subset it
+      # to a specific species, it will wastefully extract the formula
+      # from every species in the DB.
+      #
+      # Args:
+      #   - None, runs on the whole Species table.
+      #
+      # Returns:
+      #   A Sequel dataset of the Species table with a new
+      #   column 'Formula'.
+      DB[:Species]
+        .select_append(
+          Sequel.lit("
+              substr(
+                substr(inchi, instr(inchi, '/') + 1),
+                1,
+                instr(substr(inchi, instr(inchi, '/') + 1), '/') - 1
+              )").as(:Formula)
+        )
+        .from_self(alias: :form)
+    end
   end
   # rubocop:enable Metrics/ModuleLength
 end

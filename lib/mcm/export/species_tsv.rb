@@ -15,11 +15,12 @@ module MCM
         # Retrieve species information from DB
         species_query = DB[:Species]
                         .where(Name: species)
+                        .inner_join(MCM::Database.extract_formula_from_inchi, [:Name])
         synonyms = get_synonyms(species_query)
         species_query = species_query.left_join(synonyms, [:Name])
 
         # Get the species fields ordered correctly
-        col_order = %w[Name Smiles Inchi InchiKey Mass Excited PeroxyRadical Synonyms]
+        col_order = %w[Name Smiles Inchi InchiKey Formula Mass Excited PeroxyRadical Synonyms]
         species_out = species_query.map do |x|
           row_ordered = col_order.map { |col| x[col.to_sym] }
           row_ordered.join("\t")
