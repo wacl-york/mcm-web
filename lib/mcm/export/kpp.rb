@@ -430,7 +430,6 @@ module MCM
                         .where(Mechanism: mechanism)
         parent_tokens = MCM::Database.get_rate_tokens_used_in_submechanism(all_reactions)
         complex_rates = MCM::Database.traverse_complex_rates(parent_tokens)
-        puts "complex rates: #{complex_rates.all}"
 
         #------------------- Photolysis Rates
         # Photolysis rates need to be both defined and have their equation generated from the raw parameters and parsed
