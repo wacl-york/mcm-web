@@ -61,7 +61,7 @@ module MCM
         results_all = calculate_highest_score_per_species(results_all, score_baseline)
 
         # For each matched species, want to display the top 5 synonyms as well as any synonyms that matched
-        syns_five = get_top_5_synonyms(results_all)
+        syns_five = MCM::Database.get_top_5_synonyms(results_all)
         results_all = results_all.full_join(syns_five, %i[Name Synonym]) # One row per species-synonym
         results_all = collapse_synonyms(results_all) # Collapse to one row per species
 
@@ -166,27 +166,6 @@ module MCM
           .from_self(alias: :matches)
       end
 
-      def get_top_5_synonyms(data)
-        # TODO: put in DB lib
-        # Retrieves the top 5 synonyms for a species
-        #
-        # Args:
-        #   - data (Sequel Dataset): Dataset that at least has a 'Name' column with the species name
-        #
-        # Returns:
-        #   A Sequel Dataset with Name and Synonym
-        data.select(:Name).from_self(alias: :input)
-            .left_join(:SpeciesSynonyms, { Species: :Name }, table_alias: :syn)
-            .select_append(
-              Sequel.function(:row_number)
-              .over(partition: :Species, order: Sequel.desc(:NumReferences)).as(:n)
-            )
-            .from_self(alias: :m3) # 'where' gets applied at wrong stage without this
-            .where { n <= 5 }
-            .from_self(alias: :m4)
-            .select(:Name, Sequel[:m4][:Synonym])
-      end
-
       def collapse_synonyms(data)
         # Collapses long dataset with 1 row per Species-Synonym into to
         # 1 row per Species with the Synonyms concatenated into 1 string
@@ -209,9 +188,9 @@ module MCM
           .select(Sequel[:Name].as(:Name),
                   Sequel.lit('max(score)').as(:score),
                   Sequel.lit('CASE WHEN
-                              GROUP_CONCAT(Synonym, \', \') IS NULL
+                              GROUP_CONCAT(Synonym, \'; \') IS NULL
                               THEN \'\'
-                              ELSE GROUP_CONCAT(Synonym, \', \')
+                              ELSE GROUP_CONCAT(Synonym, \'; \')
                               END').as(:Synonyms))
       end
     end

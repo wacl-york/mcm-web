@@ -5,14 +5,14 @@ module MCM
     # Exporter into Facsimile format
     class Facsimile
       CONTENT_TYPE = 'text/plain'
-      FILE_EXTENSION = 'fac'
+      FILE_NAME = 'mcm_export.fac'
 
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/ParameterLists
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/CyclomaticComplexity
       def export(species, rxns, complex_rates, _photo_rates, root_species, missing_peroxies, peroxies, citation,
-                 generic: false)
+                 generic)
         #---------------------- Setup
         spacer = "#{'*' * 77} ;\n"
         empty_comment = "*;\n"

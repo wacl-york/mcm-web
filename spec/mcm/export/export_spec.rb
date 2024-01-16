@@ -87,4 +87,31 @@ describe 'regression test of full mechanism export' do
       end
     end
   end
+
+  describe 'species list TSV format' do
+    context 'with the MCM' do
+      let(:url) { build_url('MCM', mcm_species, 'species_tsv') }
+      let(:reference) do
+        read_file_from_tar('public/static/MCM/download/mcm_3-3-1.tar.gz',
+                           'mcm_3-3-1_unix/mcm_3-3-1_species_complete.tsv')
+      end
+
+      it 'is equal to the archived species list' do
+        get url
+        expect(last_response.body).to eq(reference)
+      end
+    end
+
+    context 'with the CRI' do
+      let(:url) { build_url('CRI', cri_species, 'species_tsv') }
+      let(:reference) do
+        read_file_from_tar('public/static/CRI/download/cri_2-2.tar.gz', 'cri_2-2_unix/cri_2-2_species_complete.tsv')
+      end
+
+      it 'is equal to the archived species list' do
+        get url
+        expect(last_response.body).to eq(reference)
+      end
+    end
+  end
 end

@@ -20,17 +20,17 @@ RSpec.describe 'Error Pages' do
       expect(last_response).to be_not_found
     end
 
-    it 'will show the correct error page' do
+    it 'shows the correct error page' do
       visit error_url
       expect(page).to have_text 'Sorry, page not found'
     end
 
-    it 'will show the status code' do
+    it 'shows the status code' do
       visit error_url
       expect(page).to have_text 'Error code: 404'
     end
 
-    it 'will show the custom message' do
+    it 'shows the custom message' do
       visit error_url
       expect(page).to have_text 'Custom Message'
     end
@@ -45,17 +45,17 @@ RSpec.describe 'Error Pages' do
       expect(last_response).to be_forbidden
     end
 
-    it 'will show the correct error page' do
+    it 'shows the correct error page' do
       visit error_url
       expect(page).to have_text 'Access Denied'
     end
 
-    it 'will show the status code' do
+    it 'shows the status code' do
       visit error_url
       expect(page).to have_text 'Error code: 403'
     end
 
-    it 'will show the custom message' do
+    it 'shows the custom message' do
       visit error_url
       expect(page).to have_text 'Custom Message'
     end
@@ -70,17 +70,17 @@ RSpec.describe 'Error Pages' do
       expect(last_response).to be_server_error
     end
 
-    it 'will show the correct error page' do
+    it 'shows the correct error page' do
       visit error_url
       expect(page).to have_text 'Whoops, something went wrong'
     end
 
-    it 'will show the status code' do
+    it 'shows the status code' do
       visit error_url
       expect(page).to have_text 'Error code: 500'
     end
 
-    it 'will show the custom message' do
+    it 'shows the custom message' do
       visit error_url
       expect(page).to have_text 'Custom Message'
     end

@@ -41,8 +41,7 @@ get '/:mechanism/export/download' do
 
   exporter = MCM::Export::Factory.exporter_factory(params[:format])
   content_type exporter.class::CONTENT_TYPE
-  filename = "mcm_export.#{exporter.class::FILE_EXTENSION}"
-  attachment filename
+  attachment exporter.class::FILE_NAME
   exporter.export(
     submech_species.select_map(:Name),
     submech_rxns.all,
@@ -52,7 +51,7 @@ get '/:mechanism/export/download' do
     missing_peroxies.select_map(:Name),
     peroxies.select_map(:Name),
     citation,
-    generic: params[:generic]
+    params[:generic]
   )
 end
 # rubocop:enable Metrics/BlockLength

@@ -6,7 +6,7 @@ module MCM
     # rubocop:disable Metrics/ClassLength
     class KPP
       CONTENT_TYPE = 'text/plain'
-      FILE_EXTENSION = 'eqn'
+      FILE_NAME = 'mcm_export.eqn'
       PHOTOLYSIS_MAPPING = {
         1 => {
           order: 1,
@@ -217,7 +217,7 @@ module MCM
       # rubocop:disable Metrics/AbcSize, Metrics/ParameterLists, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
       def export(species, rxns, complex_rates, photo_rates, _root_species, missing_peroxies, peroxies, citation,
-                 generic: false)
+                 generic)
         #---------------------- Setup
         # Citation
         citation_fmt = citation.map { |row| "// #{row}" }.join("\n")
