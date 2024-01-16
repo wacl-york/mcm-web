@@ -238,8 +238,11 @@ module MCM
           "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate], photo_lookup_table)} ;\n"
         end.join
 
-        # Define the species used in this submechanism
-        species_out = species.map { |x| "#{x[:Name]} = IGNORE ;\n" }.join
+        # Define the species used in this submechanism, including their formula (derived from Inchi)
+        species_with_formula = species
+                               .from_self(alias: :inp)
+                               .inner_join(MCM::Database.extract_formula_from_inchi, [:Name])
+        species_out = species_with_formula.map { |x| "#{x[:Name]} = #{parse_formula(x[:Formula])} ;\n" }.join
 
         # Peroxy radicals are provided by a proxy RO2 sum
         peroxy_out = MCM::Export.wrap_lines(peroxies.map { |x| "C(ind_#{x[:Name]})" },
@@ -503,6 +506,21 @@ module MCM
         out
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+      def parse_formula(formula)
+        # Parses a formula in the form 'CH3O2' into 'C + 3H + 2O'.
+        #
+        # Args:
+        #   - x (str): A formula in the form CH3O2
+        #
+        # Returns:
+        #   A string in the form 'C + 3H + 2O'
+        if formula.nil?
+          'IGNORE'
+        else
+          formula.gsub(/([A-Z][a-z]?)(\d+)?/, '\2\1 + ').gsub(/ \+ $/, '')
+        end
+      end
     end
     # rubocop:enable Metrics/ClassLength
   end
