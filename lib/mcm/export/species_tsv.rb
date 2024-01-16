@@ -10,7 +10,7 @@ module MCM
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/ParameterLists
       # rubocop:disable Metrics/MethodLength
-      def export(species, _rxns, _complex_rates, _photo_rates, _root_species, _missing_peroxies, _peroxies, citation,
+      def export(species, _rxns, _complex_rates, _photo_rates, root_species, _missing_peroxies, _peroxies, citation,
                  _generic)
         # Retrieve species information from DB
         species_query = DB[:Species]
@@ -18,6 +18,14 @@ module MCM
                         .inner_join(MCM::Database.extract_formula_from_inchi, [:Name])
         synonyms = get_synonyms(species_query)
         species_query = species_query.left_join(synonyms, [:Name])
+
+        # Add declaration of the selected root species
+        root_out = MCM::Export.wrap_lines(root_species,
+                                          starting_char: '* Selected VOCs: ',
+                                          every_line_start: '* ',
+                                          every_line_end: '',
+                                          ending_char: '',
+                                          sep: ' ')
 
         # Get the species fields ordered correctly
         col_order = %w[Name Smiles Inchi InchiKey Formula Mass Excited PeroxyRadical Synonyms]
@@ -31,9 +39,9 @@ module MCM
         species_out = species_out.join("\n")
 
         #---------------------- Write TSV
-        # Citation comes first
         out = ''
         out += citation.map { |row| "* #{row}\n" }.join
+        out += root_out
         out += header
         out + species_out
         #---------------------- End write TSV
