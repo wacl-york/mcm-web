@@ -230,6 +230,7 @@ module MCM
         photo_lookup_table = {}
         photo_rates.each { |x| photo_lookup_table["J<#{x[:J]}>"] = "J(J_#{PHOTOLYSIS_MAPPING[x[:J]][:name]})" }
 
+        rxns = rxns.all
         rxns = combine_reactions(rxns, combine: '+')
         rxns = rxns.each { |x| add_missing_products(x) }
         rxns = rxns.each { |x| add_photolysis_reagent(x) }
@@ -238,10 +239,10 @@ module MCM
         end.join
 
         # Define the species used in this submechanism
-        species_out = species.map { |x| "#{x} = IGNORE ;\n" }.join
+        species_out = species.map { |x| "#{x[:Name]} = IGNORE ;\n" }.join
 
         # Peroxy radicals are provided by a proxy RO2 sum
-        peroxy_out = MCM::Export.wrap_lines(peroxies.map { |x| "C(ind_#{x})" },
+        peroxy_out = MCM::Export.wrap_lines(peroxies.map { |x| "C(ind_#{x[:Name]})" },
                                             starting_char: '  RO2 = ',
                                             ending_char: '',
                                             every_line_end: ' &',
@@ -251,7 +252,7 @@ module MCM
 
         # There's a warning about species in the RO2 sum that don't have a mass
         # TODO should this include inorganics?
-        missing_peroxies_species = MCM::Export.wrap_lines(missing_peroxies,
+        missing_peroxies_species = MCM::Export.wrap_lines(missing_peroxies.select_map(:Name),
                                                           starting_char: '  ! ',
                                                           every_line_start: '  ! ',
                                                           every_line_end: '',
@@ -271,7 +272,7 @@ module MCM
         out += "#INCLUDE atoms \n\n"
         out += "#DEFVAR\n"
         # Need to define water if it's used in a rate
-        out += "H2O = IGNORE ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates, :Definition)
+        out += "H2O = IGNORE ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates.all, :Definition)
         out += species_out
         out += "\n"
 
@@ -279,8 +280,8 @@ module MCM
         out += "#INLINE F90_RCONST \n"
         out += "  USE constants_mcm\n"
         out += "  ! Peroxy radicals\n"
-        out += missing_peroxies_out if missing_peroxies.length.positive?
-        out += peroxy_out if peroxies.length.positive?
+        out += missing_peroxies_out if missing_peroxies.count.positive?
+        out += peroxy_out if peroxies.count.positive?
         out += "  CALL define_constants_mcm\n"
         out += '#ENDINLINE '
         out += "{above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}\n"

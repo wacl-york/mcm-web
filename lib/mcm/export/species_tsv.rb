@@ -13,9 +13,10 @@ module MCM
       def export(species, _rxns, _complex_rates, _photo_rates, root_species, _missing_peroxies, _peroxies, citation,
                  _generic)
         # Retrieve species information from DB
-        species_query = DB[:Species]
-                        .where(Name: species)
+        species_query = species
+                        .from_self(alias: :inp)
                         .inner_join(MCM::Database.extract_formula_from_inchi, [:Name])
+                        .order_by(:Name)
         synonyms = get_synonyms(species_query)
         species_query = species_query.left_join(synonyms, [:Name])
 
