@@ -295,7 +295,7 @@ module MCM
         out += rxns_out
 
         # Summary
-        out + "// End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count}"
+        out + "// End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count}\n"
       end
       # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
