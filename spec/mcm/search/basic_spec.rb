@@ -75,8 +75,8 @@ describe MCM::Search::Basic do
     context 'with just the InChI prefix' do
       let(:res) { described_class.find_inchi('InCHi=1S/', 17).all }
 
-      it 'returns 5809 matches' do
-        expect(res.length).to be(5809)
+      it 'returns 5830 matches' do
+        expect(res.length).to be(5830)
       end
     end
 
