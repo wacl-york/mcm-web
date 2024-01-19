@@ -275,7 +275,7 @@ module MCM
         out += "#INCLUDE atoms \n\n"
         out += "#DEFVAR\n"
         # Need to define water if it's used in a rate
-        out += "H2O = H + 2O ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates.all, :Definition)
+        out += "H2O = 2H + O ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates.all, :Definition)
         out += species_out
         out += "\n"
 
