@@ -315,8 +315,9 @@ module MCM
           .select(:Name, Sequel[:m4][:Synonym])
     end
 
+    # rubocop:disable Metrics/AbcSize
     def extract_formula_from_inchi
-      # Extracts the molecular formula from an Inchi key
+      # Extracts the molecular formula from an Inchi
       #
       # E.g. for CH3O2 with InChI=1S/CH3O2/c1-3-2/h1H3,
       # it obtains CH3O2.
@@ -336,16 +337,18 @@ module MCM
       #   A Sequel dataset of the Species table with a new
       #   column 'Formula'.
       DB[:Species]
-        .select_append(
-          Sequel.lit("
-              substr(
-                substr(inchi, instr(inchi, '/') + 1),
-                1,
-                instr(substr(inchi, instr(inchi, '/') + 1), '/') - 1
-              )").as(:Formula)
-        )
+        .select_append(Sequel.lit('instr(inchi, \'/\')').as(:first_slash))
+        .from_self(alias: :t1)
+        .select_append(Sequel.lit('instr(substr(inchi, first_slash + 1), \'/\')-1').as(:second_slash))
+        .from_self(alias: :t2)
+        # Sequel's case syntax is ({CONDITION, THEN}, ELSE, THING_CONDITIONING_ON)
+        .select_append(Sequel.case({ -1 => Sequel.lit('length(substr(inchi, first_slash+1))') },
+                                   :second_slash, :second_slash).as(:second_slash_corrected))
+        .from_self(alias: :t3)
+        .select_append(Sequel.lit('substr(inchi, first_slash+1, second_slash_corrected)').as(:Formula))
         .from_self(alias: :form)
     end
+    # rubocop:enable Metrics/AbcSize
   end
   # rubocop:enable Metrics/ModuleLength
 end
