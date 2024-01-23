@@ -24,7 +24,7 @@ module MCM
         complex_rates_out = complex_rates.map { |row| "#{row[:Child]} = #{row[:Definition]} ;\n" }.join
 
         # Define the species used in this submechanism
-        species_out = MCM::Export.wrap_lines(species)
+        species_out = MCM::Export.wrap_lines(species.select_map(:Name))
 
         # The name of the root-level VOCs are provided
         params_out = MCM::Export.wrap_lines(root_species,
@@ -35,7 +35,7 @@ module MCM
                                             sep: ' ')
 
         # Peroxy radicals are provided by a proxy RO2 sum
-        peroxy_out = MCM::Export.wrap_lines(peroxies,
+        peroxy_out = MCM::Export.wrap_lines(peroxies.select_map(:Name),
                                             starting_char: 'RO2 = ',
                                             ending_char: ';',
                                             sep: ' + ',
@@ -43,7 +43,7 @@ module MCM
                                             every_line_start: ' ' * 6)
 
         # There's a warning about species in the RO2 sum that don't have a mass
-        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies,
+        missing_peroxies_out = MCM::Export.wrap_lines(missing_peroxies.select_map(:Name),
                                                       starting_char: '* ',
                                                       every_line_start: '* ',
                                                       every_line_end: ' ;',
@@ -87,7 +87,7 @@ module MCM
         end
         out += spacer
         out += empty_comment
-        out += peroxy_out if peroxies.length.positive?
+        out += peroxy_out if peroxies.count.positive?
         out += empty_comment
 
         # Reactions

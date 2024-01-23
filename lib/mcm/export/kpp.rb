@@ -230,6 +230,7 @@ module MCM
         photo_lookup_table = {}
         photo_rates.each { |x| photo_lookup_table["J<#{x[:J]}>"] = "J(J_#{PHOTOLYSIS_MAPPING[x[:J]][:name]})" }
 
+        rxns = rxns.all
         rxns = combine_reactions(rxns, combine: '+')
         rxns = rxns.each { |x| add_missing_products(x) }
         rxns = rxns.each { |x| add_photolysis_reagent(x) }
@@ -237,11 +238,14 @@ module MCM
           "<#{i + 1}> #{row[:Reaction]} : #{parse_rate_for_kpp(row[:Rate], photo_lookup_table)} ;\n"
         end.join
 
-        # Define the species used in this submechanism
-        species_out = species.map { |x| "#{x} = IGNORE ;\n" }.join
+        # Define the species used in this submechanism, including their formula (derived from Inchi)
+        species_with_formula = species
+                               .from_self(alias: :inp)
+                               .inner_join(MCM::Database.extract_formula_from_inchi, [:Name])
+        species_out = species_with_formula.map { |x| "#{x[:Name]} = #{parse_formula(x[:Formula])} ;\n" }.join
 
         # Peroxy radicals are provided by a proxy RO2 sum
-        peroxy_out = MCM::Export.wrap_lines(peroxies.map { |x| "C(ind_#{x})" },
+        peroxy_out = MCM::Export.wrap_lines(peroxies.map { |x| "C(ind_#{x[:Name]})" },
                                             starting_char: '  RO2 = ',
                                             ending_char: '',
                                             every_line_end: ' &',
@@ -251,7 +255,7 @@ module MCM
 
         # There's a warning about species in the RO2 sum that don't have a mass
         # TODO should this include inorganics?
-        missing_peroxies_species = MCM::Export.wrap_lines(missing_peroxies,
+        missing_peroxies_species = MCM::Export.wrap_lines(missing_peroxies.select_map(:Name),
                                                           starting_char: '  ! ',
                                                           every_line_start: '  ! ',
                                                           every_line_end: '',
@@ -271,7 +275,7 @@ module MCM
         out += "#INCLUDE atoms \n\n"
         out += "#DEFVAR\n"
         # Need to define water if it's used in a rate
-        out += "H2O = IGNORE ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates, :Definition)
+        out += "H2O = 2H + O ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates.all, :Definition)
         out += species_out
         out += "\n"
 
@@ -279,8 +283,8 @@ module MCM
         out += "#INLINE F90_RCONST \n"
         out += "  USE constants_mcm\n"
         out += "  ! Peroxy radicals\n"
-        out += missing_peroxies_out if missing_peroxies.length.positive?
-        out += peroxy_out if peroxies.length.positive?
+        out += missing_peroxies_out if missing_peroxies.count.positive?
+        out += peroxy_out if peroxies.count.positive?
         out += "  CALL define_constants_mcm\n"
         out += '#ENDINLINE '
         out += "{above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}\n"
@@ -291,7 +295,7 @@ module MCM
         out += rxns_out
 
         # Summary
-        out + "// End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count}"
+        out + "// End of Subset. No. of Species = #{species.count}, No. of Reactions = #{rxns.count}\n"
       end
       # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
@@ -502,6 +506,21 @@ module MCM
         out
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+      def parse_formula(formula)
+        # Parses a formula in the form 'CH3O2' into 'C + 3H + 2O'.
+        #
+        # Args:
+        #   - x (str): A formula in the form CH3O2
+        #
+        # Returns:
+        #   A string in the form 'C + 3H + 2O'
+        if formula.nil?
+          'IGNORE'
+        else
+          formula.gsub(/([A-Z][a-z]?)(\d+)?/, '\2\1 + ').gsub(/ \+ $/, '')
+        end
+      end
     end
     # rubocop:enable Metrics/ClassLength
   end

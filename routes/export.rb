@@ -43,13 +43,13 @@ get '/:mechanism/export/download' do
   content_type exporter.class::CONTENT_TYPE
   attachment exporter.class::FILE_NAME
   exporter.export(
-    submech_species.select_map(:Name),
-    submech_rxns.all,
-    complex_rates.all,
-    photo_rates.all,
+    submech_species.select(:Name),
+    submech_rxns,
+    complex_rates,
+    photo_rates,
     params[:selected],
-    missing_peroxies.select_map(:Name),
-    peroxies.select_map(:Name),
+    missing_peroxies.select(:Name),
+    peroxies.select(:Name),
     citation,
     params[:generic]
   )
