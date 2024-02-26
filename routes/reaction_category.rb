@@ -11,7 +11,7 @@ get '/:mechanism/reaction_category' do
                fn = DB[:ReactionCategories].where(ReactionCategory: cat,
                                                   Mechanism: mechanism).get(:DocumentationFilename)
                if fn.nil?
-                 "<p>Unknown reaction category '#{cat}' for mechanism '#{mechanism}'.</p>"
+                 "<p>Unknown reaction category '#{Rack::Utils.escape_html(cat)}' for mechanism '#{mechanism}'.</p>"
                else
                  full_fn = File.join('public', 'static', mechanism, 'reaction_categories', fn)
                  File.file?(full_fn) ? File.read(full_fn) : "<p>Unable to locate static file '#{full_fn}'.</p>"
