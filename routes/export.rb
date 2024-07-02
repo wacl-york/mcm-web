@@ -2,6 +2,7 @@
 
 get '/:mechanism/export' do
   @error = params[:error].nil? ? false : params[:error]
+  @title = "#{params[:mechanism]} - Export mechanism"
   erb :export
 end
 

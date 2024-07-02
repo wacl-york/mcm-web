@@ -87,6 +87,11 @@ before '/api/*' do
   content_type :json
 end
 
+# Set default page title
+before do
+  @title = @mechanism
+end
+
 error do
   error = env['sinatra.error']
   LOGGER.error "#{error.class} - #{error.message}"

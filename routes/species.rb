@@ -15,6 +15,7 @@ get '/:mechanism/species/:species' do
                            .map(:Synonym).join('; ')
   @marklist = cookies[:marklist]
   @marklist = @marklist.nil? ? [] : @marklist.split(',')
+  @title = "#{params[:mechanism]} - #{params[:species]}"
   erb :species
 end
 
