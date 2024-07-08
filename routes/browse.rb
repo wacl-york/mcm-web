@@ -8,5 +8,6 @@ get '/:mechanism/browse/?' do
   @inorganic_categories = DB[:InorganicReactionCategories].map(:InorganicReactionCategory)
   @marklist = cookies[:marklist]
   @marklist = @marklist.nil? ? [] : @marklist.split(',')
+  @title = "#{params[:mechanism]} - Browse"
   erb :browse
 end
