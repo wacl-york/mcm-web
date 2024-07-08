@@ -14,7 +14,7 @@ services:
     ports:
       - '5000:5000'
     environment:
-      BANNER_TEXT: 'The website is going to be updated on Monday 8th July and might be unavailable between 09:00-12:00 BST.'
+      BANNER_TEXT: ''
       BANNER_TYPE: warning
       BANNER_DISMISSABLE: 'true'
       TZ: Europe/London
