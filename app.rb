@@ -2,7 +2,7 @@
 
 Bundler.require
 
-Dir['./lib/mcm/**/*.rb'].sort.each do |file|
+Dir['./lib/mcm/**/*.rb'].each do |file|
   require file
 end
 
@@ -105,7 +105,7 @@ end
 
 # Load helpers
 helpers do
-  Dir['./helpers/*.rb'].sort.each do |file|
+  Dir['./helpers/*.rb'].each do |file|
     require file
   end
 end
@@ -117,6 +117,6 @@ error_handler Sinatra::HTTPStatus::NotFound, :'error/404'
 error(Sinatra::NotFound) { erb :'error/404', locals: { error: http_status(404) } }
 
 # Load routes
-Dir['./routes/*.rb'].sort.each do |file|
+Dir['./routes/*.rb'].each do |file|
   require file
 end
