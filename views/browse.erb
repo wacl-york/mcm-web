@@ -22,7 +22,7 @@
     <ul>
     <% @inorganic_categories.each do | cat | %>
       <li>
-          <a href=<%= "/#{@mechanism}/inorganic?category=#{URI::encode(cat)}" %>>
+          <a href=<%= "/#{@mechanism}/inorganic?category=#{CGI::escapeURIComponent(cat)}" %>>
           <%= cat %>
         </a>
       </li>

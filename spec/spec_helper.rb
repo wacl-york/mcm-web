@@ -7,7 +7,6 @@ require 'rack/test'
 require 'faculty/database_helper'
 require 'faculty/spec_helpers'
 require 'sequel'
-require 'set'
 
 ENV['RACK_ENV'] = 'test'
 
