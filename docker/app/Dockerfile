@@ -2,7 +2,7 @@
 # Use a debian ruby image rather than the base lambda one as that expects
 # a lambda entry point
 FROM ruby:3.2-slim
-RUN apt-get update -qq && apt-get install -y build-essential libsqlite3-dev git cmake libboost-all-dev catch2 libfreetype-dev
+RUN apt-get update -qq && apt-get install -y build-essential libsqlite3-dev sqlite3 git cmake libboost-all-dev catch2 libfreetype-dev
 
 # Don't complain if bundler is run as root
 ENV BUNDLE_SILENCE_ROOT_WARNING=1
@@ -29,10 +29,13 @@ WORKDIR $RDKIT_ROOT/build
 RUN cmake -DRDK_BUILD_CFFI_LIB=ON -DRDK_BUILD_INCHI_SUPPORT=ON -DRDK_BUILD_PYTHON_WRAPPERS=OFF ..
 RUN make -j 2 cffi_test
 RUN Code/MinimalLib/cffi_test
-RUN make install
+RUN mkdir -p $ROOT/lib && cp lib/* $ROOT/lib
+RUN cp $ROOT/lib/* /lib
+ENV LD_LIBRARY_PATH $ROOT/lib:$LD_LIBRARY_PATH
 
-#WORKDIR $ROOT
-#RUN make
+WORKDIR $ROOT
+RUN make
 
+WORKDIR $APP_ROOT
 EXPOSE 5000
 CMD ["bundle", "exec", "rackup", "config.ru", "-p", "5000", "-s", "puma", "-o", "0.0.0.0", "-E", "production"]
