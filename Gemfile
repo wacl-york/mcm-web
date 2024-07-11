@@ -33,6 +33,7 @@ gem 'rest-client'
 gem 'sequel'
 gem 'sinatra', ['~> 2', '!= 2.1.0']
 gem 'sinatra-contrib', require: ['sinatra/capture', 'sinatra/config_file', 'sinatra/content_for', 'sinatra/cookies']
+#gem 'sqlite3', force_ruby_platform: true
 gem 'sqlite3'
 
 source 'https://gem.fury.io/universityofyork/' do
