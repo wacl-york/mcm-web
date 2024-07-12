@@ -4,17 +4,6 @@
 FROM ruby:3.2-slim
 RUN apt-get update -qq && apt-get install -y build-essential libsqlite3-dev sqlite3 git cmake libboost-all-dev catch2 libfreetype-dev wget
 
-#ENV SQLITE_ROOT /tmp/sqlite
-#RUN mkdir -p $SQLITE_ROOT
-#WORKDIR $SQLITE_ROOT
-#RUN wget -O sqlite.tar.gz 'https://www.sqlite.org/2024/sqlite-autoconf-3460000.tar.gz'
-#RUN tar -xvzf sqlite.tar.gz
-#WORKDIR $SQLITE_ROOT/sqlite-autoconf-3460000
-#RUN sed -i -e '/Disallow the load_extension/{N;N;N;N;N;N;N;d;}' sqlite3.c
-#RUN sed -i -e '/Ticket \#1863/{N;N;N;N;N;N;N;N;N;N;N;N;N;d;}' sqlite3.c
-#RUN gcc shell.c sqlite3.c -lpthread -ldl
-#RUN mv -f a.out $(which sqlite3)
-
 # Don't complain if bundler is run as root
 ENV BUNDLE_SILENCE_ROOT_WARNING=1
 # Try BUNDLE_DISABLE_EXEC_LOAD to true
@@ -27,7 +16,6 @@ RUN mkdir -p $APP_ROOT
 WORKDIR $APP_ROOT
 ADD Gemfile* $APP_ROOT/
 RUN gem install bundler -v 2.4.22
-#RUN bundle config build.sqlite3 --enable-system-libraries
 RUN bundle install
 ADD . $APP_ROOT
 
