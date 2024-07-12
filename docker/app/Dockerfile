@@ -30,12 +30,12 @@ RUN cmake -DRDK_BUILD_CFFI_LIB=ON -DRDK_BUILD_INCHI_SUPPORT=ON -DRDK_BUILD_PYTHO
 RUN make -j 2 cffi_test
 RUN Code/MinimalLib/cffi_test
 RUN mkdir -p $ROOT/lib && cp lib/* $ROOT/lib
-RUN cp $ROOT/lib/* /lib
-#RUN cp $ROOT/build/* /lib
-ENV LD_LIBRARY_PATH $ROOT/lib:$LD_LIBRARY_PATH
 
 WORKDIR $ROOT
 RUN make
+RUN cp $ROOT/lib/* /lib
+RUN cp $ROOT/build/* /lib
+ENV LD_LIBRARY_PATH $ROOT/lib:$LD_LIBRARY_PATH
 
 WORKDIR $APP_ROOT
 EXPOSE 5000
