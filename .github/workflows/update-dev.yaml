@@ -14,6 +14,8 @@ jobs:
     name: Run bundle update --group test development and auto-merge
     runs-on: ubuntu-latest
     container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:3.2
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - uses: university-of-york/faculty-dev-actions/bundle-update-dev@v1
         with:

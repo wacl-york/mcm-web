@@ -25,5 +25,7 @@ jobs:
   rspec:
     name: RSpec tests
     runs-on: ubuntu-latest
+    env: 
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - uses: university-of-york/faculty-dev-actions/rspec-runner-github-formatter@v1
