@@ -31,7 +31,7 @@ jobs:
     #  dev-deployment:
     #    name: Deploy to Dev Environment
     #    runs-on: ubuntu-22.04
-    #    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+    #    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:3.2
     #    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     #    environment: development
     #    env:
@@ -72,7 +72,7 @@ jobs:
 #  staging-deployment:
 #    name: Deploy to Staging Environment
 #    runs-on: [ self-hosted, linux, x64 ]
-#    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+#    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:3.2
 #    environment: staging
 #    needs: [ dev-deployment ]
 #    env:
@@ -109,7 +109,7 @@ jobs:
 #  production-deployment:
 #    name: Deploy to Production Environment
 #    runs-on: [ self-hosted, linux, x64 ]
-#    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:2.7
+#    container: docker://ghcr.io/university-of-york/faculty-dev-docker-images/ci/aws-lambda-ruby-dev:3.2
 #    environment: production
 #    needs: [ staging-deployment ]
 #    env:
