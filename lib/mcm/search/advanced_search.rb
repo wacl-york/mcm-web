@@ -6,7 +6,7 @@ module MCM
     module Advanced
       module_function
 
-      def search(term, mechanism)
+      def search(_term, _mechanism)
         puts 'nothing'
       end
     end
