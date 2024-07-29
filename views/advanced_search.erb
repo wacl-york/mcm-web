@@ -11,10 +11,12 @@
     </div>
   </fieldset>
 
+  <br/>
+
   <% unless @species.nil? %>
     <ul>
     <% @species.each do |species| %>
-      <li><%= species[:Species] %></li>
+      <li><%= species[:Name] %></li>
     <% end %>
     </ul>
   <% end %>
