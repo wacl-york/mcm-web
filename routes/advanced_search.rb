@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-get '/:mechanism/advanced_search/:q' do
+get '/:mechanism/advanced_search' do
   q = params[:q]
   @species = if q.nil?
                nil

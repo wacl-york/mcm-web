@@ -11,4 +11,13 @@
     </div>
   </fieldset>
 
+  <!-- Doesn't work! -->
+  <% unless @species.nil %>
+    <ul>
+    <% @species.each do |species| %>
+      <li><%= species[:Species] %></li>
+    <% end %>
+    </ul>
+  <% end %>
+
 </div>

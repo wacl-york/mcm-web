@@ -8,7 +8,7 @@ module MCM
 
       def search(_term, _mechanism)
         peroxy = get_peroxy()
-        puts peroxy
+        peroxy
       end
 
       def get_peroxy()
