@@ -7,7 +7,19 @@ module MCM
       module_function
 
       def search(_term, _mechanism)
-        puts 'nothing'
+        peroxy = get_peroxy()
+        puts peroxy
+      end
+
+      def get_peroxy()
+        valid_smarts = ["CO[O]", "[O]OC"]
+
+        peroxy = DB.fetch(
+          "SELECT * FROM Species WHERE substruct_match(Smiles, ?) OR substruct_match(Smiles, ?)",
+          valid_smarts[0], valid_smarts[1],
+        )
+
+        peroxy.all
       end
     end
   end

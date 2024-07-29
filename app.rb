@@ -20,10 +20,13 @@ configure do
   # settings.db ||= {}
   # settings.db[:noauto] = true unless in_lambda?
   DB = Sequel.connect('sqlite://mcm.db')
-  s = Sequel.sqlite
-  s.pool.all_connections do |db|
+
+  DB.pool.all_connections do |db|
     db.enable_load_extension(true)
     db.load_extension('/lib/librdkitsqlite')
+    res = db.execute <<-SQL
+      SELECT substruct_match('Cc1ccc(C)c(O)c1', 'c');
+    SQL
   end
 
   # DB = FacultyAWS::DBConnector.new(**settings.db).connection
