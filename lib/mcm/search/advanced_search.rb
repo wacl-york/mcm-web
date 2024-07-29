@@ -8,6 +8,7 @@ module MCM
 
       def search(_term, _mechanism)
         peroxy = get_peroxy()
+        puts peroxy.all
         peroxy
       end
 
@@ -19,7 +20,7 @@ module MCM
           valid_smarts[0], valid_smarts[1],
         )
 
-        peroxy.all
+        peroxy
       end
     end
   end

@@ -8,6 +8,8 @@ get '/:mechanism/advanced_search' do
                MCM::Search::Advanced.search(q, @mechanism)
              end
 
+    puts "output: #{@species.class}"
+
   @title = "#{params[:mechanism]} - Advanced search"
   erb :advanced_search
 end

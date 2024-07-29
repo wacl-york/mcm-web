@@ -11,8 +11,7 @@
     </div>
   </fieldset>
 
-  <!-- Doesn't work! -->
-  <% unless @species.nil %>
+  <% unless @species.nil? %>
     <ul>
     <% @species.each do |species| %>
       <li><%= species[:Species] %></li>

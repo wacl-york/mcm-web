@@ -24,9 +24,6 @@ configure do
   DB.pool.all_connections do |db|
     db.enable_load_extension(true)
     db.load_extension('/lib/librdkitsqlite')
-    res = db.execute <<-SQL
-      SELECT substruct_match('Cc1ccc(C)c(O)c1', 'c');
-    SQL
   end
 
   # DB = FacultyAWS::DBConnector.new(**settings.db).connection
