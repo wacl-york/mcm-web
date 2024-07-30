@@ -6,14 +6,13 @@ module MCM
     module Advanced
       module_function
 
-      def search(_term, _mechanism)
-        results_valid = get_all()
-        results_peroxy = get_peroxy()
+      def search(term, _mechanism)
+        all = get_all()
 
-        results_all = results_valid
-                      .union(results_peroxy)
+        criteria = []
+        if term[:peroxy] then criteria.push(get_peroxy()) end
 
-        results_all
+        criteria.reduce(all) { |first, second| first.intersect(second) }
       end
 
       def get_peroxy()
@@ -28,8 +27,7 @@ module MCM
       end
 
       def get_all()
-        all = DB.fetch("SELECT * FROM Species WHERE Smiles NOT NULL")
-        all
+        DB.fetch("SELECT * FROM Species WHERE Smiles NOT NULL")
       end
     end
   end
