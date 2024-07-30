@@ -7,8 +7,13 @@ module MCM
       module_function
 
       def search(_term, _mechanism)
-        peroxy = get_peroxy()
-        peroxy
+        results_valid = get_all()
+        results_peroxy = get_peroxy()
+
+        results_all = results_valid
+                      .union(results_peroxy)
+
+        results_all
       end
 
       def get_peroxy()
@@ -20,6 +25,11 @@ module MCM
         )
 
         peroxy
+      end
+
+      def get_all()
+        all = DB.fetch("SELECT * FROM Species WHERE Smiles NOT NULL")
+        all
       end
     end
   end
