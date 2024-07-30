@@ -18,7 +18,7 @@
   <% unless @species.nil? %>
     <ul>
     <% @species.each do |species| %>
-      <li><%= species[:Name] %></li>
+      <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>"><%= species[:Name] %></a></li>
     <% end %>
     </ul>
   <% end %>
