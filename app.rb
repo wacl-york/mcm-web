@@ -19,12 +19,10 @@ configure do
   ## Connect to database
   # settings.db ||= {}
   # settings.db[:noauto] = true unless in_lambda?
-  DB = Sequel.connect('sqlite://mcm.db')
-
-  DB.pool.all_connections do |db|
+  DB = Sequel.connect('sqlite://mcm.db', :after_connect=>proc{|db|
     db.enable_load_extension(true)
     db.load_extension('/lib/librdkitsqlite')
-  end
+  })
 
   # DB = FacultyAWS::DBConnector.new(**settings.db).connection
   # RBAC = FacultyRBAC::Controller.new(DB)
