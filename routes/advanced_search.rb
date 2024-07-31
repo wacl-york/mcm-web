@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 get '/:mechanism/advanced_search' do
-  @species = if params.size > 1
-              MCM::Search::Advanced.search(params, @mechanism)
-             else
-              nil
-             end
+  @species = (MCM::Search::Advanced.search(params, @mechanism) if params.size > 1)
 
   @title = "#{params[:mechanism]} - Advanced search"
   erb :advanced_search

@@ -7,27 +7,25 @@ module MCM
       module_function
 
       def search(term, _mechanism)
-        all = get_all()
+        all = find_all
 
         criteria = []
-        if term[:peroxy] then criteria.push(get_peroxy()) end
+        criteria.push(find_peroxy) if term[:peroxy]
 
         criteria.reduce(all) { |first, second| first.intersect(second) }
       end
 
-      def get_peroxy()
-        valid_smarts = ["CO[O]", "[O]OC"]
+      def find_peroxy
+        valid_smarts = ['CO[O]', '[O]OC']
 
-        peroxy = DB.fetch(
-          "SELECT * FROM Species WHERE Smiles NOT NULL AND (substruct_match(Smiles, ?) OR substruct_match(Smiles, ?))",
-          valid_smarts[0], valid_smarts[1],
+        DB.fetch(
+          'SELECT * FROM Species WHERE Smiles NOT NULL AND (substruct_match(Smiles, ?) OR substruct_match(Smiles, ?))',
+          valid_smarts[0], valid_smarts[1]
         )
-
-        peroxy
       end
 
-      def get_all()
-        DB.fetch("SELECT * FROM Species WHERE Smiles NOT NULL")
+      def find_all
+        DB.fetch('SELECT * FROM Species WHERE Smiles NOT NULL')
       end
     end
   end
