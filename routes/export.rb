@@ -42,7 +42,8 @@ get '/:mechanism/export/download' do
 
   exporter = MCM::Export::Factory.exporter_factory(params[:format])
   content_type exporter.class::CONTENT_TYPE
-  attachment exporter.class::FILE_NAME
+  filename = "#{params[:mechanism].downcase}_#{exporter.class::FILE_NAME}"
+  attachment filename
   exporter.export(
     submech_species.select(:Name),
     submech_rxns,

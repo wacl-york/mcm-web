@@ -5,7 +5,7 @@ module MCM
     # Exporter into TSV format
     class SpeciesTSV
       CONTENT_TYPE = 'text/csv'
-      FILE_NAME = 'mcm_export_species.tsv'
+      FILE_NAME = 'export_species.tsv'
 
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/ParameterLists
