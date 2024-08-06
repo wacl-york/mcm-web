@@ -25,7 +25,9 @@ jobs:
 
   rspec:
     name: RSpec tests
-    runs-on: ghcr.io/uoy-research/rdkit-sqlite:main
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/uoy-research/rdkit-sqlite:main
     env:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
