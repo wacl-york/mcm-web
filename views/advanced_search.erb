@@ -6,18 +6,22 @@
     <fieldset>
       <legend>Chemical properties</legend>
 
-      <input id="advs-all" type="hidden" name="all" checked />
+      <div>
+        <input id="advs-all" type="hidden" name="all" checked />
 
-      <input id="advs-peroxy" type="checkbox" name="peroxy" />
-      <label for="peroxy">Peroxy radical</label>
+        <input id="advs-peroxy" type="checkbox" name="peroxy" />
+        <label for="advs-peroxy">Peroxy radical</label>
+      </div>
 
-      <input id="advs-submit" type="submit" value="Submit" />
+      <div>
+        <input id="advs-submit" type="submit" value="Search" />
+      </div>
     </fieldset>
-  </form
-
-  <br/>
+  </form>
 
   <% unless @species.nil? %>
+    <hr style="" />
+
     <ul>
     <% @species.each do |species| %>
       <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>"><%= species[:Name] %></a></li>
