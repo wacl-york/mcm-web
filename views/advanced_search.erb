@@ -26,9 +26,24 @@
 
     <p><%= @species.count %> results found</p>
 
-    <ul>
+    <ul style="list-style: none;">
     <% @species.each do |species| %>
-      <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>"><%= species[:Name] %></a></li>
+      <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>">
+        <div class="py-2 d-flex">
+          <div>
+            <div class="mb-1">
+              <span class="h4">
+                <%= species[:Name] %>
+              </span>
+            </div>
+            <div class="description">
+              Smiles: <%= species[:Smiles] %>
+              <br>
+              Inchi: <%= species[:Inchi] %>
+            </div>
+          </div>
+        </div>
+      </a></li>
     <% end %>
     </ul>
   <% end %>
