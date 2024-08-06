@@ -31,4 +31,7 @@ jobs:
     env:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
+      - name: Install libyaml
+        run: |
+            apt-get -y install libyaml-dev
       - uses: university-of-york/faculty-dev-actions/rspec-runner-github-formatter@v1
