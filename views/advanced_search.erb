@@ -22,6 +22,8 @@
   <% unless @species.nil? %>
     <hr style="" />
 
+    <p><%= @species.count %> results found</p>
+
     <ul>
     <% @species.each do |species| %>
       <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>"><%= species[:Name] %></a></li>
