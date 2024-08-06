@@ -1,0 +1,51 @@
+<h1>Advanced search</h1>
+
+<div class="advanced-search-content">
+
+  <form>
+    <fieldset>
+      <legend>Chemical properties</legend>
+
+      <div>
+        <input id="advs-all" type="hidden" name="all" checked />
+
+        <input id="advs-peroxy" type="checkbox" name="peroxy" />
+        <label for="advs-peroxy">Peroxy radical</label>
+      </div>
+
+      <br/>
+
+      <div>
+        <input id="advs-submit" type="submit" value="Search" />
+      </div>
+    </fieldset>
+  </form>
+
+  <% unless @species.nil? %>
+    <hr style="" />
+
+    <p><%= @species.count %> results found</p>
+
+    <ul style="list-style: none;">
+    <% @species.each do |species| %>
+      <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>">
+        <div class="py-2 d-flex">
+          <div>
+            <div class="mb-1">
+              <span class="h4">
+                <%= species[:Name] %>
+              </span>
+            </div>
+            <div class="description">
+              Smiles: <%= species[:Smiles] %>
+              <br>
+              Inchi: <%= species[:Inchi] %>
+            </div>
+          </div>
+        </div>
+      </a></li>
+    <% end %>
+    </ul>
+  <% end %>
+
+</div>
