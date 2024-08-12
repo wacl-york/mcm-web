@@ -131,7 +131,7 @@ GEM
     omniauth-oauth2 (1.7.3)
       oauth2 (>= 1.4, < 3)
       omniauth (>= 1.9, < 3)
-    parallel (1.26.1)
+    parallel (1.26.2)
     parser (3.3.4.2)
       ast (~> 2.4.1)
       racc
@@ -151,7 +151,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rexml (3.3.4)
+    rexml (3.3.5)
       strscan
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
