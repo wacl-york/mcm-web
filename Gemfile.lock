@@ -23,9 +23,9 @@ GEM
       omniauth-cognito-idp (~> 0.1)
       serverless-rack (>= 1.0.8)
       uoy-faculty-sinatra (>= 2.0, < 6.0)
-    uoy-faculty-spec-helpers (6.0.3)
+    uoy-faculty-spec-helpers (7.0.1)
       sequel (~> 5)
-      uoy-faculty-rbac (~> 5.0)
+      uoy-faculty-rbac (>= 5.0, < 7.0)
       webmock (~> 3.10)
     uoy-faculty_aws (0.10.1)
 
