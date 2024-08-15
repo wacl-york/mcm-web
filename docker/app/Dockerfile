@@ -1,4 +1,5 @@
-FROM ghcr.io/uoy-research/rdkit-sqlite:main
+#FROM ghcr.io/uoy-research/rdkit-sqlite:main
+FROM rdkitsqlite:latest
 
 # Install tools used when installing / building gems
 # Use a debian ruby image rather than the base lambda one as that expects
@@ -6,7 +7,7 @@ FROM ghcr.io/uoy-research/rdkit-sqlite:main
 FROM ruby:3.2-slim
 
 COPY --from=0 /lib/librdkit* /lib/
-RUN apt-get update -qq && apt-get install -y build-essential libsqlite3-dev libboost-all-dev libfreetype-dev
+RUN apt-get update -qq && apt-get install -y build-essential libsqlite3-dev
 
 # Don't complain if bundler is run as root
 ENV BUNDLE_SILENCE_ROOT_WARNING=1
