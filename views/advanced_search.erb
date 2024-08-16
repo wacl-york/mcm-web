@@ -3,22 +3,19 @@
 <div class="advanced-search-content">
 
   <form>
-    <fieldset>
-      <legend>Chemical properties</legend>
+    <input id="advs-all" type="hidden" name="all" checked />
 
-      <div>
-        <input id="advs-all" type="hidden" name="all" checked />
+    <div style="display:flex; flex-direction: row;">
+      <fieldset>
+        <legend>Radicals</legend>
 
         <input id="advs-peroxy" type="checkbox" name="peroxy" />
-        <label for="advs-peroxy">Peroxy radical</label>
-      </div>
+        <label for="advs-peroxy">Peroxy</label><br/>
+      </fieldset>
+    </div>
 
-      <br/>
-
-      <div>
-        <input id="advs-submit" type="submit" value="Search" onclick="document.querySelector('#loading').style.display = 'block';" />
-      </div>
-    </fieldset>
+    <br/>
+    <input id="advs-submit" type="submit" value="Search" onclick="document.querySelector('#loading').style.display = 'block';" />
   </form>
 
   <div id="loading" style="display:none; margin:auto; width:5%; text-align:center;">
