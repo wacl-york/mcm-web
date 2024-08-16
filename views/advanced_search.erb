@@ -16,36 +16,45 @@
       <br/>
 
       <div>
-        <input id="advs-submit" type="submit" value="Search" />
+        <input id="advs-submit" type="submit" value="Search" onclick="document.querySelector('#loading').style.display = 'block';" />
       </div>
     </fieldset>
   </form>
 
-  <% unless @species.nil? %>
-    <hr style="" />
+  <div id="loading" style="display:none; margin:auto; width:5%; text-align:center;">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <p>Loading...</p>
+  </div>
 
-    <p><%= @species.count %> results found</p>
+  <div id="results">
+    <% unless @species.nil? %>
+      <hr />
 
-    <ul style="list-style: none;">
-    <% @species.each do |species| %>
-      <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>">
-        <div class="py-2 d-flex">
-          <div>
-            <div class="mb-1">
-              <span class="h4">
-                <%= species[:Name] %>
-              </span>
-            </div>
-            <div class="description">
-              Smiles: <%= species[:Smiles] %>
-              <br>
-              Inchi: <%= species[:Inchi] %>
+      <p><%= @species.count %> results found</p>
+
+      <ul style="list-style: none;">
+      <% @species.each do |species| %>
+        <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>">
+          <div class="py-2 d-flex">
+            <div>
+              <div class="mb-1">
+                <span class="h4">
+                  <%= species[:Name] %>
+                </span>
+              </div>
+              <div class="description">
+                Smiles: <%= species[:Smiles] %>
+                <br>
+                Inchi: <%= species[:Inchi] %>
+              </div>
             </div>
           </div>
-        </div>
-      </a></li>
+        </a></li>
+      <% end %>
+      </ul>
     <% end %>
-    </ul>
-  <% end %>
+  </div>
 
 </div>
