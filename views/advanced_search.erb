@@ -27,33 +27,33 @@
     <p>Loading...</p>
   </div>
 
-  <div id="results">
-    <% unless @species.nil? %>
-      <hr />
+  <% unless @species.nil? %>
+    <hr />
 
-      <p><%= @species.count %> results found</p>
+    <p><%= @species.count %> results found</p>
 
-      <ul style="list-style: none;">
-      <% @species.each do |species| %>
-        <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>">
-          <div class="py-2 d-flex">
-            <div>
-              <div class="mb-1">
-                <span class="h4">
-                  <%= species[:Name] %>
-                </span>
-              </div>
-              <div class="description">
-                Smiles: <%= species[:Smiles] %>
-                <br>
-                Inchi: <%= species[:Inchi] %>
+    <div id="results" style="max-height:60vh; overflow-y: scroll;">
+        <ul style="list-style: none;">
+        <% @species.each do |species| %>
+          <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>">
+            <div class="py-2 d-flex">
+              <div>
+                <div class="mb-1">
+                  <span class="h4">
+                    <%= species[:Name] %>
+                  </span>
+                </div>
+                <div class="description">
+                  Smiles: <%= species[:Smiles] %>
+                  <br>
+                  Inchi: <%= species[:Inchi] %>
+                </div>
               </div>
             </div>
-          </div>
-        </a></li>
-      <% end %>
-      </ul>
-    <% end %>
-  </div>
+          </a></li>
+        <% end %>
+        </ul>
+    </div>
+  <% end %>
 
 </div>
