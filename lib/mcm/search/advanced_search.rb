@@ -20,9 +20,8 @@ module MCM
 
         DB[:Species]
           .exclude(Smiles: nil)
-          .where(Sequel.lit("substruct_match(Smiles, ?) OR substruct_match(Smiles, ?)",
-            valid_smarts[0], valid_smarts[1],
-          ))
+          .where(Sequel.lit('substruct_match(Smiles, ?) OR substruct_match(Smiles, ?)',
+                            valid_smarts[0], valid_smarts[1]))
       end
 
       def find_all
