@@ -36,6 +36,37 @@ module MCM
       def find_all
         DB[:Species].exclude(Smiles: nil)
       end
+
+      def extract_elements(inchi)
+        formula = inchi.split('/')[1]
+        elements = {}
+
+        elem = 'initial'
+        num = ''
+
+        formula.each_char do |char|
+          case char
+          when /\d/
+            num << char
+          when /[[:lower:]]/
+            elem << char
+          when /[[:upper:]]/
+            if elem != 'initial'
+              num = '1' if num == ''
+              elements[elem] = num.to_i
+              num = ''
+            end
+
+            elem = char
+          end
+        end
+
+        # Final element
+        num = '1' if num == ''
+        elements[elem] = num.to_i
+
+        elements
+      end
     end
   end
 end
