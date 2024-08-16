@@ -10,9 +10,18 @@ module MCM
         all = find_all
 
         criteria = []
+        criteria.push(find_radical) if term[:radical]
         criteria.push(find_peroxy) if term[:peroxy]
 
         criteria.reduce(all) { |first, second| first.intersect(second) }
+      end
+
+      def find_radical
+        valid_smarts = ['[O]']
+
+        DB[:Species]
+          .exclude(Smiles: nil)
+          .where(Sequel.lit('substruct_match(Smiles, ?)', valid_smarts[0]))
       end
 
       def find_peroxy
