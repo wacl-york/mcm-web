@@ -13,6 +13,13 @@ module MCM
         criteria.push(find_radical) if term[:radical]
         criteria.push(find_peroxy) if term[:peroxy]
 
+        criteria.push(find_elements({
+                                      'C' => term[:elemc],
+                                      'Cl' => term[:elemcl],
+                                      'O' => term[:elemo],
+                                      'H' => term[:elemh]
+                                    }))
+
         criteria.reduce(all) { |first, second| first.intersect(second) }
       end
 
@@ -33,6 +40,28 @@ module MCM
                             valid_smarts[0], valid_smarts[1]))
       end
 
+      def find_elements(element_counts)
+        all = DB[:Species].select(:Inchi).exclude(Inchi: nil).map { |x| x[:Inchi] }
+
+        valid_inchi = all.filter do |inchi|
+          makeup = extract_elements(inchi)
+          fail_flag = false
+
+          element_counts.each do |elem, count|
+            case count
+            when '0'
+              fail_flag = true unless makeup.key?(elem)
+            when /[1-9][0-9]*/
+              fail_flag = true if makeup[elem] != count.to_i
+            end
+          end
+
+          !fail_flag
+        end
+
+        DB[:Species].where(Inchi: valid_inchi)
+      end
+
       def find_all
         DB[:Species].exclude(Smiles: nil)
       end
@@ -41,8 +70,8 @@ module MCM
         formula = inchi.split('/')[1]
         elements = {}
 
-        elem = 'initial'
-        num = ''
+        elem = +'initial'
+        num = +''
 
         formula.each_char do |char|
           case char
@@ -52,9 +81,9 @@ module MCM
             elem << char
           when /[[:upper:]]/
             if elem != 'initial'
-              num = '1' if num == ''
+              num = +'1' if num == ''
               elements[elem] = num.to_i
-              num = ''
+              num = +''
             end
 
             elem = char
