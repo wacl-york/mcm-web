@@ -17,7 +17,8 @@ module MCM
                                       'C' => term[:elemc],
                                       'Cl' => term[:elemcl],
                                       'O' => term[:elemo],
-                                      'H' => term[:elemh]
+                                      'H' => term[:elemh],
+                                      'N' => term[:elemn]
                                     }))
 
         criteria.reduce(all) { |first, second| first.intersect(second) }
