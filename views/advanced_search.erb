@@ -9,24 +9,24 @@
       <fieldset>
         <legend>Radicals</legend>
 
-        <input id="advs-radical" type="checkbox" name="radical" />
+        <input id="advs-radical" type="checkbox" name="radical" <%= params.include?("radical") ? "checked" : "" %> />
         <label for="advs-radical">Any</label><br/>
-        <input id="advs-peroxy" type="checkbox" name="peroxy" />
+        <input id="advs-peroxy" type="checkbox" name="peroxy" <%= params.include?("peroxy") ? "checked" : "" %> />
         <label for="advs-peroxy">Peroxy</label><br/>
       </fieldset>
 
       <fieldset>
         <legend>Elements</legend>
 
-        <input id="advs-elem-c" name="elemc" type="number" min="0" />
+        <input id="advs-elem-c" name="elemc" type="number" min="0" value="<%= params[:elemc] %>" />
         <label for="advs-elem-c">Carbon (C)</label><br/>
-        <input id="advs-elem-cl" name="elemcl" type="number" min="0" />
+        <input id="advs-elem-cl" name="elemcl" type="number" min="0" value="<%= params[:elemcl] %>" />
         <label for="advs-elem-cl">Chlorine (Cl)</label><br/>
-        <input id="advs-elem-o" name="elemo" type="number" min="0" />
+        <input id="advs-elem-o" name="elemo" type="number" min="0" value="<%= params[:elemo] %>" />
         <label for="advs-elem-o">Oxygen (O)</label><br/>
-        <input id="advs-elem-h" name="elemh" type="number" min="0" />
+        <input id="advs-elem-h" name="elemh" type="number" min="0" value="<%= params[:elemh] %>" />
         <label for="advs-elem-h">Hydrogen (H)</label><br/>
-        <input id="advs-elem-n" name="elemn" type="number" min="0" />
+        <input id="advs-elem-n" name="elemn" type="number" min="0" value="<%= params[:elemn] %>" />
         <label for="advs-elem-n">Nitrogen (N)</label><br/>
       </fieldset>
     </div>
