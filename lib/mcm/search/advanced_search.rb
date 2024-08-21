@@ -47,11 +47,11 @@ module MCM
         valid_inchi = all.filter do |inchi|
           makeup = extract_elements(inchi)
           fail_flag = false
-
+          
           element_counts.each do |elem, count|
             case count
             when '0'
-              fail_flag = true unless makeup.key?(elem)
+              fail_flag = true if makeup.key?(elem)
             when /[1-9][0-9]*/
               fail_flag = true if makeup[elem] != count.to_i
             end
