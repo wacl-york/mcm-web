@@ -60,7 +60,7 @@
 
     <p><%= @species.count %> results found</p>
 
-    <div id="results" style="max-height:60vh; overflow-y: scroll;">
+    <div id="results" style="max-height:80vh; overflow-y: scroll;">
         <ul style="list-style: none;">
         <% @species.each do |species| %>
           <li><a href="/<%= params[:mechanism] %>/species/<%= species[:Name] %>">
