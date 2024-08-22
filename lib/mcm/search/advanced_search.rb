@@ -11,7 +11,7 @@ module MCM
 
         criteria = []
         criteria.push(find_radical) if term[:radical]
-        criteria.push(find_peroxy) if term[:peroxy]
+        criteria.push(find_peroxy) unless term[:peroxy]
 
         criteria.push(find_elements({
                                       'C' => term[:elemc],
@@ -20,6 +20,8 @@ module MCM
                                       'H' => term[:elemh],
                                       'N' => term[:elemn]
                                     }))
+
+        criteria.push(find_by_amw(term[:amw].to_f)) unless term[:amw].empty?
 
         criteria.reduce(all) { |first, second| first.intersect(second) }
       end
@@ -47,7 +49,7 @@ module MCM
         valid_inchi = all.filter do |inchi|
           makeup = extract_elements(inchi)
           fail_flag = false
-          
+
           element_counts.each do |elem, count|
             case count
             when '0'
@@ -61,6 +63,15 @@ module MCM
         end
 
         DB[:Species].where(Inchi: valid_inchi)
+      end
+
+      def find_by_amw(amw)
+        tolerance = 0.01
+
+        DB[:Species]
+          .exclude(Smiles: nil)
+          .where(Sequel.lit('CAST(get_descriptor(Smiles, "amw") AS decimal) BETWEEN ? AND ?',
+            amw - tolerance, amw + tolerance));
       end
 
       def find_all
