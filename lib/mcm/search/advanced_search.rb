@@ -46,23 +46,21 @@ module MCM
       def find_elements(element_counts)
         all = DB[:Species].select(:Inchi).exclude(Inchi: nil).map { |x| x[:Inchi] }
 
-        valid_inchi = all.filter do |inchi|
-          makeup = extract_elements(inchi)
-          fail_flag = false
-
-          element_counts.each do |elem, count|
-            case count
-            when '0'
-              fail_flag = true if makeup.key?(elem)
-            when /[1-9][0-9]*/
-              fail_flag = true if makeup[elem] != count.to_i
-            end
+        elements_match = lambda { |requested, actual|
+          requested.each do |elem, count|
+            return false if count == '0' && actual.key?(elem)
+            return false if count.to_i.positive? && actual[elem] != count.to_i
           end
 
-          !fail_flag
+          true
+        }
+
+        matching_inchi = all.filter do |inchi|
+          makeup = extract_elements(inchi)
+          elements_match.call(element_counts)
         end
 
-        DB[:Species].where(Inchi: valid_inchi)
+        DB[:Species].where(Inchi: matching_inchi)
       end
 
       def find_by_amw(amw)
@@ -71,7 +69,7 @@ module MCM
         DB[:Species]
           .exclude(Smiles: nil)
           .where(Sequel.lit('CAST(get_descriptor(Smiles, "amw") AS decimal) BETWEEN ? AND ?',
-            amw - tolerance, amw + tolerance));
+                            amw - tolerance, amw + tolerance))
       end
 
       def find_all
