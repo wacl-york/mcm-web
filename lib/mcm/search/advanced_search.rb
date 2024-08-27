@@ -6,6 +6,8 @@ module MCM
     module Advanced
       module_function
 
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize
       def search(term, _mechanism)
         all = find_all
 
@@ -25,6 +27,8 @@ module MCM
 
         criteria.reduce(all) { |first, second| first.intersect(second) }
       end
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize
 
       def find_radical
         valid_smarts = ['[O]']
@@ -46,18 +50,9 @@ module MCM
       def find_elements(element_counts)
         all = DB[:Species].select(:Inchi).exclude(Inchi: nil).map { |x| x[:Inchi] }
 
-        elements_match = lambda { |requested, actual|
-          requested.each do |elem, count|
-            return false if count == '0' && actual.key?(elem)
-            return false if count.to_i.positive? && actual[elem] != count.to_i
-          end
-
-          true
-        }
-
         matching_inchi = all.filter do |inchi|
           makeup = extract_elements(inchi)
-          elements_match.call(element_counts, makeup)
+          element_match?(element_counts, makeup)
         end
 
         DB[:Species].where(Inchi: matching_inchi)
@@ -87,6 +82,15 @@ module MCM
         end
 
         elements
+      end
+
+      def element_match?(requested, actual)
+        requested.each do |elem, count|
+          return false if count == '0' && actual.key?(elem)
+          return false if count.to_i.positive? && actual[elem] != count.to_i
+        end
+
+        true
       end
     end
   end
