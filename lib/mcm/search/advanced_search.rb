@@ -57,7 +57,7 @@ module MCM
 
         matching_inchi = all.filter do |inchi|
           makeup = extract_elements(inchi)
-          elements_match.call(element_counts)
+          elements_match.call(element_counts, makeup)
         end
 
         DB[:Species].where(Inchi: matching_inchi)
@@ -78,31 +78,13 @@ module MCM
 
       def extract_elements(inchi)
         formula = inchi.split('/')[1]
+        query = /([A-Z][a-z]*)(\d*)/
         elements = {}
 
-        elem = +'initial'
-        num = +''
-
-        formula.each_char do |char|
-          case char
-          when /\d/
-            num << char
-          when /[[:lower:]]/
-            elem << char
-          when /[[:upper:]]/
-            if elem != 'initial'
-              num = +'1' if num == ''
-              elements[elem] = num.to_i
-              num = +''
-            end
-
-            elem = char
-          end
+        formula.scan(query).each do |(elem, num)|
+          num = '1' if num.empty?
+          elements[elem] = num.to_i
         end
-
-        # Final element
-        num = '1' if num == ''
-        elements[elem] = num.to_i
 
         elements
       end
