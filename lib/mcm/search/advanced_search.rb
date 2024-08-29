@@ -64,8 +64,8 @@ module MCM
 
         DB[:Species]
           .exclude(Smiles: nil)
-          .where(Sequel.lit('CAST(get_descriptor(Smiles, "amw") AS decimal) BETWEEN ? AND ?',
-                            amw - tolerance, amw + tolerance))
+          .where { mass > amw - tolerance }
+          .where { mass < amw + tolerance }
       end
 
       def find_all
