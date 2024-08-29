@@ -13,7 +13,7 @@ module MCM
 
         criteria = []
         criteria.push(find_radical) if term[:radical]
-        criteria.push(find_peroxy) unless term[:peroxy]
+        criteria.push(find_peroxy) if term[:peroxy]
 
         criteria.push(find_elements({
                                       'C' => term[:elemc],
@@ -69,7 +69,7 @@ module MCM
       end
 
       def find_all
-        DB[:Species].exclude(Smiles: nil)
+        DB[:Species]
       end
 
       def extract_elements(inchi)
