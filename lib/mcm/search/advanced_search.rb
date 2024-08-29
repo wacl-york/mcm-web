@@ -18,9 +18,9 @@ module MCM
         criteria.push(find_elements({
                                       'C' => term[:elemc],
                                       'Cl' => term[:elemcl],
-                                      'O' => term[:elemo],
                                       'H' => term[:elemh],
                                       'N' => term[:elemn],
+                                      'O' => term[:elemo],
                                       'S' => term[:elems]
                                     }))
 
