@@ -34,12 +34,14 @@
         <label for="advs-elem-h">Hydrogen (H)</label><br/>
         <input id="advs-elem-n" name="elemn" type="number" min="0" value="<%= params[:elemn] %>" />
         <label for="advs-elem-n">Nitrogen (N)</label><br/>
+        <input id="advs-elem-s" name="elems" type="number" min="0" value="<%= params[:elems] %>" />
+        <label for="advs-elem-s">Sulphur (S)</label><br/>
       </fieldset>
 
       <fieldset>
         <legend>Properties</legend>
 
-        <input id="advs-amw" name="amw" type="number" min="0" step="0.001" value="<%= params[:amw] %>" />
+        <input id="advs-amw" name="amw" type="number" min="0" step="0.01" value="<%= params[:amw] %>" />
         <label for="advs-amw">Mass</label><br/>
       </fieldset>
     </div>

@@ -20,7 +20,8 @@ module MCM
                                       'Cl' => term[:elemcl],
                                       'O' => term[:elemo],
                                       'H' => term[:elemh],
-                                      'N' => term[:elemn]
+                                      'N' => term[:elemn],
+                                      'S' => term[:elems]
                                     }))
 
         criteria.push(find_by_amw(term[:amw].to_f)) unless term[:amw].empty?
@@ -59,7 +60,7 @@ module MCM
       end
 
       def find_by_amw(amw)
-        tolerance = 0.01
+        tolerance = 0.5
 
         DB[:Species]
           .exclude(Smiles: nil)
