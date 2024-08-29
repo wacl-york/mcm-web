@@ -3,6 +3,6 @@
 get '/:mechanism/advanced_search' do
   @species = (MCM::Search::Advanced.search(params, @mechanism) if params.size > 1)
 
-  @title = "#{params[:mechanism]} - Advanced search"
+  @title = "#{params[:mechanism]} - Advanced Search"
   erb :advanced_search
 end
