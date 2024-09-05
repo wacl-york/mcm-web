@@ -31,21 +31,22 @@ module MCM
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
-      def find_radical
-        valid_smarts = ['[O]']
+      def substruct_match(valid_smarts)
+        return if valid_smarts.empty?
+
+        query = "substruct_match(Smiles, ?)#{'OR substruct_match(Smiles, ?)' * (valid_smarts.length - 1)}"
 
         DB[:Species]
           .exclude(Smiles: nil)
-          .where(Sequel.lit('substruct_match(Smiles, ?)', valid_smarts[0]))
+          .where(Sequel.lit(query, *valid_smarts))
+      end
+
+      def find_radical
+        substruct_match(['[O]'])
       end
 
       def find_peroxy
-        valid_smarts = ['CO[O]', '[O]OC']
-
-        DB[:Species]
-          .exclude(Smiles: nil)
-          .where(Sequel.lit('substruct_match(Smiles, ?) OR substruct_match(Smiles, ?)',
-                            valid_smarts[0], valid_smarts[1]))
+        substruct_match(['CO[O]', '[O]OC'])
       end
 
       def find_elements(element_counts)
