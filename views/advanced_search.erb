@@ -10,9 +10,58 @@
         <legend>Radicals</legend>
 
         <input id="advs-radical" type="checkbox" name="radical" <%= params.include?("radical") ? "checked" : "" %> />
-          <label for="advs-radical">Radical</label><br/>
+          <label for="advs-radical">All</label><br/>
         <input id="advs-peroxy" type="checkbox" name="peroxy" <%= params.include?("peroxy") ? "checked" : "" %> />
           <label for="advs-peroxy">Peroxy</label><br/>
+
+        <input id="advs-alkoxy" type="checkbox" name="alkoxy" <%= params.include?("alkoxy") ? "checked" : "" %> />
+          <label for="advs-alkoxy">Alkoxy</label><br/>
+
+        <input id="advs-acylperoxy" type="checkbox" name="acylperoxy" <%= params.include?("acylperoxy") ? "checked" : "" %> />
+          <label for="advs-acylperoxy">Acyl peroxy</label><br/>
+
+        <input id="advs-criegee" type="checkbox" name="criegee" <%= params.include?("criegee") ? "checked" : "" %> />
+          <label for="advs-criegee">Criegee</label><br/>
+      </fieldset>
+
+      <fieldset>
+        <legend>Functional Groups</legend>
+
+        <input id="advs-alcohol" type="checkbox" name="alcohol" <%= params.include?("alcohol") ? "checked" : "" %> />
+          <label for="advs-alcohol">Alcohol</label><br/>
+
+        <input id="advs-aldehyde" type="checkbox" name="aldehyde" <%= params.include?("aldehyde") ? "checked" : "" %> />
+          <label for="advs-aldehyde">Aldehyde</label><br/>
+
+        <input id="advs-ketone" type="checkbox" name="ketone" <%= params.include?("ketone") ? "checked" : "" %> />
+          <label for="advs-ketone">Ketone</label><br/>
+
+        <input id="advs-nitrate" type="checkbox" name="nitrate" <%= params.include?("nitrate") ? "checked" : "" %> />
+          <label for="advs-nitrate">Nitrate</label><br/>
+
+        <input id="advs-nitro" type="checkbox" name="nitro" <%= params.include?("nitro") ? "checked" : "" %> />
+          <label for="advs-nitro">Nitro</label><br/>
+
+        <input id="advs-carboxylic-acid" type="checkbox" name="carboxylic-acid" <%= params.include?("carboxylic-acid") ? "checked" : "" %> />
+          <label for="advs-carboxylic-acid">Carboxylic acid</label><br/>
+
+        <input id="advs-peracid" type="checkbox" name="peracid" <%= params.include?("peracid") ? "checked" : "" %> />
+          <label for="advs-peracid">Peracid</label><br/>
+
+        <input id="advs-peroxyacyl-nitrate" type="checkbox" name="peroxyacyl-nitrate" <%= params.include?("peroxyacyl-nitrate") ? "checked" : "" %> />
+          <label for="advs-peroxyacyl-nitrate">Peroxyacyl nitrate</label><br/>
+
+        <input id="advs-hydroperoxide" type="checkbox" name="hydroperoxide" <%= params.include?("hydroperoxide") ? "checked" : "" %> />
+          <label for="advs-hydroperoxide">Hydroperoxide</label><br/>
+
+        <input id="advs-peroxide" type="checkbox" name="peroxide" <%= params.include?("peroxyde") ? "checked" : "" %> />
+          <label for="advs-peroxyde">Peroxide</label><br/>
+
+        <input id="advs-ester" type="checkbox" name="ester" <%= params.include?("ester") ? "checked" : "" %> />
+          <label for="advs-ester">Ester</label><br/>
+
+        <input id="advs-ether" type="checkbox" name="ether" <%= params.include?("ether") ? "checked" : "" %> />
+          <label for="advs-ether">Ether</label><br/>
       </fieldset>
 
       <fieldset>
@@ -20,14 +69,19 @@
 
         <input id="advs-elem-c" name="elemc" type="number" min="0" value="<%= params[:elemc] %>" />
           <label for="advs-elem-c">Carbon (C)</label><br/>
+
         <input id="advs-elem-cl" name="elemcl" type="number" min="0" value="<%= params[:elemcl] %>" />
           <label for="advs-elem-cl">Chlorine (Cl)</label><br/>
+
         <input id="advs-elem-h" name="elemh" type="number" min="0" value="<%= params[:elemh] %>" />
           <label for="advs-elem-h">Hydrogen (H)</label><br/>
+
         <input id="advs-elem-n" name="elemn" type="number" min="0" value="<%= params[:elemn] %>" />
           <label for="advs-elem-n">Nitrogen (N)</label><br/>
+
         <input id="advs-elem-o" name="elemo" type="number" min="0" value="<%= params[:elemo] %>" />
           <label for="advs-elem-o">Oxygen (O)</label><br/>
+
         <input id="advs-elem-s" name="elems" type="number" min="0" value="<%= params[:elems] %>" />
           <label for="advs-elem-s">Sulphur (S)</label><br/>
       </fieldset>
