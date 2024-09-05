@@ -6,14 +6,19 @@ module MCM
     module Advanced
       module_function
 
+      PATTERNS = {
+        'radical' => ['[O]'],
+        'peroxy' => ['CO[O]', '[O]OC']
+      }.freeze
+
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
       def search(term, _mechanism)
         all = find_all
 
         criteria = []
-        criteria.push(find_radical) if term[:radical]
-        criteria.push(find_peroxy) if term[:peroxy]
+        criteria.push(substruct_match(PATTERNS['radical'])) if term[:radical]
+        criteria.push(substruct_match(PATTERNS['peroxy'])) if term[:peroxy]
 
         criteria.push(find_elements({
                                       'C' => term[:elemc],
