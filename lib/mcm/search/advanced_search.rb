@@ -41,14 +41,6 @@ module MCM
           .where(Sequel.lit(query, *valid_smarts))
       end
 
-      def find_radical
-        substruct_match(['[O]'])
-      end
-
-      def find_peroxy
-        substruct_match(['CO[O]', '[O]OC'])
-      end
-
       def find_elements(element_counts)
         all = DB[:Species].select(:Inchi).exclude(Inchi: nil).map { |x| x[:Inchi] }
 
@@ -61,7 +53,7 @@ module MCM
       end
 
       def find_by_amw(amw)
-        tolerance = 0.5
+        tolerance = 1.0
 
         DB[:Species]
           .exclude(Smiles: nil)
