@@ -19,8 +19,10 @@ module MCM
         criteria = []
         criteria.push(substruct_match(PATTERNS['radical'])) if term[:radical]
         criteria.push(substruct_match(PATTERNS['peroxy'])) if term[:peroxy]
+        # Add bromine
 
         criteria.push(find_elements({
+                                      'Br' => term[:elembr],
                                       'C' => term[:elemc],
                                       'Cl' => term[:elemcl],
                                       'H' => term[:elemh],
