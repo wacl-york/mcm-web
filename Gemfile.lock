@@ -24,7 +24,7 @@ GEM
       rexml
       serverless-rack (>= 1.0.8)
       uoy-faculty-sinatra (>= 2.0, < 6.0)
-    uoy-faculty-spec-helpers (7.1.0)
+    uoy-faculty-spec-helpers (7.2.0)
       sequel (~> 5)
       uoy-faculty-rbac (>= 5.0, < 7.0)
       webmock (~> 3.10)
