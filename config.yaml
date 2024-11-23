@@ -6,5 +6,5 @@ db:
   search_path: people,rbac
 web_library:
   root: https://uk-ac-york-its-faculty-dev-web-library.s3.amazonaws.com
-  version: "4.18.1"
+  version: "4.19.1"
 bootstrap_major_version: 5
