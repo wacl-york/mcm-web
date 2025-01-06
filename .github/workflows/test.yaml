@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/uoy-research/rdkit-sqlite-demo:main
+      steps:
       - name: Install
         run: |
             apt-get update -qq && apt-get -y install git curl gcc make zlib1g-dev libedit-dev libedit2 libssl-dev libffi-dev libyaml-dev
