@@ -28,8 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/uoy-research/rdkit-sqlite-demo:main
-    env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - name: Install
         run: |
