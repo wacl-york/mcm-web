@@ -28,10 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/uoy-research/rdkit-sqlite-demo:main
-      options: '--tmpfs /__e/node20:exec,size=200M'
-    steps:
-      - name: Bootstrap node20 for glibc2.17
-        run: 'cp -a /node_al2/* /__e/node20 && /__e/node20/bin/node -v'
       - name: Install
         run: |
             apt-get update -qq && apt-get -y install git curl gcc make zlib1g-dev libedit-dev libedit2 libssl-dev libffi-dev libyaml-dev
