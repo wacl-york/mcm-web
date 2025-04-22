@@ -26,7 +26,7 @@ module MCM
         current_line_length += to_add.length
       end
       if words.count.positive?
-        out = (out[..-(sep.length + 1)]).to_s # remove last unused separating space if added one
+        out = out[..-(sep.length + 1)].to_s # remove last unused separating space if added one
       end
       out = "#{out}#{ending_char}\n"
     end
