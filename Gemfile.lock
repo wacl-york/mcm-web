@@ -141,7 +141,7 @@ GEM
       oauth2 (>= 1.4, < 3)
       omniauth (>= 1.9, < 3)
     parallel (1.27.0)
-    parser (3.3.9.0)
+    parser (3.3.10.0)
       ast (~> 2.4.1)
       racc
     prism (1.6.0)
@@ -246,7 +246,7 @@ GEM
     unicode-emoji (4.1.0)
     uri (1.0.3)
     version_gem (1.1.9)
-    webmock (3.25.2)
+    webmock (3.26.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
