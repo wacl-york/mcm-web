@@ -239,7 +239,7 @@ GEM
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
     sqlite3 (2.7.3-x86_64-linux-gnu)
-    thor (1.4.0)
+    thor (1.5.0)
     tilt (2.6.1)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
