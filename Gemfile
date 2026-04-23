@@ -17,7 +17,7 @@ group :development do
   gem 'rubocop'
   gem 'rubocop-performance', require: false
   gem 'rubocop-rake', require: false
-  gem 'rubocop-rspec', '~> 2.0', require: false
+  gem 'rubocop-rspec', '~> 3.9', require: false
   gem 'rubocop-sequel', require: false
   gem 'webrick'
 end
