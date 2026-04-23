@@ -40,7 +40,7 @@ source 'https://gem.fury.io/universityofyork/' do
   gem 'uoy-faculty_aws', '>= 0.9.0', require: ['faculty_aws/notify_devs', 'faculty_aws/db_connector']
   gem 'uoy-faculty-helpers', require: 'faculty_helpers'
   gem 'uoy-faculty-rbac', require: ['rbac', 'faculty_rbac/sinatra']
-  gem 'uoy-faculty-sinatra', '~> 4.5', require: ['rack/combined_logger', 'sinatra/faculty']
+  gem 'uoy-faculty-sinatra', '~> 5.1', require: ['rack/combined_logger', 'sinatra/faculty']
   gem 'uoy-faculty-sinatra-aws', '~> 3.0', require: ['sinatra/faculty/aws', 'sinatra/faculty/aws_alternate_logs']
 
   group :test do
