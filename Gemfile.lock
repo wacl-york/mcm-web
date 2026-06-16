@@ -7,7 +7,8 @@ GEM
     uoy-faculty-helpers (2.0.0)
     uoy-faculty-rbac (6.1.0)
       sequel (~> 5.38)
-    uoy-faculty-sinatra (4.5.1)
+    uoy-faculty-sinatra (5.1.0)
+      base64 (~> 0.2)
       rack (>= 2, < 4)
       sequel (~> 5.0)
       sinatra (~> 2, != 2.1.0)
@@ -69,7 +70,7 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.3.0)
     benchmark (0.5.0)
-    bigdecimal (3.2.3)
+    bigdecimal (4.1.2)
     bundler-audit (0.9.3)
       bundler (>= 1.2.0)
       thor (~> 1.0)
@@ -113,8 +114,8 @@ GEM
     mime-types-data (3.2025.0902)
     mini_mime (1.1.5)
     multi_json (1.17.0)
-    multi_xml (0.7.2)
-      bigdecimal (~> 3.1)
+    multi_xml (0.8.1)
+      bigdecimal (>= 3.1, < 5)
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
     net-http (0.6.0)
@@ -240,7 +241,7 @@ GEM
       version_gem (>= 1.1.8, < 3)
     sqlite3 (2.7.3-x86_64-linux-gnu)
     thor (1.5.0)
-    tilt (2.6.1)
+    tilt (2.7.0)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
@@ -284,7 +285,7 @@ DEPENDENCIES
   sqlite3
   uoy-faculty-helpers!
   uoy-faculty-rbac!
-  uoy-faculty-sinatra (~> 4.5)!
+  uoy-faculty-sinatra (~> 5.1)!
   uoy-faculty-sinatra-aws (~> 3.0)!
   uoy-faculty-spec-helpers!
   uoy-faculty_aws (>= 0.9.0)!
