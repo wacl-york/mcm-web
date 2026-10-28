@@ -1,8 +1,4 @@
 version: 2
-registries:
-  gemfury:
-    type: rubygems-server
-    url: https://gem.fury.io/universityofyork
 updates:
   - package-ecosystem: bundler
     directory: /
