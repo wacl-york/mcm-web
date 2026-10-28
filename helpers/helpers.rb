@@ -4,7 +4,7 @@
 helpers do
   def display_reaction(rxn, species_page, doc_link: true)
     output = "<div class='rxn-reactants'>#{parse_multiple_species(rxn[:Reactants], species_page)}</div>
-    <div class='rxn-rate'><a#{rxn[:RateURL].nil? ? '' : " href='#{rxn[:RateURL]}'"}>#{parse_rate(rxn[:Rate])}</a></div>
+    <div class='rxn-rate'><a#{" href='#{rxn[:RateURL]}'" unless rxn[:RateURL].nil?}>#{parse_rate(rxn[:Rate])}</a></div>
     <div class='rxn-products'>#{parse_multiple_species(rxn[:Products], species_page)}</div>
     <div class='rxn-category'>"
     if doc_link && !rxn[:Category].nil?
