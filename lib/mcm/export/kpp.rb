@@ -3,7 +3,7 @@
 module MCM
   module Export
     # Exporter into Facsimile format
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class KPP
       CONTENT_TYPE = 'text/plain'
       FILE_NAME = 'export.eqn'
@@ -299,7 +299,7 @@ module MCM
       end
       # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Lint/UnusedMethodArgument
 
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable-next Metrics/AbcSize
       def combine_reactions(rxns, combine: '+')
         # If there exist multiple reactions (as in the same reactants and products), then they will be combined
         # into one single reaction.
@@ -333,7 +333,6 @@ module MCM
         # Combine rates
         grouped.map { |h, k| { Reaction: h, Rate: k.join(combine) } }
       end
-      # rubocop:enable Metrics/AbcSize
 
       def add_missing_products(rxn)
         # KPP can't handle reactions with no products
@@ -426,7 +425,7 @@ module MCM
         "#{lhs} = #{rhs} ! MCM J=#{params[:J]}"
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:disable-next Metrics/MethodLength, Metrics/AbcSize
       def constants_file(mechanism)
         # Retrieve all tokenized rates in mechanism
         # get tokenized rates in order
@@ -505,7 +504,6 @@ module MCM
         out += "END MODULE constants_mcm\n"
         out
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       def parse_formula(formula)
         # Parses a formula in the form 'CH3O2' into 'C + 3H + 2O'.
@@ -522,6 +520,5 @@ module MCM
         end
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

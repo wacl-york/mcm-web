@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 get '/:mechanism/?' do
   @mechanism_details = DB[:Mechanisms]
                        .where(Mechanism: params[:mechanism])
@@ -62,4 +62,3 @@ get '/:mechanism/?' do
 
   erb :home
 end
-# rubocop:enable Metrics/BlockLength

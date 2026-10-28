@@ -6,7 +6,7 @@ module MCM
     module Factory
       module_function
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable-next Metrics/MethodLength
       def exporter_factory(format)
         # Returns the selected export format
         #
@@ -27,7 +27,6 @@ module MCM
           MCM::Export::Fallback.new
         end
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end
