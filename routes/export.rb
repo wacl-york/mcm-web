@@ -13,7 +13,7 @@ get '/:mechanism/export/download' do
   #------------------- Submechanism
   submech_rxns = MCM::Database.get_submechanism(params[:selected], params[:inorganic], @mechanism)
   # Ensure we have at least 1 reaction in sub-mechanism
-  unless submech_rxns.count.positive?
+  if submech_rxns.empty?
     status 404
     redirect "/#{params[:mechanism]}/export?error=true"
   end
@@ -37,8 +37,7 @@ get '/:mechanism/export/download' do
   photo_rates = MCM::Database.get_photolysis_rates_used_in_submechanism(submech_rxns)
 
   #------------------- Export
-  citation_file = File.open("#{settings.public_folder}/citation.txt")
-  citation = citation_file.readlines.map(&:chomp)
+  citation = File.readlines("#{settings.public_folder}/citation.txt", chomp: true)
 
   exporter = MCM::Export::Factory.exporter_factory(params[:format])
   content_type exporter.class::CONTENT_TYPE

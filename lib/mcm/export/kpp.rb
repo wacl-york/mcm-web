@@ -275,7 +275,7 @@ module MCM
         out += "#INCLUDE atoms \n\n"
         out += "#DEFVAR\n"
         # Need to define water if it's used in a rate
-        out += "H2O = 2H + O ;\n" if rate_uses_water(rxns, :Rate) || rate_uses_water(complex_rates.all, :Definition)
+        out += "H2O = 2H + O ;\n" if rate_uses_water?(rxns, :Rate) || rate_uses_water?(complex_rates.all, :Definition)
         out += species_out
         out += "\n"
 
@@ -283,8 +283,8 @@ module MCM
         out += "#INLINE F90_RCONST \n"
         out += "  USE constants_mcm\n"
         out += "  ! Peroxy radicals\n"
-        out += missing_peroxies_out if missing_peroxies.count.positive?
-        out += peroxy_out if peroxies.count.positive?
+        out += missing_peroxies_out unless missing_peroxies.empty?
+        out += peroxy_out unless peroxies.empty?
         out += "  CALL define_constants_mcm\n"
         out += '#ENDINLINE '
         out += "{above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}\n"
@@ -392,7 +392,7 @@ module MCM
         rate.gsub(/[<>@]/, '<' => '(', '>' => ')', '@' => '**')
       end
 
-      def rate_uses_water(array, key)
+      def rate_uses_water?(array, key)
         # Identifies whether a list of objects that contain rates have at least
         # one occurrence of H2O in a rate.
         #
