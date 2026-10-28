@@ -80,14 +80,14 @@ module MCM
         # Peroxies
         out += spacer
         out += "* Peroxy radicals. ;\n*;\n"
-        if !missing_peroxies.empty?
+        unless !missing_peroxies.empty?
           out += "* WARNING: The following species do not have SMILES strings in the database. ;\n"
           out += "*          If any of these are peroxy radicals the RO2 sum will be wrong!!! ;\n"
           out += missing_peroxies_out # TODO: Shoud this exclude inorganics?
         end
         out += spacer
         out += empty_comment
-        out += peroxy_out if !peroxies.empty?
+        out += peroxy_out unless !peroxies.empty?
         out += empty_comment
 
         # Reactions
