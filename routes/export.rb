@@ -6,7 +6,7 @@ get '/:mechanism/export' do
   erb :export
 end
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 get '/:mechanism/export/download' do
   params[:selected] = [] if params[:selected].nil?
 
@@ -55,7 +55,6 @@ get '/:mechanism/export/download' do
     params[:generic]
   )
 end
-# rubocop:enable Metrics/BlockLength
 
 get '/:mechanism/export/kpp_constants' do
   content_type 'text/plain'

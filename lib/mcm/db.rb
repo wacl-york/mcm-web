@@ -2,7 +2,7 @@
 
 module MCM
   # Utility functions for extracting values from the DB
-  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable-next Metrics/ModuleLength
   module Database
     module_function
 
@@ -315,7 +315,7 @@ module MCM
           .select(:Name, Sequel[:m4][:Synonym])
     end
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable-next Metrics/AbcSize
     def extract_formula_from_inchi
       # Extracts the molecular formula from an Inchi
       #
@@ -348,7 +348,5 @@ module MCM
         .select_append(Sequel.lit('substr(inchi, first_slash+1, second_slash_corrected)').as(:Formula))
         .from_self(alias: :form)
     end
-    # rubocop:enable Metrics/AbcSize
   end
-  # rubocop:enable Metrics/ModuleLength
 end

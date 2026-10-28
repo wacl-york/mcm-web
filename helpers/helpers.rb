@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 helpers do
   def display_reaction(rxn, species_page, doc_link: true)
     output = "<div class='rxn-reactants'>#{parse_multiple_species(rxn[:Reactants], species_page)}</div>
@@ -15,7 +15,7 @@ helpers do
     output
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def parse_rate(rate, display_arrow: true)
     # Parses a raw rate string into a MathJAX formatted label with matching length arrow
     # Converts the FACSIMILIE rate equation into human readable math in 3 ways:
@@ -50,7 +50,6 @@ helpers do
     inner = display_arrow ? "->[#{parsed}]" : parsed
     "\\(\\ce{#{inner}}\\)"
   end
-  # rubocop:enable Metrics/MethodLength
 
   def parse_multiple_species(values, species_page)
     # Parses an array of species into a '+' delimited string with hyperreferences
@@ -111,4 +110,3 @@ helpers do
     "<a href='/static/MCM/download/#{species}.zip'>#{species}</a>"
   end
 end
-# rubocop:enable Metrics/BlockLength

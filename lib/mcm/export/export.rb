@@ -5,7 +5,7 @@ module MCM
   module Export
     module_function
 
-    # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize
+    # rubocop:disable-next Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize
     def wrap_lines(words,
                    max_line_length: 68,
                    starting_char: ' ',
@@ -30,6 +30,5 @@ module MCM
       end
       out = "#{out}#{ending_char}\n"
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize
   end
 end
