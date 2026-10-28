@@ -5,3 +5,4 @@ vendor/
 packaged.yaml
 
 .env
+test-images/*
