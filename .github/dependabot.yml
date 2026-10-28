@@ -6,6 +6,7 @@ registries:
 updates:
   - package-ecosystem: bundler
     directory: /
+    registries: "*"
     schedule:
       interval: weekly
       day: thursday
