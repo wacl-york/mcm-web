@@ -14,7 +14,7 @@ jobs:
       options: '--tmpfs /__e/node24:exec,size=200M'
     steps:
       - name: Bootstrap node24 for glibc2.17
-        run: 'cp -a /node_al2/* /__e/node24 && /__e/node20/bin/node -v'
+        run: 'cp -a /node_al2/* /__e/node24 && /__e/node24/bin/node -v'
       - uses: university-of-york/faculty-dev-actions/bundle-update@v1
         with:
           checkout-key: ${{ secrets.BUNDLE_UPDATE_SSH_PRIVATE_KEY }}
