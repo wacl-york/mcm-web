@@ -42,14 +42,14 @@ GEM
     auth-sanitizer (0.2.5)
       version_gem (~> 1.1, >= 1.1.16)
     aws-eventstream (1.4.1)
-    aws-partitions (1.1299.1)
-    aws-sdk-cloudwatchlogs (1.169.0)
-      aws-sdk-core (~> 3, >= 3.262.0)
+    aws-partitions (1.1301.0)
+    aws-sdk-cloudwatchlogs (1.172.0)
+      aws-sdk-core (~> 3, >= 3.264.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-cognitoidentityprovider (1.158.0)
-      aws-sdk-core (~> 3, >= 3.262.0)
+    aws-sdk-cognitoidentityprovider (1.160.0)
+      aws-sdk-core (~> 3, >= 3.264.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.262.0)
+    aws-sdk-core (3.264.0)
       aws-eventstream (~> 1, >= 1.4.1)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -58,17 +58,17 @@ GEM
       jmespath (~> 1, >= 1.6.1)
       logger
       rexml (~> 3.4, >= 3.4.2)
-    aws-sdk-dynamodb (1.179.0)
-      aws-sdk-core (~> 3, >= 3.262.0)
+    aws-sdk-dynamodb (1.181.0)
+      aws-sdk-core (~> 3, >= 3.264.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-rds (1.328.0)
-      aws-sdk-core (~> 3, >= 3.262.0)
+    aws-sdk-rds (1.330.0)
+      aws-sdk-core (~> 3, >= 3.264.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-secretsmanager (1.140.0)
-      aws-sdk-core (~> 3, >= 3.262.0)
+    aws-sdk-secretsmanager (1.142.0)
+      aws-sdk-core (~> 3, >= 3.264.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-sns (1.125.0)
-      aws-sdk-core (~> 3, >= 3.262.0)
+    aws-sdk-sns (1.127.0)
+      aws-sdk-core (~> 3, >= 3.264.0)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
@@ -91,7 +91,7 @@ GEM
       bigdecimal
       rexml
     diff-lcs (1.6.2)
-    domain_name (0.7.20261007)
+    domain_name (0.7.20261031)
     erubi (1.13.1)
     faraday (2.15.1)
       faraday-net_http (>= 2.0, < 3.6)
@@ -116,7 +116,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2026.1027)
+    mime-types-data (3.2026.1103)
     mini_mime (1.1.5)
     multi_json (1.21.2)
     multi_xml (0.9.1)
@@ -130,7 +130,7 @@ GEM
       timeout
     netrc (0.11.0)
     nio4r (2.7.5)
-    nokogiri (1.19.4-x86_64-linux-gnu)
+    nokogiri (1.19.7-x86_64-linux-gnu)
       racc (~> 1.4)
     oauth2 (2.1.0)
       anonymous_loader (~> 0.1, >= 0.1.5)
@@ -160,7 +160,7 @@ GEM
     puma (8.0.2)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.24)
+    rack (2.2.25)
     rack-protection (2.2.4)
       rack
     rack-test (2.3.0)
@@ -218,7 +218,7 @@ GEM
       rubocop (>= 1.72.1, < 2)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    sequel (5.109.0)
+    sequel (5.110.0)
       bigdecimal
     serverless-rack (1.0.8)
       rack (~> 2.0)
@@ -297,4 +297,4 @@ RUBY VERSION
   ruby 3.2.4p170
 
 BUNDLED WITH
-  4.0.23
+  4.0.24
